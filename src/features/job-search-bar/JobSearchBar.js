@@ -4,7 +4,7 @@ import { Navbar, Nav, NavDropdown, Form, FormControl, Button, Container } from '
 import {
     searchJobs,
     selectGlobalJobFilters
-} from './jobSearchBarSlice';
+} from './JobSearchBarSlice';
 import styles from './JobSearchBar.module.css';
 
 export function JobSearchBar() {
