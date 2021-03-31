@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Navbar, Nav, NavDropdown, Form, FormControl, Button, Col } from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown, Form, FormControl, Button, Col, Row } from 'react-bootstrap';
 import { NotLoggedInView } from '../profile-view/NotLoggedInView';
 import { LoggedInView } from '../profile-view/LoggedInView';
+import { JobPostView } from '../job-post-view/JobPostView';
 import {
     searchJobs,
     selectGlobalJobFilters,
@@ -62,7 +63,7 @@ export function JobSearchBar() {
                 <Navbar.Brand href="#home">Find available jobs</Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="mr-auto" style={{ paddingLeft: "15vw" }}>
+                    <Nav className="mr-auto" style={{ paddingLeft: "5vw" }}>
                         <Form inline>
 
                             <Col style={{ minWidth: "12vw" }}>
@@ -96,11 +97,19 @@ export function JobSearchBar() {
                                 }} />
                             </Col>
                             <Button onClick={() => { dispatch(searchJobs(jobFilters)) }} variant="outline-success" >Find Jobs!</Button>
+                            
                         </Form>
                     </Nav>
-
-                    <Nav style={{ paddingLeft: "10vw", minWidth: "20vw" }}>
-                        {globalIsLoggedIn ? <LoggedInView /> : <NotLoggedInView />}
+                    
+                    <Nav style={{ paddingLeft: "10vw", minWidth: "25vw", paddingRight:"3vw" }}>
+                        <Row>
+                            <Col  style={{ minWidth: "10vw"}}>
+                                <JobPostView/>
+                            </Col>
+                            <Col>
+                                {globalIsLoggedIn ? <LoggedInView /> : <NotLoggedInView />}
+                            </Col>
+                        </Row>
                     </Nav>
                 </Navbar.Collapse>
 

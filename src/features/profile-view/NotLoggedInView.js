@@ -22,7 +22,7 @@ export function NotLoggedInView() {
 
     return (
         <div>
-            <Button onClick={() => setLgShow(true)} variant="outline-success" >Login</Button>
+            <Button style={{minWidth:"5vw"}} onClick={() => setLgShow(true)} variant="outline-success" >Login</Button>
             <Modal
                 show={lgShow}
                 onHide={() => setLgShow(false)}
