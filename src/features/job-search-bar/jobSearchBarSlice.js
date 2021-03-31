@@ -6,7 +6,9 @@ export const jobSearchBarSlice = createSlice({
     initialState: {
         "jobFilters":{
           jobType:"",
-          amount:0
+          pay:0,
+          amount:0,
+          postedBefore:""
       }
     },
     reducers: {
