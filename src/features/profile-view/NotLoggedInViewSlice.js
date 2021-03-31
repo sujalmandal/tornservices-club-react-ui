@@ -1,17 +1,28 @@
 import { createSlice } from '@reduxjs/toolkit';
-
+import { getLoginURI } from '../../utills/EndpointUtils'
+import axios from 'axios';
 
 export const notLoggedInViewSlice = createSlice({
-    name: 'notLoggedInView',
-    initialState: {
-       
-    },
-    reducers: {
-      login: (state,action) => {
-        
-      }
-    },
-  });
+  name: 'notLoggedInView',
+  initialState: {
 
-export const {login} = notLoggedInViewSlice.actions;
+  },
+  reducers: {
+
+  },
+});
+
+export const { } = notLoggedInViewSlice.actions;
+
+export const sendLoginRequest = function (apiKey, onResult) {
+  return function (dispatch) {
+    axios.post(getLoginURI(apiKey))
+      .then((response) => {
+        onResult(true, response);
+      }, (error) => {
+        onResult(false, error);
+      });
+  }
+}
+
 export default notLoggedInViewSlice.reducer;

@@ -14,11 +14,14 @@ export const sharedCacheSlice = createSlice({
     reducers: {
       updateApiKey: (state,action) => {
             state.apiKey=action.payload;
+      },
+      updateSharedCache: (state,action)=>{
+            state=action.payload;
       }
     }
   });
 
-  export const {updateApiKey} = sharedCacheSlice.actions;
+  export const {updateApiKey,updateSharedCache} = sharedCacheSlice.actions;
   export const selectPlayerInfo = (state) => state.sharedCache;
 
   export default sharedCacheSlice.reducer;

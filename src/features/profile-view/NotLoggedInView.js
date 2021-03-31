@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Modal,Form, FormControl, Container } from 'react-bootstrap';
-import { login } from './NotLoggedInViewSlice';
+import { sendLoginRequest } from './NotLoggedInViewSlice';
 import {
     updateApiKey,
+    updateSharedCache,
     selectPlayerInfo
+    
 } from '../shared-vars/SharedCacheSlice';
 
 export function NotLoggedInView() {
@@ -18,6 +20,31 @@ export function NotLoggedInView() {
 
     const setAPIKey = function(e){
         dispatch(updateApiKey(e.target.value))
+    }
+
+    const onResult=function(isSuccess,response){
+        if(isSuccess){
+            console.log(response.data)
+            dispatch(updateSharedCache({
+                ...globalPlayerInfo,
+                subscriberType: response.data,
+                tornPlayerName: response.data.tornUserName,
+                tornPlayerId: response.data.tornUserId,
+                playerId: response.data.internalId,
+                isLoggedIn: true
+            }));
+        }
+        else{
+            console.error(response);
+            dispatch(updateSharedCache({
+                ...globalPlayerInfo,
+                subscriberType: "",
+                tornPlayerName: "",
+                tornPlayerId: "",
+                playerId: "",
+                isLoggedIn: false
+            }));
+        }
     }
 
     return (
@@ -39,7 +66,7 @@ export function NotLoggedInView() {
 
                     <Form inline>
                         <FormControl  defaultValue={globalPlayerInfo.apiKey} type="text" className="mr-sm-4" onChange={setAPIKey} />
-                        <Button onClick={()=>{dispatch(login())}}variant="outline-success" >Login!</Button>
+                        <Button onClick={()=>{dispatch(sendLoginRequest(globalPlayerInfo.apiKey,onResult))}}variant="outline-success" >Login!</Button>
                     </Form>
                     </Container>
                 </Modal.Body>
