@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 
-export const registrationLoginSlice = createSlice({
-    name: 'registrationLogin',
+export const notLoggedInViewSlice = createSlice({
+    name: 'notLoggedInView',
     initialState: {
         "player":{
           apiKey: "",
@@ -23,7 +23,7 @@ export const registrationLoginSlice = createSlice({
     },
   });
 
-export const selectPlayerInfo = (state) => state.registrationLogin.player;
+  export const selectPlayerInfo = (state) => state.sharedCache;
 
-export const {login,register} = registrationLoginSlice.actions;
-export default registrationLoginSlice.reducer;
+export const {login,register} = notLoggedInViewSlice.actions;
+export default notLoggedInViewSlice.reducer;

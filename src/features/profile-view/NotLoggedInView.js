@@ -5,9 +5,9 @@ import {
     login,
     register,
     selectPlayerInfo
-} from './RegistrationLoginSlice';
+} from './NotLoggedInViewSlice';
 
-export function RegistrationLogin() {
+export function NotLoggedInView() {
 
     const dispatch = useDispatch();
 
@@ -57,7 +57,6 @@ export function RegistrationLogin() {
                     </Container>
                 </Modal.Body>
             </Modal>
-
         </div>
     );
 
