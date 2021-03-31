@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Navbar, Nav, NavDropdown, Form, FormControl, Button, Container, Col, Row } from 'react-bootstrap';
+import { Navbar, Nav, NavDropdown, Form, FormControl, Button, Col } from 'react-bootstrap';
+import { RegistrationLogin } from '../registration-login/RegistrationLogin';
 import {
     searchJobs,
     selectGlobalJobFilters
 } from './JobSearchBarSlice';
-import styles from './JobSearchBar.module.css';
 
 export function JobSearchBar() {
 
@@ -96,7 +96,7 @@ export function JobSearchBar() {
                     </Nav>
 
                     <Nav style={{paddingLeft:"10vw"}}>
-                        <Button onClick={() => { dispatch(searchJobs(jobFilters)) }} variant="outline-success" >Login/Register</Button>
+                       <RegistrationLogin/>
                     </Nav>
                 </Navbar.Collapse>
 

@@ -5,7 +5,6 @@ import {
     searchJobs,
     selectJobs
 } from './JobListTableSlice';
-import styles from './JobListTable.module.css';
 
 export function JobListTable() {
 
