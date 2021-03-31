@@ -39,7 +39,7 @@ export function NotLoggedInView() {
 
                     <Form inline>
                         <FormControl  defaultValue={globalPlayerInfo.apiKey} type="text" className="mr-sm-4" onChange={setAPIKey} />
-                        <Button variant="outline-success" >Login!</Button>
+                        <Button onClick={()=>{dispatch(login())}}variant="outline-success" >Login!</Button>
                     </Form>
                     </Container>
                 </Modal.Body>

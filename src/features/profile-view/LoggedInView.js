@@ -1,21 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Nav, Button, Modal, Form, FormControl, Container, Navbarm, NavDropdown } from 'react-bootstrap';
+import { Button, NavDropdown } from 'react-bootstrap';
 import { logout } from './LoggedInViewSlice';
 import { selectPlayerInfo } from '../shared-vars/SharedCacheSlice';
 
 export function LoggedInView() {
 
     const globalPlayerInfo = useSelector(selectPlayerInfo);
+    const dispatch = useDispatch();
     
     return (
         <div>
-            <NavDropdown title={globalPlayerInfo.tornPlayerName} id="basic-nav-dropdown" onSelect="">
+            <NavDropdown title={globalPlayerInfo.tornPlayerName} id="basic-nav-dropdown">
                 <NavDropdown.Item>Accepted Jobs</NavDropdown.Item>
                 <NavDropdown.Item>Posted Jobs</NavDropdown.Item>
-                <NavDropdown.Divider />
+                <NavDropdown.Divider/>
                 <NavDropdown.Item>
-                    <Button variant="outline-danger">Logout</Button>
+                    <Button variant="outline-danger" onClick={()=>{dispatch(logout())}}>Logout</Button>
                 </NavDropdown.Item>
             </NavDropdown>
         </div>
