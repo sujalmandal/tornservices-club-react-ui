@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Container, Card, Button, CardImg, CardTitle, CardText, CardColumns } from 'reactstrap';
 import {
-    searchJobs,
+    getDetails,
     selectJobs
 } from './JobListTableSlice';
 

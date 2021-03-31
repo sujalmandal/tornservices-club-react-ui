@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Nav, Button, Modal, Form, FormControl, Container, Navbarm, NavDropdown } from 'react-bootstrap';
-import {
-    login,
-    register,
-    selectPlayerInfo
-} from './LoggedInViewSlice';
+import { logout } from './LoggedInViewSlice';
+import { selectPlayerInfo } from '../shared-vars/SharedCacheSlice';
 
 export function LoggedInView() {
 
@@ -18,7 +15,7 @@ export function LoggedInView() {
                 <NavDropdown.Item>Posted Jobs</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item>
-                    <Button>Logout</Button>
+                    <Button variant="outline-danger">Logout</Button>
                 </NavDropdown.Item>
             </NavDropdown>
         </div>

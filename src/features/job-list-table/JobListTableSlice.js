@@ -12,14 +12,13 @@ export const jobListTableSlice = createSlice({
         }]
     },
     reducers: {
-      searchJobs: (state,action) => {
-        console.log(action)
-        state.jobFilters = action.payload;
+      getDetails: (state,action) => {
+        
       }
     }
   });
 
 export const selectJobs = (state) => state.jobListTable.jobs;
 
-export const {searchJobs} = jobListTableSlice.actions;
+export const {getDetails} = jobListTableSlice.actions;
 export default jobListTableSlice.reducer;

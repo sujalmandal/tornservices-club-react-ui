@@ -1,19 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 
-export const notLoggedInViewSlice = createSlice({
+export const loggedInViewSlice = createSlice({
     name: 'notLoggedInView',
     initialState: {
         
     },
     reducers: {
-      login: (state,action) => {
+      logout: (state,action) => {
         
       }
     },
   });
 
-export const selectPlayerInfo = (state) => state.sharedCache;
-
-export const {login,register} = notLoggedInViewSlice.actions;
-export default notLoggedInViewSlice.reducer;
+export const {logout} = loggedInViewSlice.actions;
+export default loggedInViewSlice.reducer;

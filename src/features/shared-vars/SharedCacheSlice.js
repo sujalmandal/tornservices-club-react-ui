@@ -9,9 +9,16 @@ export const sharedCacheSlice = createSlice({
           tornPlayerName: "transhumanist",
           tornPlayerId: "",
           playerId: "",
-          isLoggedIn: false
+          isLoggedIn: true
     },
-    reducers: {}
+    reducers: {
+      updateApiKey: (state,action) => {
+            state.apiKey=action.payload;
+      }
+    }
   });
+
+  export const {updateApiKey} = sharedCacheSlice.actions;
+  export const selectPlayerInfo = (state) => state.sharedCache;
 
   export default sharedCacheSlice.reducer;

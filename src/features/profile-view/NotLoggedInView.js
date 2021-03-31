@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Modal,Form, FormControl, Container } from 'react-bootstrap';
+import { login } from './NotLoggedInViewSlice';
 import {
-    login,
-    register,
+    updateApiKey,
     selectPlayerInfo
-} from './NotLoggedInViewSlice';
+} from '../shared-vars/SharedCacheSlice';
 
 export function NotLoggedInView() {
 
@@ -14,23 +14,10 @@ export function NotLoggedInView() {
     /* redux, global states */
     const globalPlayerInfo = useSelector(selectPlayerInfo);
 
-    /* local, feature-level states */
-    const [playerData, setPlayerData] = useState({
-        apiKey: "",
-        subscriberType: "",
-        tornPlayerName: "",
-        tornPlayerId: "",
-        playerId: "",
-        isLoggedIn: false
-    });
-
     const [lgShow, setLgShow] = useState(false);
 
     const setAPIKey = function(e){
-        setPlayerData({
-            ...playerData,
-            apiKey: e.target.value
-        });
+        dispatch(updateApiKey(e.target.value))
     }
 
     return (
@@ -51,7 +38,7 @@ export function NotLoggedInView() {
                     <Container>
 
                     <Form inline>
-                        <FormControl  defaultValue={playerData.apiKey} type="text" className="mr-sm-4" onChange={setAPIKey} />
+                        <FormControl  defaultValue={globalPlayerInfo.apiKey} type="text" className="mr-sm-4" onChange={setAPIKey} />
                         <Button variant="outline-success" >Login!</Button>
                     </Form>
                     </Container>

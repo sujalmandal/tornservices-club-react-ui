@@ -49,6 +49,13 @@ export function JobSearchBar() {
         });
     }
 
+    const updateMinAmount = function (e) {
+        setJobFilters({
+            ...jobFilters,
+            amount: e.target.value
+        })
+    }
+
     return (
         <div>
             <Navbar fixed="top" bg="dark" variant="dark" expand="lg">
@@ -76,12 +83,7 @@ export function JobSearchBar() {
 
                             <Col>
                                 <Form.Label className="mr-sm-4" style={{ color: "gray" }}>How many?</Form.Label>
-                                <FormControl style={{ width: "5vw" }} max="99" value={jobFilters.amount} type="number" className="mr-sm-4" onChange={(e) => {
-                                    setJobFilters({
-                                        ...jobFilters,
-                                        amount: e.target.value
-                                    })
-                                }} />
+                                <FormControl style={{ width: "5vw" }} max="99" value={jobFilters.amount} type="number" className="mr-sm-4" onChange={updateMinAmount} />
                             </Col>
 
                             <Col>
