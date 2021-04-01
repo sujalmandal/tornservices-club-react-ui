@@ -2,8 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export const initialSharedState = {
       apiKey: "",
-      subscriberType: "",
-      tornPlayerName: "",
+      activeSubscriptionType: "",
+      tornUserName: "",
       tornPlayerId: "",
       playerId: "",
       isLoggedIn: false

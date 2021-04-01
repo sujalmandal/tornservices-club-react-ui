@@ -14,7 +14,7 @@ export function LoggedInView() {
 
     return (
         <div>
-            <NavDropdown title={globalPlayerInfo.tornPlayerName} id="basic-nav-dropdown">
+            <NavDropdown title={globalPlayerInfo.tornUserName} id="basic-nav-dropdown">
                 <NavDropdown.Item>Accepted Jobs</NavDropdown.Item>
                 <NavDropdown.Item>Posted Jobs</NavDropdown.Item>
                 <NavDropdown.Divider />

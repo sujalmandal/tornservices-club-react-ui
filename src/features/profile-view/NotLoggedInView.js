@@ -42,10 +42,7 @@ export function NotLoggedInView() {
             console.log(response.data)
             dispatch(updateSharedState({
                 ...globalPlayerInfo,
-                subscriberType: response.data,
-                tornPlayerName: response.data.tornUserName,
-                tornPlayerId: response.data.tornUserId,
-                playerId: response.data.internalId,
+                ...response.data,
                 isLoggedIn: true,
                 isLoading : false
             }));
