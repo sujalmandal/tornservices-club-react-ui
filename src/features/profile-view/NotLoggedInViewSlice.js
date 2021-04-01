@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getLoginURI } from '../../utills/EndpointUtils'
+import { getLoginURI } from '../../utils/EndpointUtils'
 import axios from 'axios';
 
 export const notLoggedInViewSlice = createSlice({

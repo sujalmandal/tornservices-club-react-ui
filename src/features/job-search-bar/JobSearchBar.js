@@ -6,9 +6,9 @@ import { LoggedInView } from '../profile-view/LoggedInView';
 import { JobPostView } from '../job-post-view/JobPostView';
 import {
     searchJobs,
-    selectGlobalJobFilters,
-    selectIsLoggedIn
+    selectGlobalJobFilters
 } from './JobSearchBarSlice';
+import { selectIsLoggedIn } from '../shared-vars/SharedStateSlice';
 
 export function JobSearchBar() {
 

@@ -20,6 +20,5 @@ export const jobSearchBarSlice = createSlice({
   });
 
 export const selectGlobalJobFilters = (state) => state.jobSearchBar.jobFilters;
-export const selectIsLoggedIn =(state) => state.sharedCache.isLoggedIn;
 export const {searchJobs} = jobSearchBarSlice.actions;
 export default jobSearchBarSlice.reducer;
