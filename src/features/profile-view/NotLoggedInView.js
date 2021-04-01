@@ -6,7 +6,6 @@ import {
     updateApiKey,
     updateSharedState,
     selectPlayerInfo,
-    selectIsLoading,
     initialSharedState
 
 } from '../shared-vars/SharedStateSlice';
@@ -18,15 +17,17 @@ export function NotLoggedInView() {
 
     /* redux, global states */
     const globalPlayerInfo = useSelector(selectPlayerInfo);
-    const globalIsLoading = useSelector(selectIsLoading);
 
-    const [lgShow, setLgShow] = useState(false);
+    /* local states */
+    const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const setAPIKey = function (e) {
         dispatch(updateApiKey(e.target.value))
     }
 
     const handleLogin = function () {
+        setIsLoading(true);
         dispatch(updateSharedState({
             ...globalPlayerInfo,
             isLoading:true
@@ -35,6 +36,8 @@ export function NotLoggedInView() {
     }
 
     const onResult = function (isSuccess, response) {
+        setIsLoading(false);
+        setIsLoginPopupOpen(false);
         if (isSuccess) {
             console.log(response.data)
             dispatch(updateSharedState({
@@ -58,10 +61,11 @@ export function NotLoggedInView() {
 
     return (
         <div>
-            <Button style={{ minWidth: "5vw" }} onClick={() => setLgShow(true)} variant="outline-success" >Login</Button>
+            <Button style={{ minWidth: "5vw" }} onClick={() => setIsLoginPopupOpen(true)} variant="outline-success" >Login</Button>
             <Modal
-                show={lgShow}
-                onHide={() => setLgShow(false)}
+                backdrop="static"
+                show={isLoginPopupOpen}
+                onHide={() => setIsLoginPopupOpen(false)}
                 aria-labelledby="contained-modal-title-vcenter"
                 centered
             >
@@ -72,9 +76,9 @@ export function NotLoggedInView() {
                 <Modal.Body>
                     <Container>
                         <Form inline>
-                            <FormControl defaultValue={globalPlayerInfo.apiKey} type="text" className="mr-sm-4" onChange={setAPIKey} />
-                            <Button onClick={handleLogin} variant="outline-success" >
-                                {globalIsLoading ? <div>Working on it.. <Spinner
+                            <FormControl defaultValue={globalPlayerInfo.apiKey} type="text" className="mr-sm-4" onChange={setAPIKey} disabled={isLoading}/>
+                            <Button onClick={handleLogin} variant="outline-success" disabled={isLoading}>
+                                {isLoading ? <div>Working on it.. <Spinner
                                     as="span"
                                     animation="border"
                                     size="sm"

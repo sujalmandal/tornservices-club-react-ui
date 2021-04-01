@@ -6,8 +6,7 @@ export const initialSharedState = {
       tornPlayerName: "",
       tornPlayerId: "",
       playerId: "",
-      isLoggedIn: false,
-      isLoading : false
+      isLoggedIn: false
 };
 
 const getSharedStateFromLocalStorage = function () {
@@ -28,7 +27,6 @@ export const sharedStateSlice = createSlice({
             updateSharedState: (state, action) => {
                   state = action.payload;
                   setSharedStateToLocalStorage(action.payload);
-                  setTimeout(()=>{window.location.reload()},100);
             }
       }
 });
@@ -36,11 +34,11 @@ export const sharedStateSlice = createSlice({
 export const wipeSharedState=(dispatch)=>{
       localStorage.removeItem("sharedState");
       dispatch(updateSharedState(initialSharedState));
+      setTimeout(()=>{window.location.reload()},1000);
 }
 
 export const { updateApiKey, updateSharedState } = sharedStateSlice.actions;
 export const selectPlayerInfo = (state) => state.sharedState;
-export const selectIsLoading = (state) => state.sharedState.isLoading;
 export const selectIsLoggedIn =(state) => state.sharedState.isLoggedIn;
 
 export default sharedStateSlice.reducer;
