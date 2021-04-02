@@ -13,7 +13,8 @@ export function JobPostView() {
     const dispatch = useDispatch();
 
     const [jobType, setJobType] = useState(null);
-    const [serviceType, setServiceType] = useState("looking for services");
+    const [serviceTypeText, setServiceTypeText] = useState("looking for services");
+    const [serviceType, setServiceType] = useState("REQUESTING");
     const [availableKeys, setAvailableKeys] = useState([]);
     const [showJobPostForm, setShowJobPostForm] = useState(false);
     const [formData, setFormData] = useState(null);
@@ -37,6 +38,17 @@ export function JobPostView() {
         setJobType(availableKeys[index].label);
         dispatch(getJobDetailFormData(availableKeys[index].key, onGetJobDetailFormDataResult));
     }
+
+    const handleServiceTypeTextChange=function(serviceTypeText){
+        setServiceTypeText(serviceTypeText);
+        if(serviceTypeText==="looking for services"){
+            setServiceType("REQUESTING");
+        }
+        if(serviceTypeText==="offering services"){
+            setServiceType("OFFERING");
+        }
+    }
+
 
     /* callbacks */
 
@@ -80,9 +92,7 @@ export function JobPostView() {
                     <Container>
                         <Row>
                             <Col>
-                                <DropdownButton id="dropdown-basic-button-service-type" title={"I am " + serviceType} onSelect={(eventKey) => {
-                                    setServiceType(eventKey);
-                                }}>
+                                <DropdownButton id="dropdown-basic-button-service-type" title={"I am " + serviceTypeText} onSelect={handleServiceTypeTextChange}>
                                     <Dropdown.Item eventKey="offering services">offering services</Dropdown.Item>
                                     <Dropdown.Item eventKey="looking for services">looking for services</Dropdown.Item>
                                 </DropdownButton>
@@ -99,10 +109,12 @@ export function JobPostView() {
                             <Container>
                                 <Form>
                                     {formData == null ? "" : formData.elements.map((element => {
-                                        return <Row style={{paddingRight:"2vw", paddingLeft:"2vw", paddingTop:"1vh"}}>
+                                        if(element.serviceType==="ALL" || element.serviceType===serviceType){
+                                            return <Row style={{paddingRight:"2vw", paddingLeft:"2vw", paddingTop:"1vh"}}>
                                             <Col><Form.Label className="mr-sm-4">{element.label}</Form.Label></Col>
                                             <Col><FormControl id={element.id} style={{ width: "10vw" }} type={element.type} min={0} size="sm" className="mr-sm-4" /></Col>
-                                        </Row>
+                                        </Row> 
+                                        }
                                     }))}
                                 </Form>
                             </Container>
