@@ -28,14 +28,14 @@ export function JobPostView() {
             dispatch(getAvailableJobDetailKeys(onGetAvailableJobDetailKeysResult));
         }
         else {
-            setJobType(availableKeys[0]);
+            setJobType(availableKeys[0].label);
             setShowJobPostForm(true);
         }
     }
 
-    const handleJobTypeSelect = function (jobType) {
-        setJobType(jobType);
-        dispatch(getJobDetailFormData(jobType, onGetJobDetailFormDataResult));
+    const handleJobTypeSelect = function (index) {
+        setJobType(availableKeys[index].label);
+        dispatch(getJobDetailFormData(availableKeys[index].key, onGetJobDetailFormDataResult));
     }
 
     /* callbacks */
@@ -53,6 +53,7 @@ export function JobPostView() {
     }
 
     const onGetJobDetailFormDataResult = function (isSuccess, response) {
+        console.log("getJobDetailFormData() result received!");
         if (isSuccess) {
             console.log(response.data);
             setFormData(response.data);
@@ -88,8 +89,8 @@ export function JobPostView() {
                             </Col>
                             <Col>
                                 <DropdownButton id="dropdown-basic-button-job-details" title={"Service : " + (jobType ? jobType : "-select-")} onSelect={handleJobTypeSelect}>
-                                    {availableKeys.map((jobDetailType) => {
-                                        return <Dropdown.Item key={jobDetailType} eventKey={jobDetailType}>{jobDetailType}</Dropdown.Item>
+                                    {availableKeys.map((jobDetailType,index) => {
+                                        return <Dropdown.Item eventKey={index}>{jobDetailType.label}</Dropdown.Item>
                                     })}
                                 </DropdownButton>
                             </Col>
@@ -100,7 +101,7 @@ export function JobPostView() {
                                     {formData == null ? "" : formData.elements.map((element => {
                                         return <Row style={{paddingRight:"2vw", paddingLeft:"2vw", paddingTop:"1vh"}}>
                                             <Col><Form.Label className="mr-sm-4">{element.label}</Form.Label></Col>
-                                            <Col><FormControl id={element.id} style={{ width: "5vw" }} type={element.type} min={0} size="sm" className="mr-sm-4" /></Col>
+                                            <Col><FormControl id={element.id} style={{ width: "10vw" }} type={element.type} min={0} size="sm" className="mr-sm-4" /></Col>
                                         </Row>
                                     }))}
                                 </Form>
