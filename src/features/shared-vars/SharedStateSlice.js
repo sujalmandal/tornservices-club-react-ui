@@ -40,5 +40,5 @@ export const wipeSharedState=(dispatch)=>{
 export const { updateApiKey, updateSharedState } = sharedStateSlice.actions;
 export const selectPlayerInfo = (state) => state.sharedState;
 export const selectIsLoggedIn =(state) => state.sharedState.isLoggedIn;
-
+export const selectAPIKey =(state) => state.sharedState.apiKey;
 export default sharedStateSlice.reducer;

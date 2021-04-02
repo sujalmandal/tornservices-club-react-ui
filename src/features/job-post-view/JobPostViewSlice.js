@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
   getJobDetailTemplatesKeyURI,
-  getJobDetailTemplateByKeyURI
+  getJobDetailTemplateByKeyURI,
+  getPostNewJobURI
 } from '../../utils/EndpointUtils'
 import axios from 'axios';
 
@@ -11,14 +12,12 @@ export const JobPostViewSlice = createSlice({
 
   },
   reducers: {
-    postNewJob: (state, action) => {
-
-    }
+  
   }
 });
 
 export const getAvailableJobDetailKeys = function (onResult) {
-  return function (dispatch) {
+  return function () {
     axios.get(getJobDetailTemplatesKeyURI())
       .then((response) => {
         onResult(true, response);
@@ -29,7 +28,7 @@ export const getAvailableJobDetailKeys = function (onResult) {
 }
 
 export const getJobDetailFormData = function (jobDetailKey, onResult) {
-  return function (dispatch) {
+  return function () {
     axios.get(getJobDetailTemplateByKeyURI(jobDetailKey))
       .then((response) => {
         onResult(true, response);
@@ -39,5 +38,16 @@ export const getJobDetailFormData = function (jobDetailKey, onResult) {
   }
 }
 
-export const { postNewJob } = JobPostViewSlice.actions;
+export const postNewJob = function (createJobDTO, onResult) {
+  return function () {
+    axios.post(getPostNewJobURI(),createJobDTO)
+      .then((response) => {
+        onResult(true, response);
+      }, (error) => {
+        onResult(false, error);
+      });
+  }
+}
+
+export const { } = JobPostViewSlice.actions;
 export default JobPostViewSlice.reducer;

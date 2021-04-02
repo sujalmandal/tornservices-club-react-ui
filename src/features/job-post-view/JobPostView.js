@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
 import { Button, Modal, Form, FormControl, Container, Dropdown, DropdownButton, Col, Row } from 'react-bootstrap';
 import {
     postNewJob,
@@ -12,6 +12,7 @@ import {
     SERVICE_TYPE_OFFERING,
     SERVICE_TYPE_REQUESTING
 } from '../../constants';
+import { selectAPIKey } from '../shared-vars/SharedStateSlice';
 import { toast } from 'react-toastify';
 
 export function JobPostView() {
@@ -23,9 +24,15 @@ export function JobPostView() {
     const [serviceType, setServiceType] = useState(SERVICE_TYPE_REQUESTING);
     const [availableKeys, setAvailableKeys] = useState([]);
     const [showJobPostForm, setShowJobPostForm] = useState(false);
-    const [formData, setFormData] = useState(null);
-    const [createJobDTO, setCreateJobDTO] = useState({
+    const [jobDetailsTemplate,setJobDetailsTemplate] = useState(null);
 
+    //form data
+    const [createJobDTO, setCreateJobDTO] = useState({
+        serviceType:SERVICE_TYPE_REQUESTING,
+        jobDetails:{
+
+        },
+        apiKey: useSelector(selectAPIKey)
     });
 
     /* handlers */
@@ -49,12 +56,30 @@ export function JobPostView() {
         setServiceTypeText(serviceTypeText);
         if(serviceTypeText===SERVICE_TYPE_REQUESTING_TEXT){
             setServiceType(SERVICE_TYPE_REQUESTING);
+            setCreateJobDTO({
+                ...createJobDTO,
+                serviceType:SERVICE_TYPE_REQUESTING
+            });
         }
         if(serviceTypeText===SERVICE_TYPE_OFFERING_TEXT){
             setServiceType(SERVICE_TYPE_OFFERING);
+            setCreateJobDTO({
+                ...createJobDTO,
+                serviceType:SERVICE_TYPE_OFFERING
+            });
         }
     }
 
+    const handleOnChangeFormElement=function(e){
+        var fieldName=e.target.name;
+        var fieldValue=e.target.value;
+        createJobDTO.jobDetails[fieldName]=fieldValue;
+        setCreateJobDTO(createJobDTO);
+    }
+
+    const handlePostNewJob = function(e){
+        dispatch(postNewJob(createJobDTO,onPostResult));
+    }
 
     /* callbacks */
 
@@ -74,11 +99,22 @@ export function JobPostView() {
         console.log("getJobDetailFormData() result received!");
         if (isSuccess) {
             console.log(response.data);
-            setFormData(response.data);
+            setJobDetailsTemplate(response.data);
         }
         else {
             console.error(response);
             toast.error("Unable to fetch job post details from server!");
+        }
+    }
+
+    const onPostResult=function(isSuccess, response){
+        console.log("postNewJob() result received!");
+        if (isSuccess) {
+            console.log(response.data);
+        }
+        else {
+            console.error(response);
+            toast.error("Unable to post the job :( !");
         }
     }
 
@@ -113,23 +149,24 @@ export function JobPostView() {
                         </Row>
                         <Row style={{paddingTop:"5vh"}}>
                             <Container>
-                                <Form>
-                                    {formData == null ? "" : formData.elements.map((element => {
+                               
+                                    {jobDetailsTemplate == null ? "" : jobDetailsTemplate.elements.map((element => {
                                         if(element.serviceType==="ALL" || element.serviceType===serviceType){
                                             return <Row style={{paddingRight:"2vw", paddingLeft:"2vw", paddingTop:"1vh"}}>
                                             <Col><Form.Label className="mr-sm-4">{element.label}</Form.Label></Col>
-                                            <Col><FormControl id={element.id} style={{ width: "10vw" }} type={element.type} min={0} size="sm" className="mr-sm-4" /></Col>
+                                            <Col><FormControl id={element.id} 
+                                                    style={{ width: "10vw" }} type={element.type} min={0} name={element.name}
+                                                    size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement}/></Col>
                                         </Row> 
                                         }
                                     }))}
-                                </Form>
                             </Container>
                         </Row>
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
+                    <Button variant="primary" onClick={handlePostNewJob}>Post!</Button>
                     <Button variant="secondary" onClick={() => { setShowJobPostForm(false) }}>Cancel</Button>
-                    <Button variant="primary" onClick={() => (dispatch(postNewJob(createJobDTO)))}>Post!</Button>
                 </Modal.Footer>
             </Modal>
         </div>

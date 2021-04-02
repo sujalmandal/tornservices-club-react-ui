@@ -11,3 +11,7 @@ export const getJobDetailTemplatesKeyURI=function(){
 export const getJobDetailTemplateByKeyURI=function(key){
     return BASE_URI+'/job/detailTemplate/'+key;
 }
+
+export const getPostNewJobURI=function(){
+    return BASE_URI+'/job/post';
+}
