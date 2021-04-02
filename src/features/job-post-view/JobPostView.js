@@ -6,6 +6,12 @@ import {
     getAvailableJobDetailKeys,
     getJobDetailFormData
 } from './JobPostViewSlice';
+import {
+    SERVICE_TYPE_OFFERING_TEXT,
+    SERVICE_TYPE_REQUESTING_TEXT,
+    SERVICE_TYPE_OFFERING,
+    SERVICE_TYPE_REQUESTING
+} from '../../constants';
 import { toast } from 'react-toastify';
 
 export function JobPostView() {
@@ -13,8 +19,8 @@ export function JobPostView() {
     const dispatch = useDispatch();
 
     const [jobType, setJobType] = useState(null);
-    const [serviceTypeText, setServiceTypeText] = useState("looking for services");
-    const [serviceType, setServiceType] = useState("REQUESTING");
+    const [serviceTypeText, setServiceTypeText] = useState(SERVICE_TYPE_REQUESTING_TEXT);
+    const [serviceType, setServiceType] = useState(SERVICE_TYPE_REQUESTING);
     const [availableKeys, setAvailableKeys] = useState([]);
     const [showJobPostForm, setShowJobPostForm] = useState(false);
     const [formData, setFormData] = useState(null);
@@ -41,11 +47,11 @@ export function JobPostView() {
 
     const handleServiceTypeTextChange=function(serviceTypeText){
         setServiceTypeText(serviceTypeText);
-        if(serviceTypeText==="looking for services"){
-            setServiceType("REQUESTING");
+        if(serviceTypeText===SERVICE_TYPE_REQUESTING_TEXT){
+            setServiceType(SERVICE_TYPE_REQUESTING);
         }
-        if(serviceTypeText==="offering services"){
-            setServiceType("OFFERING");
+        if(serviceTypeText===SERVICE_TYPE_OFFERING_TEXT){
+            setServiceType(SERVICE_TYPE_OFFERING);
         }
     }
 
@@ -93,8 +99,8 @@ export function JobPostView() {
                         <Row>
                             <Col>
                                 <DropdownButton id="dropdown-basic-button-service-type" title={"I am " + serviceTypeText} onSelect={handleServiceTypeTextChange}>
-                                    <Dropdown.Item eventKey="offering services">offering services</Dropdown.Item>
-                                    <Dropdown.Item eventKey="looking for services">looking for services</Dropdown.Item>
+                                    <Dropdown.Item eventKey={SERVICE_TYPE_OFFERING_TEXT}>{SERVICE_TYPE_OFFERING_TEXT}</Dropdown.Item>
+                                    <Dropdown.Item eventKey={SERVICE_TYPE_REQUESTING_TEXT}>{SERVICE_TYPE_REQUESTING_TEXT}</Dropdown.Item>
                                 </DropdownButton>
                             </Col>
                             <Col>
