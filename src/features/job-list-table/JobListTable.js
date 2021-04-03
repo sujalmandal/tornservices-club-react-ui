@@ -17,8 +17,7 @@ export function JobListTable() {
     const [selectedJob, setSelectedJob] = useState(null);
 
     return (
-        <div style={{ height: "100%", background: "#2d405f", minHeight:"100vh" }}>
-            <Container style={{ paddingTop: "100px" }}  >
+        <div style={{ width:"100vw", background: "#2d405f", minHeight:"100vh", paddingTop:"20vh" }}>
                 <CardColumns>
                     { globalJobs.map((job, index) => (
                         <Card body inverse style={{ backgroundColor: '#333', borderColor: '#333' }}>
@@ -29,7 +28,6 @@ export function JobListTable() {
                         </Card>    
                     ))}
                 </CardColumns>
-            </Container>
         </div>
     );
 

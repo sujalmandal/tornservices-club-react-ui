@@ -9,6 +9,7 @@ import {
     initialSharedState
 
 } from '../shared-vars/SharedStateSlice';
+import SpinnerText from '../common-components/SpinnerText';
 import { toast } from 'react-toastify';
 
 export function NotLoggedInView() {
@@ -30,12 +31,12 @@ export function NotLoggedInView() {
         setIsLoading(true);
         dispatch(updateSharedState({
             ...globalPlayerInfo,
-            isLoading:true
+            isLoading: true
         }));
-        dispatch(sendLoginRequest(globalPlayerInfo.apiKey, onResult));
+        dispatch(sendLoginRequest(globalPlayerInfo.apiKey, onLoginResult));
     }
 
-    const onResult = function (isSuccess, response) {
+    const onLoginResult = function (isSuccess, response) {
         setIsLoading(false);
         setIsLoginPopupOpen(false);
         if (isSuccess) {
@@ -44,15 +45,15 @@ export function NotLoggedInView() {
                 ...globalPlayerInfo,
                 ...response.data,
                 isLoggedIn: true,
-                isLoading : false
+                isLoading: false
             }));
-            toast.success("Welcome "+response.data.tornUserName+" !");
-            setTimeout(()=>{window.location.reload()},3000);
+            toast.success("Welcome " + response.data.tornUserName + " !");
+            setTimeout(() => { window.location.reload() }, 3000);
         }
         else {
             console.error(response);
             dispatch(updateSharedState(initialSharedState));
-            toast.error("Login failed! Please check your APIKey and try again.");
+            toast.error("Something went wrong! Please try again..?");
         }
     }
 
@@ -73,15 +74,9 @@ export function NotLoggedInView() {
                 <Modal.Body>
                     <Container>
                         <Form inline>
-                            <FormControl defaultValue={globalPlayerInfo.apiKey} type="text" className="mr-sm-4" onChange={setAPIKey} disabled={isLoading}/>
+                            <FormControl defaultValue={globalPlayerInfo.apiKey} type="text" className="mr-sm-4" onChange={setAPIKey} disabled={isLoading} />
                             <Button onClick={handleLogin} variant="outline-success" disabled={isLoading}>
-                                {isLoading ? <div>Working on it.. <Spinner
-                                    as="span"
-                                    animation="border"
-                                    size="sm"
-                                    role="status"
-                                    aria-hidden="true"
-                                /></div> : <div>Login!</div>}
+                                <SpinnerText isLoading={isLoading} loadingText="Checking your identity.." text="Login!" />
                             </Button>
                         </Form>
                     </Container>

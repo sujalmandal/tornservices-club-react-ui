@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Navbar, Nav, NavDropdown, Form, FormControl, Button, Col, Row } from 'react-bootstrap';
+import { Navbar, Nav, Form, Col, Row } from 'react-bootstrap';
 import { NotLoggedInView } from '../profile-view/NotLoggedInView';
 import { LoggedInView } from '../profile-view/LoggedInView';
 import { JobPostView } from '../job-post-view/JobPostView';
 import {
     searchJobs,
-    selectGlobalJobFilters
+    selectGlobalJobFilters,
+    getAvailableFilters,
+    getAvailableFilterDetails
 } from './JobSearchBarSlice';
+import SpinnerText from '../common-components/SpinnerText';
+import { toast } from 'react-toastify';
 import { selectIsLoggedIn } from '../shared-vars/SharedStateSlice';
 
 export function JobSearchBar() {
@@ -15,29 +19,51 @@ export function JobSearchBar() {
     const dispatch = useDispatch();
 
     /* redux, global states */
-    const globalJobFilters = useSelector(selectGlobalJobFilters);
     const globalIsLoggedIn = useSelector(selectIsLoggedIn);
 
     /* local, feature-level states */
     const [jobFilters, setJobFilters] = useState({
-        jobType: "Bounty",
-        amount: 0,
-        pay: 50000,
-        postedBefore: ""
+        filterType: "",
+        postedBeforeDays: 3
     });
+    const [filterDetailMap,setFilterDetailMap] = useState({});
+    const [isFetchAvailableFilterLoading, setFetchAvailableFilterLoading] = useState(false);
+    const [availableFilters, setAvailableFilters] = useState([]);
+    const [selectedFilterIndex, setSelectedFilterIndex] = useState(0);
 
+    /* on init */
+    useEffect(() => {
+        setFetchAvailableFilterLoading(true);
+        dispatch(getAvailableFilters(onGetAvailableFiltersResult))
+    }, [])
 
-    const updateJobType = function (jobTypeParam) {
-        setJobFilters({
-            ...jobFilters,
-            jobType: jobTypeParam
-        });
+    /* side effects */
+
+    useEffect(() => {
+        if(availableFilters[selectedFilterIndex]){
+            var selectedFilter=availableFilters[selectedFilterIndex].key;
+            console.log("selected filter type : "+selectedFilter);
+            setJobFilters({
+                ...jobFilters,
+                filterType:selectedFilter
+            });
+            if(!filterDetailMap[selectedFilter]){
+                console.log("fetching filter detail for '"+selectedFilter+"' for the first time.");
+                dispatch(getAvailableFilterDetails(selectedFilter, onGetAvailableFilterDetailsResult));
+            }
+        }
+    }, [selectedFilterIndex])
+
+    /* event handlers */
+    const updateSelectedFilter = function (selectedIndex) {
+        selectedIndex=parseInt(selectedIndex);
+        setSelectedFilterIndex(selectedIndex);
     }
 
     const updatePostedDate = function (e) {
         setJobFilters({
             ...jobFilters,
-            postedBefore: e.target.value
+            postedBeforeDays: e.target.value
         });
     }
 
@@ -48,56 +74,66 @@ export function JobSearchBar() {
         })
     }
 
+    /* api callbacks */
+
+    const onGetAvailableFiltersResult = function (isSuccess, response) {
+        if (isSuccess) {
+            setFetchAvailableFilterLoading(false);
+            setAvailableFilters(response.data);
+        }
+        else {
+            toast.error("Unable to fetch available search parameters, try refreshing the page.");
+        }
+    }
+
+    const onGetAvailableFilterDetailsResult = function (isSuccess, response) {
+        if (isSuccess) {
+            filterDetailMap[response.data.key]=response.data;
+            setFilterDetailMap({
+                ...filterDetailMap
+            });
+            console.log(response.data);
+        }
+        else {
+            toast.error("Unable to fetch details, try refreshing the page.");
+        }
+    }
+
     return (
         <div>
             <Navbar fixed="top" bg="dark" variant="dark" expand="lg">
                 <Navbar.Brand href="#home">Find available jobs</Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="mr-auto" style={{ paddingLeft: "5vw" }}>
+                    <Nav className="mr-auto" style={{  minWidth: "65vw", paddingLeft: "2vw", paddingTop: "0.3vh" }}>
                         <Form inline>
-
-                            <Col style={{ minWidth: "12vw" }}>
-                                <Form.Label className="mr-sm-4" style={{ color: "gray" }}>What kind of job?</Form.Label>
-                                <NavDropdown title={jobFilters.jobType} id="basic-nav-dropdown" onSelect={updateJobType}>
-                                    <NavDropdown.Item eventKey="Hospitalize">Hospitalize</NavDropdown.Item>
-                                    <NavDropdown.Item eventKey="Mug">Mug</NavDropdown.Item>
-                                    <NavDropdown.Divider />
-                                    <NavDropdown.Item eventKey="Bounty reveal">Bounty reveal</NavDropdown.Item>
-                                    <NavDropdown.Item eventKey="Bounty">Bounty</NavDropdown.Item>
-                                </NavDropdown>
-                            </Col>
-
-                            <Col>
-                                <Form.Label className="mr-sm-4" style={{ color: "gray" }}>Posted After Date?</Form.Label>
-                                <FormControl className="mr-sm-4" type="date" name='posted_after' value={jobFilters.postedBefore} onChange={updatePostedDate} />
-                            </Col>
-
-                            <Col>
-                                <Form.Label className="mr-sm-4" style={{ color: "gray" }}>How many?</Form.Label>
-                                <FormControl style={{ width: "5vw" }} max="99" value={jobFilters.amount} type="number" className="mr-sm-4" onChange={updateMinAmount} />
-                            </Col>
-
-                            <Col>
-                                <Form.Label className="mr-sm-4" style={{ color: "gray" }}>Minimum Pay?</Form.Label>
-                                <FormControl style={{ width: "8vw" }} max="100000000" step="10000" value={jobFilters.pay} type="number" className="mr-sm-4" onChange={(e) => {
-                                    setJobFilters({
-                                        ...jobFilters,
-                                        pay: e.target.value
-                                    })
-                                }} />
-                            </Col>
-                            <Button onClick={() => { dispatch(searchJobs(jobFilters)) }} variant="outline-success" >Find Jobs!</Button>
-                            
+                            {isFetchAvailableFilterLoading ? "" :
+                                <Nav variant="pills" onSelect={updateSelectedFilter}>
+                                    <Col>
+                                        <Row>
+                                            {availableFilters.map((filter, index) => {
+                                                return <div><Nav.Item>
+                                                    <Nav.Link eventKey={index}>{filter.filterLabel}</Nav.Link>
+                                                </Nav.Item>
+                                                </div>
+                                            })}
+                                        </Row>
+                                    </Col>
+                                </Nav>
+                            }
+                            <Form.Group controlId="formBasicRange">
+                                <Form.Label className="mr-sm-4" style={{ color: "gray" }}>Posted before {jobFilters.postedBeforeDays} day(s)?</Form.Label>
+                                <Form.Control type="range" style={{ width: "10vw" }} min={1} max={7} value={jobFilters.postedBeforeDays} onChange={updatePostedDate} />
+                            </Form.Group>
                         </Form>
                     </Nav>
-                    
-                    <Nav style={{ paddingLeft: "10vw", minWidth: "25vw", paddingRight:"3vw" }}>
+
+                    <Nav style={{ paddingLeft: "0.5vw", minWidth: "20vw", paddingRight: "0.5vw" }}>
                         <Row>
-                            <Col  style={{ minWidth: "10vw"}}>
-                                <JobPostView/>
+                            <Col style={{ minWidth: "5vw" }}>
+                                <JobPostView />
                             </Col>
-                            <Col>
+                            <Col  style={{ minWidth: "5vw" }}>
                                 {globalIsLoggedIn ? <LoggedInView /> : <NotLoggedInView />}
                             </Col>
                         </Row>

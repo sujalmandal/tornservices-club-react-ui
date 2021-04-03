@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Modal, Form, FormControl, Container, Dropdown, DropdownButton, Col, Row, Spinner } from 'react-bootstrap';
+import { Button, Modal, Form, FormControl, Container, Dropdown, DropdownButton, Col, Row } from 'react-bootstrap';
 import {
     postNewJob,
     getAvailableJobDetailKeys,
@@ -15,6 +15,7 @@ import {
 } from '../../constants';
 import { selectAPIKey } from '../shared-vars/SharedStateSlice';
 import NumberFormat from 'react-number-format';
+import SpinnerText from '../common-components/SpinnerText';
 import { toast } from 'react-toastify';
 
 export function JobPostView() {
@@ -40,6 +41,7 @@ export function JobPostView() {
     /* handlers */
     const handleOpenJobPost = function () {
         if (availableKeys.length === 0) {
+            setIsLoading(true);
             console.log("getAvailableJobDetailKeys() triggered!");
             dispatch(getAvailableJobDetailKeys(onGetAvailableJobDetailKeysResult));
         }
@@ -95,6 +97,7 @@ export function JobPostView() {
     /* callbacks */
 
     const onGetAvailableJobDetailKeysResult = function (isSuccess, response) {
+        setIsLoading(false);
         console.log("getAvailableJobDetailKeys() result received!");
         if (isSuccess) {
             setAvailableKeys(response.data);
@@ -135,7 +138,9 @@ export function JobPostView() {
 
     return (
         <div>
-            <Button onClick={handleOpenJobPost} variant="outline-success" >Post a new job</Button>
+            <Button onClick={handleOpenJobPost} variant="outline-success" disabled={isLoading}>
+                <SpinnerText isLoading={isLoading} loadingText="Just a min.." text="Post New Job"/>
+            </Button>
             <Modal
                 size="lg"
                 show={showJobPostForm}
@@ -186,13 +191,7 @@ export function JobPostView() {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={handlePostNewJob} disabled={isLoading}>
-                        {isLoading ? <div>Working on it.. <Spinner
-                            as="span"
-                            animation="border"
-                            size="sm"
-                            role="status"
-                            aria-hidden="true"
-                        /></div> : <div>Post!</div>}
+                        <SpinnerText isLoading={isLoading} loadingText="Working on it.." text="Post!"/>
                     </Button>
                     <Button variant="secondary" disabled={isLoading} onClick={() => { setShowJobPostForm(false) }}>Cancel</Button>
                 </Modal.Footer>
