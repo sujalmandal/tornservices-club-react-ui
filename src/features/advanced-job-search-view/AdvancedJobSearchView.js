@@ -24,6 +24,7 @@ export function AdvancedJobSearchView(props) {
     const [isLoading, setIsLoading] = useState(false);
     const [serviceTypeText, setServiceTypeText] = useState(SERVICE_TYPE_OFFERING_FILTER_LABEL);
     const [serviceType, setServiceType] = useState(SERVICE_TYPE_REQUEST);
+    const [filterRequestDTO, setFilterRequestDTO] = useState({})
     
     const handleServiceTypeTextChange = function (serviceTypeText) {
         setServiceTypeText(serviceTypeText);
@@ -35,11 +36,23 @@ export function AdvancedJobSearchView(props) {
         }
     }
 
-
     /* init */
     useEffect(()=>{
-        console.log("opened advanced search with the template : "+JSON.stringify(props.jobDetailFilterTemplate));
-    },[])
+        if(props.isOpen){
+            console.log("opened advanced search with the template : "+JSON.stringify(props.jobDetailFilterTemplate)); 
+        }
+    },[props.isOpen])
+
+    /* event handlers */
+
+    const handleOnChangeFormElement = function (e) {
+        var fieldName = e.target.name;
+        var fieldValue = e.target.value;
+        fieldValue=fieldValue.replaceAll('$', '');
+        fieldValue=fieldValue.replaceAll(',', '');
+        filterRequestDTO[fieldName] = fieldValue;
+        setFilterRequestDTO({...filterRequestDTO});
+    }
 
     const handleAdvancedSearch=function(){
 
@@ -54,7 +67,10 @@ export function AdvancedJobSearchView(props) {
                 backdrop="static"
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Search with filters</Modal.Title>
+                    <Modal.Title>{props.jobDetailFilterTemplate==null?"":
+                    <>
+                    Search <span style={{color:"green"}}>{props.jobDetailFilterTemplate.filterTemplateLabel}</span> services with filters 
+                    </>}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Container>
@@ -68,8 +84,23 @@ export function AdvancedJobSearchView(props) {
                           
                         </Row>
                         <Row style={{ paddingTop: "5vh" }}>
-                            <Container>
-                               
+                        <Container>
+                                {props.jobDetailFilterTemplate == null ? "" : props.jobDetailFilterTemplate.filterElements.map((element => {
+                                    if (element.serviceType === "ALL" || element.serviceType === serviceType) {
+                                        return <Row style={{ paddingRight: "2vw", paddingLeft: "2vw", paddingTop: "1vh" }}>
+                                            <Col><Form.Label className="mr-sm-4">{element.fieldLabel}</Form.Label></Col>
+                                            <Col>
+                                                {(element.format && element.format === CURRENCY_FORMAT) ?
+                                                    <NumberFormat style={{ width: "10vw" }} name={element.fieldName} onChange={handleOnChangeFormElement}
+                                                     className="mr-sm-4" thousandSeparator={true} prefix={'$'} /> :
+                                                    <FormControl id={element.id}
+                                                        style={{ width: "10vw" }} type={element.fieldType} min={0} name={element.fieldName}
+                                                        size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} />}
+
+                                            </Col>
+                                        </Row>
+                                    }
+                                }))}
                             </Container>
                         </Row>
                     </Container>

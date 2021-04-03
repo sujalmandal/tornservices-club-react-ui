@@ -140,7 +140,7 @@ export function JobSearchBar() {
         <div>
             <AdvancedJobSearchView onClose={closeAdvancedSearchPopup} isOpen={isAdvancedSearchPopupOpen} jobDetailFilterTemplate={selectedFilterTemplate}/>
             <Navbar fixed="top" bg="dark" variant="dark" expand="lg">
-                <Navbar.Brand href="#home">Find available jobs</Navbar.Brand>
+                <Navbar.Brand>Find offers/requests</Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto" style={{ minWidth: "65vw", paddingLeft: "2vw", paddingTop: "0.3vh" }}>
