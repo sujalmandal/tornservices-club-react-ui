@@ -4,15 +4,11 @@ import axios from 'axios';
 
 export const notLoggedInViewSlice = createSlice({
   name: 'notLoggedInView',
-  initialState: {
-
-  },
-  reducers: {
-
-  },
+  initialState: {},
+  reducers: {},
 });
 
-export const { } = notLoggedInViewSlice.actions;
+export const {} = notLoggedInViewSlice.actions;
 
 export const sendLoginRequest = function (apiKey, onResult) {
   return function (dispatch) {
