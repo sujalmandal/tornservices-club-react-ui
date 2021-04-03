@@ -7,8 +7,8 @@ import {
     getJobDetailFormData
 } from './JobPostViewSlice';
 import {
-    SERVICE_TYPE_OFFERING_TEXT,
-    SERVICE_TYPE_REQUESTING_TEXT,
+    SERVICE_TYPE_OFFERING_FORM_LABEL,
+    SERVICE_TYPE_REQUESTING_FORM_LABEL,
     SERVICE_TYPE_OFFER,
     SERVICE_TYPE_REQUEST,
     CURRENCY_FORMAT
@@ -29,7 +29,7 @@ export function JobPostView() {
     };
 
     const [jobType, setJobType] = useState(null);
-    const [serviceTypeText, setServiceTypeText] = useState(SERVICE_TYPE_REQUESTING_TEXT);
+    const [serviceTypeText, setServiceTypeText] = useState(SERVICE_TYPE_REQUESTING_FORM_LABEL);
     const [serviceType, setServiceType] = useState(SERVICE_TYPE_REQUEST);
     const [availableJobDetailTemplates, setAvailableJobDetailTemplates] = useState([]);
     const [showJobPostForm, setShowJobPostForm] = useState(false);
@@ -63,14 +63,14 @@ export function JobPostView() {
 
     const handleServiceTypeTextChange = function (serviceTypeText) {
         setServiceTypeText(serviceTypeText);
-        if (serviceTypeText === SERVICE_TYPE_REQUESTING_TEXT) {
+        if (serviceTypeText === SERVICE_TYPE_REQUESTING_FORM_LABEL) {
             setServiceType(SERVICE_TYPE_REQUEST);
             setCreateJobDTO({
                 ...createJobDTO,
                 serviceType: SERVICE_TYPE_REQUEST
             });
         }
-        if (serviceTypeText === SERVICE_TYPE_OFFERING_TEXT) {
+        if (serviceTypeText === SERVICE_TYPE_OFFERING_FORM_LABEL) {
             setServiceType(SERVICE_TYPE_OFFER);
             setCreateJobDTO({
                 ...createJobDTO,
@@ -155,8 +155,8 @@ export function JobPostView() {
                         <Row>
                             <Col>
                                 <DropdownButton id="dropdown-basic-button-service-type" title={"I am " + serviceTypeText} onSelect={handleServiceTypeTextChange}>
-                                    <Dropdown.Item eventKey={SERVICE_TYPE_OFFERING_TEXT}>{SERVICE_TYPE_OFFERING_TEXT}</Dropdown.Item>
-                                    <Dropdown.Item eventKey={SERVICE_TYPE_REQUESTING_TEXT}>{SERVICE_TYPE_REQUESTING_TEXT}</Dropdown.Item>
+                                    <Dropdown.Item eventKey={SERVICE_TYPE_OFFERING_FORM_LABEL}>{SERVICE_TYPE_OFFERING_FORM_LABEL}</Dropdown.Item>
+                                    <Dropdown.Item eventKey={SERVICE_TYPE_REQUESTING_FORM_LABEL}>{SERVICE_TYPE_REQUESTING_FORM_LABEL}</Dropdown.Item>
                                 </DropdownButton>
                             </Col>
                             <Col>
