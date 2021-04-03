@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Navbar, Nav, Form, Col, Row } from 'react-bootstrap';
+import { Navbar, Nav, Form, FormControl, Col, Row } from 'react-bootstrap';
 import { NotLoggedInView } from '../profile-view/NotLoggedInView';
 import { LoggedInView } from '../profile-view/LoggedInView';
 import { JobPostView } from '../job-post-view/JobPostView';
@@ -10,6 +10,14 @@ import {
     getAvailableFilters,
     getAvailableFilterDetails
 } from './JobSearchBarSlice';
+import {
+    SERVICE_TYPE_OFFERING_TEXT,
+    SERVICE_TYPE_REQUESTING_TEXT,
+    SERVICE_TYPE_OFFER,
+    SERVICE_TYPE_REQUEST,
+    CURRENCY_FORMAT
+} from '../../constants';
+import NumberFormat from 'react-number-format';
 import SpinnerText from '../common-components/SpinnerText';
 import { toast } from 'react-toastify';
 import { selectIsLoggedIn } from '../shared-vars/SharedStateSlice';
@@ -26,11 +34,12 @@ export function JobSearchBar() {
         filterType: "",
         postedBeforeDays: 3
     });
-    const [filterDetailMap,setFilterDetailMap] = useState({});
+    const [filterDetailMap, setFilterDetailMap] = useState({});
     const [isFetchAvailableFilterLoading, setFetchAvailableFilterLoading] = useState(false);
     const [availableFilters, setAvailableFilters] = useState([]);
-    const [selectedFilterIndex, setSelectedFilterIndex] = useState(0);
-
+    const [selectedFilterIndex, setSelectedFilterIndex] = useState();
+    const [serviceType, setServiceType] = useState(SERVICE_TYPE_REQUEST);
+    const [selectedFilterTemplate, setSelectedFilterTemplate] = useState(null);
     /* on init */
     useEffect(() => {
         setFetchAvailableFilterLoading(true);
@@ -40,23 +49,29 @@ export function JobSearchBar() {
     /* side effects */
 
     useEffect(() => {
-        if(availableFilters[selectedFilterIndex]){
-            var selectedFilter=availableFilters[selectedFilterIndex].key;
-            console.log("selected filter type : "+selectedFilter);
+        if (availableFilters[selectedFilterIndex]) {
+            var selectedFilter = availableFilters[selectedFilterIndex].key;
+            console.log("selected filter type : " + selectedFilter);
             setJobFilters({
                 ...jobFilters,
-                filterType:selectedFilter
+                filterType: selectedFilter
             });
-            if(!filterDetailMap[selectedFilter]){
-                console.log("fetching filter detail for '"+selectedFilter+"' for the first time.");
+            if (!filterDetailMap[selectedFilter]) {
+                console.log("fetching filter detail for '" + selectedFilter + "' for the first time.");
                 dispatch(getAvailableFilterDetails(selectedFilter, onGetAvailableFilterDetailsResult));
+            }else{
+                setSelectedFilterTemplate(filterDetailMap[selectedFilter]);
             }
         }
-    }, [selectedFilterIndex])
+    }, [selectedFilterIndex,filterDetailMap]);
+
+    useEffect(()=>{
+        console.log("selected template: "+JSON.stringify(selectedFilterTemplate));
+    },[selectedFilterTemplate])
 
     /* event handlers */
     const updateSelectedFilter = function (selectedIndex) {
-        selectedIndex=parseInt(selectedIndex);
+        selectedIndex = parseInt(selectedIndex);
         setSelectedFilterIndex(selectedIndex);
     }
 
@@ -74,6 +89,14 @@ export function JobSearchBar() {
         })
     }
 
+    const handleOnChangeFormElement = function (e) {
+        var fieldName = e.target.name;
+        var fieldValue = e.target.value;
+        fieldValue = fieldValue.replaceAll('$', '');
+        fieldValue = fieldValue.replaceAll(',', '');
+
+    }
+
     /* api callbacks */
 
     const onGetAvailableFiltersResult = function (isSuccess, response) {
@@ -88,11 +111,11 @@ export function JobSearchBar() {
 
     const onGetAvailableFilterDetailsResult = function (isSuccess, response) {
         if (isSuccess) {
-            filterDetailMap[response.data.key]=response.data;
+            var cache={...filterDetailMap};
+            cache[response.data.key] = response.data;
             setFilterDetailMap({
-                ...filterDetailMap
+                ...cache
             });
-            console.log(response.data);
         }
         else {
             toast.error("Unable to fetch details, try refreshing the page.");
@@ -105,7 +128,7 @@ export function JobSearchBar() {
                 <Navbar.Brand href="#home">Find available jobs</Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="mr-auto" style={{  minWidth: "65vw", paddingLeft: "2vw", paddingTop: "0.3vh" }}>
+                    <Nav className="mr-auto" style={{ minWidth: "65vw", paddingLeft: "2vw", paddingTop: "0.3vh" }}>
                         <Form inline>
                             {isFetchAvailableFilterLoading ? "" :
                                 <Nav variant="pills" onSelect={updateSelectedFilter}>
@@ -125,15 +148,15 @@ export function JobSearchBar() {
                                 <Form.Label className="mr-sm-4" style={{ color: "gray" }}>Posted before {jobFilters.postedBeforeDays} day(s)?</Form.Label>
                                 <Form.Control type="range" style={{ width: "10vw" }} min={1} max={7} value={jobFilters.postedBeforeDays} onChange={updatePostedDate} />
                             </Form.Group>
+                            
                         </Form>
                     </Nav>
-
-                    <Nav style={{ paddingLeft: "0.5vw", minWidth: "20vw", paddingRight: "0.5vw" }}>
+                    <Nav className="mr-auto" style={{ paddingLeft: "0.5vw", minWidth: "20vw", paddingRight: "0.5vw" }}>
                         <Row>
                             <Col style={{ minWidth: "5vw" }}>
                                 <JobPostView />
                             </Col>
-                            <Col  style={{ minWidth: "5vw" }}>
+                            <Col style={{ minWidth: "5vw" }}>
                                 {globalIsLoggedIn ? <LoggedInView /> : <NotLoggedInView />}
                             </Col>
                         </Row>
