@@ -8,7 +8,7 @@ import {
     searchJobs,
     selectGlobalJobFilters,
     getAvailableFilters,
-    getAvailableFilterDetails
+    getFilterTemplateByTemplateName
 } from './JobSearchBarSlice';
 import {
     SERVICE_TYPE_OFFERING_TEXT,
@@ -50,17 +50,17 @@ export function JobSearchBar() {
 
     useEffect(() => {
         if (availableFilters[selectedFilterIndex]) {
-            var selectedFilter = availableFilters[selectedFilterIndex].jobDetailFilterTemplateName;
-            console.log("selected filter type : " + selectedFilter);
+            var filterTemplateName = availableFilters[selectedFilterIndex].jobDetailFilterTemplateName;
+            console.log("selected filter template : " + filterTemplateName);
             setJobFilters({
                 ...jobFilters,
-                filterType: selectedFilter
+                filterType: filterTemplateName
             });
-            if (!filterDetailMap[selectedFilter]) {
-                console.log("fetching filter detail for '" + selectedFilter + "' for the first time.");
-                dispatch(getAvailableFilterDetails(selectedFilter, onGetAvailableFilterDetailsResult));
+            if (!filterDetailMap[filterTemplateName]) {
+                console.log("fetching filter detail for '" + filterTemplateName + "' for the first time.");
+                dispatch(getFilterTemplateByTemplateName(filterTemplateName, onGetAvailableFilterDetailsResult));
             }else{
-                setSelectedFilterTemplate(filterDetailMap[selectedFilter]);
+                setSelectedFilterTemplate(filterDetailMap[filterTemplateName]);
             }
         }
     }, [selectedFilterIndex,filterDetailMap]);
@@ -112,7 +112,7 @@ export function JobSearchBar() {
     const onGetAvailableFilterDetailsResult = function (isSuccess, response) {
         if (isSuccess) {
             var cache={...filterDetailMap};
-            cache[response.data.jobDetailFilterTemplateName] = response.data;
+            cache[response.data.filterTemplateName] = response.data;
             setFilterDetailMap({
                 ...cache
             });

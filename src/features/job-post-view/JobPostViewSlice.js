@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
   getJobDetailTemplatesURI,
-  getJobDetailTemplateByNameURI,
+  getJobDetailFormTemplateByNameURI,
   getPostNewJobURI
 } from '../../utils/EndpointUtils'
 import axios from 'axios';
@@ -29,7 +29,7 @@ export const getAvailableJobDetailKeys = function (onResult) {
 
 export const getJobDetailFormData = function (jobDetailTemplateName, onResult) {
   return function () {
-    axios.get(getJobDetailTemplateByNameURI(jobDetailTemplateName))
+    axios.get(getJobDetailFormTemplateByNameURI(jobDetailTemplateName))
       .then((response) => {
         onResult(true, response);
       }, (error) => {

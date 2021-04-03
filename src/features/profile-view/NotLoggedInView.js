@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Modal, Form, FormControl, Container, Spinner } from 'react-bootstrap';
+import { Button, Modal, Form, FormControl, Container } from 'react-bootstrap';
 import { sendLoginRequest } from './NotLoggedInViewSlice';
 import {
     updateApiKey,

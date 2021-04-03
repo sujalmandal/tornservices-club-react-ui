@@ -5,11 +5,15 @@ export const getLoginURI=function(APIKey){
 }
 
 export const getJobDetailTemplatesURI=function(){
-    return BASE_URI+'/job/detailTemplates';
+    return BASE_URI+'/job/jobDetailTemplates';
 }
 
-export const getJobDetailTemplateByNameURI=function(jobDetailTemplateName){
-    return BASE_URI+'/job/detailTemplate/'+jobDetailTemplateName;
+export const getJobDetailFormTemplateByNameURI=function(jobDetailTemplateName){
+    return BASE_URI+'/job/jobDetailFormTemplate/'+jobDetailTemplateName;
+}
+
+export const getJobDetailFilterTemplateByNameURI=function(jobDetailTemplateName){
+    return BASE_URI+'/job/jobDetailFilterTemplate/'+jobDetailTemplateName;
 }
 
 export const getPostNewJobURI=function(){

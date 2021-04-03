@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
   getJobDetailTemplatesURI,
-  getJobDetailTemplateByNameURI
+  getJobDetailFilterTemplateByNameURI
 } from '../../utils/EndpointUtils'
 import axios from 'axios';
 
@@ -35,9 +35,9 @@ export const jobSearchBarSlice = createSlice({
     }
   }
 
-  export const getAvailableFilterDetails = function (filterType,onResult) {
+  export const getFilterTemplateByTemplateName = function (filterType,onResult) {
     return function () {
-      axios.get(getJobDetailTemplateByNameURI(filterType))
+      axios.get(getJobDetailFilterTemplateByNameURI(filterType))
         .then((response) => {
           onResult(true, response);
         }, (error) => {
