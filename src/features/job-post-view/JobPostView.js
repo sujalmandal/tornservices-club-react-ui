@@ -10,7 +10,8 @@ import {
     SERVICE_TYPE_OFFERING_TEXT,
     SERVICE_TYPE_REQUESTING_TEXT,
     SERVICE_TYPE_OFFER,
-    SERVICE_TYPE_REQUEST
+    SERVICE_TYPE_REQUEST,
+    CURRENCY_FORMAT
 } from '../../constants';
 import { selectAPIKey } from '../shared-vars/SharedStateSlice';
 import NumberFormat from 'react-number-format';
@@ -79,6 +80,8 @@ export function JobPostView() {
     const handleOnChangeFormElement = function (e) {
         var fieldName = e.target.name;
         var fieldValue = e.target.value;
+        fieldValue=fieldValue.replaceAll('$', '');
+        fieldValue=fieldValue.replaceAll(',', '');
         createJobDTO.jobDetails[fieldName] = fieldValue;
         setCreateJobDTO(createJobDTO);
     }
@@ -166,8 +169,9 @@ export function JobPostView() {
                                         return <Row style={{ paddingRight: "2vw", paddingLeft: "2vw", paddingTop: "1vh" }}>
                                             <Col><Form.Label className="mr-sm-4">{element.label}</Form.Label></Col>
                                             <Col>
-                                                {(element.format && element.format === "CURRENCY") ?
-                                                    <NumberFormat className="mr-sm-4" thousandSeparator={true} prefix={'$'} /> :
+                                                {(element.format && element.format === CURRENCY_FORMAT) ?
+                                                    <NumberFormat style={{ width: "10vw" }} name={element.name} onChange={handleOnChangeFormElement}
+                                                     className="mr-sm-4" thousandSeparator={true} prefix={'$'} /> :
                                                     <FormControl id={element.id}
                                                         style={{ width: "10vw" }} type={element.type} min={0} name={element.name}
                                                         size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} />}
