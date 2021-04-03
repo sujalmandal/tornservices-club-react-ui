@@ -13,13 +13,14 @@ import {
     SERVICE_TYPE_REQUEST
 } from '../../constants';
 import { selectAPIKey } from '../shared-vars/SharedStateSlice';
+import NumberFormat from 'react-number-format';
 import { toast } from 'react-toastify';
 
 export function JobPostView() {
 
     const dispatch = useDispatch();
 
-    const initialCreateJobDTO={
+    const initialCreateJobDTO = {
         serviceType: SERVICE_TYPE_REQUEST,
         jobDetails: {},
         apiKey: useSelector(selectAPIKey)
@@ -83,7 +84,7 @@ export function JobPostView() {
     }
 
     const handlePostNewJob = function (e) {
-        console.log("posting "+JSON.stringify(createJobDTO));
+        console.log("posting " + JSON.stringify(createJobDTO));
         setIsLoading(true);
         dispatch(postNewJob(createJobDTO, onPostResult));
     }
@@ -117,7 +118,7 @@ export function JobPostView() {
     const onPostResult = function (isSuccess, response) {
         console.log("postNewJob() result received!");
         if (isSuccess) {
-            toast.success("Your job "+serviceType.toLowerCase()+" has been posted!");
+            toast.success("Your job " + serviceType.toLowerCase() + " has been posted!");
             setIsLoading(false);
             setShowJobPostForm(false);
             setCreateJobDTO(initialCreateJobDTO);
@@ -164,9 +165,14 @@ export function JobPostView() {
                                     if (element.serviceType === "ALL" || element.serviceType === serviceType) {
                                         return <Row style={{ paddingRight: "2vw", paddingLeft: "2vw", paddingTop: "1vh" }}>
                                             <Col><Form.Label className="mr-sm-4">{element.label}</Form.Label></Col>
-                                            <Col><FormControl id={element.id}
-                                                style={{ width: "10vw" }} type={element.type} min={0} name={element.name}
-                                                size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} /></Col>
+                                            <Col>
+                                                {(element.format && element.format === "CURRENCY") ?
+                                                    <NumberFormat className="mr-sm-4" thousandSeparator={true} prefix={'$'} /> :
+                                                    <FormControl id={element.id}
+                                                        style={{ width: "10vw" }} type={element.type} min={0} name={element.name}
+                                                        size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} />}
+
+                                            </Col>
                                         </Row>
                                     }
                                 }))}
