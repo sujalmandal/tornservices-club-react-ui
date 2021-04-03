@@ -90,13 +90,12 @@ export function AdvancedJobSearchView(props) {
                                         return <Row style={{ paddingRight: "2vw", paddingLeft: "2vw", paddingTop: "1vh" }}>
                                             <Col><Form.Label className="mr-sm-4">{element.fieldLabel}</Form.Label></Col>
                                             <Col>
-                                                {(element.format && element.format === CURRENCY_FORMAT) ?
-                                                    <NumberFormat style={{ width: "10vw" }} name={element.fieldName} onChange={handleOnChangeFormElement}
+                                            {(element.format && element.format === CURRENCY_FORMAT) ?
+                                                    <NumberFormat style={{ width: "10vw" }} name={element.name} onChange={handleOnChangeFormElement}
                                                      className="mr-sm-4" thousandSeparator={true} prefix={'$'} /> :
                                                     <FormControl id={element.id}
-                                                        style={{ width: "10vw" }} type={element.fieldType} min={0} name={element.fieldName}
+                                                        style={{ width: "10vw" }} type={element.fieldType} min={0} name={element.name}
                                                         size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} />}
-
                                             </Col>
                                         </Row>
                                     }

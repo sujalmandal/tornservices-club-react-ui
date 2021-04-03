@@ -117,6 +117,7 @@ export function JobSearchBar() {
         if (isSuccess) {
             setIsLoading(false);
             setAvailableFilters(response.data);
+            console.log("fetched available template information : "+JSON.stringify(response.data));
         }
         else {
             toast.error("Unable to fetch available search parameters, try refreshing the page.");
