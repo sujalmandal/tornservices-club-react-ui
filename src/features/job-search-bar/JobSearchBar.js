@@ -50,7 +50,7 @@ export function JobSearchBar() {
 
     useEffect(() => {
         if (availableFilters[selectedFilterIndex]) {
-            var selectedFilter = availableFilters[selectedFilterIndex].key;
+            var selectedFilter = availableFilters[selectedFilterIndex].jobDetailFilterTemplateName;
             console.log("selected filter type : " + selectedFilter);
             setJobFilters({
                 ...jobFilters,
@@ -112,7 +112,7 @@ export function JobSearchBar() {
     const onGetAvailableFilterDetailsResult = function (isSuccess, response) {
         if (isSuccess) {
             var cache={...filterDetailMap};
-            cache[response.data.key] = response.data;
+            cache[response.data.jobDetailFilterTemplateName] = response.data;
             setFilterDetailMap({
                 ...cache
             });
@@ -136,7 +136,7 @@ export function JobSearchBar() {
                                         <Row>
                                             {availableFilters.map((filter, index) => {
                                                 return <div><Nav.Item>
-                                                    <Nav.Link eventKey={index}>{filter.filterLabel}</Nav.Link>
+                                                    <Nav.Link eventKey={index}>{filter.jobDetailFilterTemplateLabel}</Nav.Link>
                                                 </Nav.Item>
                                                 </div>
                                             })}

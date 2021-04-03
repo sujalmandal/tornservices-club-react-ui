@@ -31,7 +31,7 @@ export function JobPostView() {
     const [jobType, setJobType] = useState(null);
     const [serviceTypeText, setServiceTypeText] = useState(SERVICE_TYPE_REQUESTING_TEXT);
     const [serviceType, setServiceType] = useState(SERVICE_TYPE_REQUEST);
-    const [availableKeys, setAvailableKeys] = useState([]);
+    const [availableJobDetailTemplates, setAvailableJobDetailTemplates] = useState([]);
     const [showJobPostForm, setShowJobPostForm] = useState(false);
     const [jobDetailsTemplate, setJobDetailsTemplate] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -40,13 +40,13 @@ export function JobPostView() {
 
     /* handlers */
     const handleOpenJobPost = function () {
-        if (availableKeys.length === 0) {
+        if (availableJobDetailTemplates.length === 0) {
             setIsLoading(true);
             console.log("getAvailableJobDetailKeys() triggered!");
             dispatch(getAvailableJobDetailKeys(onGetAvailableJobDetailKeysResult));
         }
         else {
-            setJobType(availableKeys[0].label);
+            setJobType(availableJobDetailTemplates[0].label);
             setShowJobPostForm(true);
         }
     }
@@ -55,10 +55,10 @@ export function JobPostView() {
         setCreateJobDTO({
             ...createJobDTO,
             serviceType: SERVICE_TYPE_REQUEST,
-            jobDetailType: availableKeys[index].key
+            jobDetailType: availableJobDetailTemplates[index].jobDetailFormTemplateName
         });
-        setJobType(availableKeys[index].label);
-        dispatch(getJobDetailFormData(availableKeys[index].key, onGetJobDetailFormDataResult));
+        setJobType(availableJobDetailTemplates[index].jobDetailFormTemplateLabel);
+        dispatch(getJobDetailFormData(availableJobDetailTemplates[index].jobDetailFormTemplateName, onGetJobDetailFormDataResult));
     }
 
     const handleServiceTypeTextChange = function (serviceTypeText) {
@@ -100,7 +100,7 @@ export function JobPostView() {
         setIsLoading(false);
         console.log("getAvailableJobDetailKeys() result received!");
         if (isSuccess) {
-            setAvailableKeys(response.data);
+            setAvailableJobDetailTemplates(response.data);
             setShowJobPostForm(true);
         }
         else {
@@ -161,8 +161,8 @@ export function JobPostView() {
                             </Col>
                             <Col>
                                 <DropdownButton id="dropdown-basic-button-job-details" title={"Service : " + (jobType ? jobType : "-select-")} onSelect={handleJobTypeSelect}>
-                                    {availableKeys.map((jobDetailType, index) => {
-                                        return <Dropdown.Item eventKey={index}>{jobDetailType.label}</Dropdown.Item>
+                                    {availableJobDetailTemplates.map((formTemplate, index) =>{
+                                        return <Dropdown.Item eventKey={index}>{formTemplate.jobDetailFormTemplateLabel}</Dropdown.Item>
                                     })}
                                 </DropdownButton>
                             </Col>

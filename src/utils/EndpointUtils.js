@@ -4,12 +4,12 @@ export const getLoginURI=function(APIKey){
     return BASE_URI+'player/auth/'+APIKey
 }
 
-export const getJobDetailTemplatesKeyURI=function(){
+export const getJobDetailTemplatesURI=function(){
     return BASE_URI+'/job/detailTemplates';
 }
 
-export const getJobDetailTemplateByKeyURI=function(key){
-    return BASE_URI+'/job/detailTemplate/'+key;
+export const getJobDetailTemplateByNameURI=function(jobDetailTemplateName){
+    return BASE_URI+'/job/detailTemplate/'+jobDetailTemplateName;
 }
 
 export const getPostNewJobURI=function(){
