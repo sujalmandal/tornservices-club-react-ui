@@ -2,19 +2,23 @@ export const SERVICE_TYPE = {
     "REQUEST": {
         "FORM": {
             "LABEL": "looking for services",
-            "KEY": "REQUEST"
+            "SHORT_LABEL":"Requests",
+            "KEY": "REQUEST",
         },
         "FILTER": {
             "LABEL": "search for requested services",
+            "SHORT_LABEL":"Requests",
             "KEY": "REQUEST"
         }
     }, "OFFER": {
         "FORM": {
             "LABEL": "offering services",
+            "SHORT_LABEL":"Offers",
             "KEY": "OFFER"
         },
         "FILTER": { 
             "LABEL": "search for offered services", 
+            "SHORT_LABEL":"Offers",
             "KEY": "OFFER" 
         }
     },

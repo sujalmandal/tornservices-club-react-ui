@@ -6,3 +6,10 @@ export const yyyy_mm_dd = function (dateIn) {
     console.log(dateAsString);
     return dateAsString;
 }
+
+export const validateNumberFormat = function (valueObj, limit) {
+    const value = valueObj.value;
+    if (parseInt(value) >= 0 && parseInt(value) <= parseInt(limit)) {
+        return valueObj;
+    }
+}

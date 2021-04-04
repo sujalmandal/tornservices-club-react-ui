@@ -13,6 +13,7 @@ import {
 import { selectAPIKey } from '../shared-vars/SharedStateSlice';
 import NumberFormat from 'react-number-format';
 import SpinnerText from '../common-components/SpinnerText';
+import {validateNumberFormat} from '../../utils/AppUtils';
 import { toast } from 'react-toastify';
 
 export function JobPostView() {
@@ -166,9 +167,11 @@ export function JobPostView() {
                                             <Col>
                                                 {(element.format && element.format === CURRENCY_FORMAT) ?
                                                     <NumberFormat style={{ width: "10vw" }} name={element.name} onChange={handleOnChangeFormElement}
-                                                     className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'} /> :
+                                                     className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'} 
+                                                     isAllowed={(valObj) => { return validateNumberFormat(valObj, element.limit) }} /> :
                                                     <FormControl id={element.id}
-                                                        style={{ width: "10vw" }} type={element.type} min={0} name={element.name}
+                                                        style={{ width: "10vw" }} type={element.type} min={0} 
+                                                        max={parseInt(element.limit)} name={element.name}
                                                         size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} />}
                                             </Col>
                                         </Row>

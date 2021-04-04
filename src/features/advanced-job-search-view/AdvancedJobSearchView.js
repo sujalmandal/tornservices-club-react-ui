@@ -14,6 +14,7 @@ import { selectAPIKey } from '../shared-vars/SharedStateSlice';
 import NumberFormat from 'react-number-format';
 import SpinnerText from '../common-components/SpinnerText';
 import { toast } from 'react-toastify';
+import {validateNumberFormat} from '../../utils/AppUtils';
 
 export function AdvancedJobSearchView(props) {
 
@@ -50,14 +51,6 @@ export function AdvancedJobSearchView(props) {
 
     }
 
-    const validateNumberFormat = function (valueObj, limit) {
-        const value = valueObj.value;
-        if (value >= 0 && value <= limit) {
-            return valueObj;
-        }
-        return false;
-    }
-
     /***** dynamic filter form renderer start *****/
     const renderDynamicFilter = function (jobDetailFilterTemplate,selectedServiceTypeKey) {
         console.log("rendering form based on template...");
@@ -86,7 +79,7 @@ export function AdvancedJobSearchView(props) {
                                 <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                 <FormControl id={elementArr[0].id} style={{ width: "10vw" }}
                                     type={elementArr[0].fieldType} name={elementArr[0].name}
-                                    min={0} max={elementArr[0].limit}
+                                    min={0} max={parseInt(elementArr[0].limit)}
                                     size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} 
                                 />
                             </Col>
@@ -120,14 +113,16 @@ export function AdvancedJobSearchView(props) {
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                     <FormControl id={elementArr[0].id}
-                                        style={{ width: "10vw" }} min={0} type="number" max={elementArr[0].limit} name={elementArr[0].name}
+                                        style={{ width: "10vw" }} min={0} type="number" max={parseInt(elementArr[0].limit)} 
+                                        name={elementArr[0].name}
                                         size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} 
                                     />
                                 </Col>
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[1].fieldLabel}</Form.Label>
                                     <FormControl id={elementArr[1].id}
-                                        style={{ width: "10vw" }} min={0} type="number" max={elementArr[1].limit} name={elementArr[1].name}
+                                        style={{ width: "10vw" }} min={0} type="number" max={parseInt(elementArr[1].limit)}
+                                         name={elementArr[1].name}
                                         size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement}
                                     />
                                 </Col>

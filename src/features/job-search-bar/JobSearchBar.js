@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Navbar, Nav, Form, FormControl, Col, Row, Button,ButtonGroup } from 'react-bootstrap';
+import { Navbar, Nav, Form, Col, Row, Button, ButtonGroup, ToggleButton } from 'react-bootstrap';
 import { NotLoggedInView } from '../profile-view/NotLoggedInView';
 import { LoggedInView } from '../profile-view/LoggedInView';
 import { JobPostView } from '../job-post-view/JobPostView';
 import { AdvancedJobSearchView } from '../advanced-job-search-view/AdvancedJobSearchView';
 import {
-    searchJobs,
-    selectGlobalJobFilters,
     getAvailableFilters,
-    getFilterTemplateByTemplateName
+    getFilterTemplateByTemplateName,
+    simpleSearchJobsByFilter,
+    setSearchResults
 } from './JobSearchBarSlice';
 import {
-    SERVICE_TYPE,
-    CURRENCY_FORMAT
+    SERVICE_TYPE
 } from '../../constants';
-import NumberFormat from 'react-number-format';
 import SpinnerText from '../common-components/SpinnerText';
 import { toast } from 'react-toastify';
 import { selectIsLoggedIn } from '../shared-vars/SharedStateSlice';
@@ -28,17 +26,18 @@ export function JobSearchBar() {
     const globalIsLoggedIn = useSelector(selectIsLoggedIn);
 
     /* local, feature-level states */
-    const [jobFilters, setJobFilters] = useState({
-        filterType: "",
-        postedBeforeDays: 3
+    const [searchFilterObj, setSearchFilterObj] = useState({
+        serviceType: "ALL",
+        postedXDaysAgo: 3
     });
-    const [filterDetailMap, setFilterDetailMap] = useState({});
+
     const [isLoading, setIsLoading] = useState(false);
+    const [filterDetailMap, setFilterDetailMap] = useState({});
     const [isAdvancedSearchPopupOpen, setAdvancedSearchPopupOpen] = useState(false);
-    const [availableFilters, setAvailableFilters] = useState([]);
-    const [selectedFilterIndex, setSelectedFilterIndex] = useState();
-    const [serviceType, setServiceType] = useState(SERVICE_TYPE.REQUEST.FILTER.KEY);
+    const [availableFilterTemplates, setAvailableFilterTemplates] = useState([]);
+    const [selectFilterTemplateIndex, setSelectedFilterTemplateIndex] = useState(null);
     const [selectedFilterTemplate, setSelectedFilterTemplate] = useState(null);
+    const [selectedServiceTypeKey, setServiceTypeKey] = useState(SERVICE_TYPE.ALL);
 
     /* on init */
     useEffect(() => {
@@ -47,15 +46,10 @@ export function JobSearchBar() {
     }, [])
 
     /* side effects */
-
     useEffect(() => {
-        if (availableFilters[selectedFilterIndex]) {
-            var filterTemplateName = availableFilters[selectedFilterIndex].jobDetailFilterTemplateName;
+        if (availableFilterTemplates[selectFilterTemplateIndex]) {
+            var filterTemplateName = availableFilterTemplates[selectFilterTemplateIndex].jobDetailFilterTemplateName;
             console.log("selected filter template : " + filterTemplateName);
-            setJobFilters({
-                ...jobFilters,
-                filterType: filterTemplateName
-            });
             if (!filterDetailMap[filterTemplateName]) {
                 console.log("fetching filter detail for '" + filterTemplateName + "' for the first time.");
                 dispatch(getFilterTemplateByTemplateName(filterTemplateName, onGetAvailableFilterDetailsResult));
@@ -63,58 +57,50 @@ export function JobSearchBar() {
                 setSelectedFilterTemplate(filterDetailMap[filterTemplateName]);
             }
         }
-    }, [selectedFilterIndex, filterDetailMap]);
-
-    useEffect(() => {
-        console.log("selected template: " + JSON.stringify(selectedFilterTemplate));
-    }, [selectedFilterTemplate])
+    }, [selectFilterTemplateIndex, filterDetailMap]);
 
     /* event handlers */
-    const updateSelectedFilter = function (selectedIndex) {
+    const updateSelectedFilterTemplate = function (selectedIndex) {
         selectedIndex = parseInt(selectedIndex);
-        setSelectedFilterIndex(selectedIndex);
+        setSelectedFilterTemplateIndex(selectedIndex);
     }
 
     const updatePostedDate = function (e) {
-        setJobFilters({
-            ...jobFilters,
-            postedBeforeDays: e.target.value
+        setSearchFilterObj({
+            ...searchFilterObj,
+            postedXDaysAgo: e.target.value
         });
     }
 
-    const updateMinAmount = function (e) {
-        setJobFilters({
-            ...jobFilters,
-            amount: e.target.value
-        })
+    const handleSelectServiceTypeChange = function (e) {
+        var selectedServiceTypeKey=e.currentTarget.name;
+        setServiceTypeKey(selectedServiceTypeKey);
+        setSearchFilterObj({
+            ...searchFilterObj,
+            serviceType: selectedServiceTypeKey
+        });
     }
 
-    const handleOnChangeFormElement = function (e) {
-        var fieldName = e.target.name;
-        var fieldValue = e.target.value;
-        fieldValue = fieldValue.replaceAll('$', '');
-        fieldValue = fieldValue.replaceAll(',', '');
-
+    const handleSimpleSearch = function () {
+       setIsLoading(true);
+       console.log("triggering simple search with criteria : "+JSON.stringify(searchFilterObj));
+       dispatch(simpleSearchJobsByFilter(searchFilterObj,onSimpleSearchJobsByFilterResult))
     }
 
-    const handleSimpleSearch=function(){
-
-    }
-
-    const openAdvancedSearchPopup=function(){
+    const openAdvancedSearchPopup = function () {
         setAdvancedSearchPopupOpen(true);
     }
 
-    const closeAdvancedSearchPopup=function(){
+    const closeAdvancedSearchPopup = function () {
         setAdvancedSearchPopupOpen(false);
     }
+    
     /* api callbacks */
-
     const onGetAvailableFiltersResult = function (isSuccess, response) {
         if (isSuccess) {
             setIsLoading(false);
-            setAvailableFilters(response.data);
-            console.log("fetched available template information : "+JSON.stringify(response.data));
+            setAvailableFilterTemplates(response.data);
+            console.log("fetched available template information : " + JSON.stringify(response.data));
         }
         else {
             toast.error("Unable to fetch available search parameters, try refreshing the page.");
@@ -134,22 +120,32 @@ export function JobSearchBar() {
         }
     }
 
+    const onSimpleSearchJobsByFilterResult = function (isSuccess, response) {
+        if (isSuccess) {
+            setIsLoading(false);
+            dispatch(setSearchResults(response.data.jobs))
+        }
+        else {
+            toast.error("Unable to search jobs/services. Please wait for a while and try again.");
+        }
+    }
+
     return (
         <div>
-            <AdvancedJobSearchView onClose={closeAdvancedSearchPopup} isOpen={isAdvancedSearchPopupOpen} jobDetailFilterTemplate={selectedFilterTemplate}/>
+            <AdvancedJobSearchView onClose={closeAdvancedSearchPopup} isOpen={isAdvancedSearchPopupOpen} jobDetailFilterTemplate={selectedFilterTemplate} />
             <Navbar fixed="top" bg="dark" variant="dark" expand="lg">
                 <Navbar.Brand>Find offers/requests</Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="mr-auto" style={{ minWidth: "65vw", paddingLeft: "2vw", paddingTop: "0.3vh" }}>
+                    <Nav className="mr-auto" style={{ paddingLeft: "2vw", paddingTop: "0.3vh" }}>
                         <Form inline>
                             {isLoading ? "" :
-                                <Nav variant="pills" onSelect={updateSelectedFilter}>
+                                <Nav variant="pills" onSelect={updateSelectedFilterTemplate}>
                                     <Col>
                                         <Row>
-                                            {availableFilters.map((filter, index) => {
-                                                return <div key={'div_'+index}><Nav.Item key={'item_'+index}>
-                                                    <Nav.Link key={'link_'+index} eventKey={index}>{filter.jobDetailFilterTemplateLabel}</Nav.Link>
+                                            {availableFilterTemplates.map((filter, index) => {
+                                                return <div key={'div_' + index}><Nav.Item key={'item_' + index}>
+                                                    <Nav.Link key={'link_' + index} eventKey={index}>{filter.jobDetailFilterTemplateLabel}</Nav.Link>
                                                 </Nav.Item>
                                                 </div>
                                             })}
@@ -158,14 +154,34 @@ export function JobSearchBar() {
                                 </Nav>
                             }
                             <Form.Group controlId="formBasicRange" style={{ paddingLeft: "0.5vw" }}>
-                                <Form.Label className="mr-sm-4" style={{ color: "gray" }}>Posted between today and {jobFilters.postedBeforeDays} day(s) ago</Form.Label>
-                                <Form.Control type="range" style={{ width: "10vw" }} min={1} max={7} value={jobFilters.postedBeforeDays} onChange={updatePostedDate} />
+                                <Form.Label className="mr-sm-4" style={{ color: "gray" }}>Posted between today and {searchFilterObj.postedBeforeDays} day(s) ago</Form.Label>
+                                <Form.Control type="range" style={{ width: "10vw" }} min={1} max={7} value={searchFilterObj.postedBeforeDays} onChange={updatePostedDate} />
                             </Form.Group>
-                            <ButtonGroup style={{paddingLeft:"0.5vw"}} >
-                               <Button onClick={openAdvancedSearchPopup} variant="secondary" disabled={(isLoading || (selectedFilterTemplate==null))}>
+
+                            <Form.Group style={{ paddingLeft: "0.5vw" }}>
+                                <ButtonGroup toggle >
+                                    <ToggleButton
+                                        type="radio"
+                                        variant="secondary"
+                                        name={SERVICE_TYPE.REQUEST.FILTER.KEY}
+                                        checked={selectedServiceTypeKey === SERVICE_TYPE.REQUEST.FILTER.KEY}
+                                        onChange={handleSelectServiceTypeChange}
+                                    > {SERVICE_TYPE.REQUEST.FILTER.SHORT_LABEL} </ToggleButton>
+                                    <ToggleButton
+                                        type="radio"
+                                        variant="secondary"
+                                        name={SERVICE_TYPE.OFFER.FILTER.KEY}
+                                        checked={selectedServiceTypeKey === SERVICE_TYPE.OFFER.FILTER.KEY}
+                                        onChange={handleSelectServiceTypeChange}
+                                    > {SERVICE_TYPE.OFFER.FILTER.SHORT_LABEL} </ToggleButton>
+                                </ButtonGroup>
+                            </Form.Group>
+
+                            <ButtonGroup style={{ paddingLeft: "0.5vw" }} >
+                                <Button onClick={openAdvancedSearchPopup} variant="outline-primary" disabled={(isLoading || (selectedFilterTemplate == null))}>
                                     <SpinnerText isLoading={isLoading} loadingText="Just a min.." text="Advanced Search" />
                                 </Button>
-                                <Button onClick={handleSimpleSearch} variant="secondary" disabled={(isLoading || (selectedFilterTemplate==null))}>
+                                <Button onClick={handleSimpleSearch} variant="primary" disabled={(isLoading)}>
                                     <SpinnerText isLoading={isLoading} loadingText="Just a min.." text="Search" />
                                 </Button>
                             </ButtonGroup>

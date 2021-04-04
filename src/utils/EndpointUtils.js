@@ -19,3 +19,7 @@ export const getJobDetailFilterTemplateByNameURI=function(jobDetailTemplateName)
 export const getPostNewJobURI=function(){
     return BASE_URI+'/job/post';
 }
+
+export const getSimpleSearchURI=function(){
+    return BASE_URI+'/job/search';
+}
