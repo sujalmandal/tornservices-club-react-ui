@@ -84,7 +84,7 @@ export function AdvancedJobSearchView(props) {
                 /* text or checkbox */
                 if (elementArr.length == 1) {
                     renderedElements.push(
-                        <Row>
+                        <Row key={'row_'+groupName+"_"+new Date().getTime}>
                             <Col>
                                 <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                 <FormControl id={elementArr[0].id} style={{ width: "10vw" }}
@@ -100,7 +100,7 @@ export function AdvancedJobSearchView(props) {
                 if (elementArr.length === 2 && elementArr[0].fieldType === "number" && elementArr[1].fieldType === "number") {
                     if (elementArr[0].format === CURRENCY_FORMAT && elementArr[1].format === CURRENCY_FORMAT) {
                         renderedElements.push(
-                            <Row>
+                            <Row key={'row_'+groupName+"_"+new Date().getTime}>
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                     <NumberFormat style={{ width: "10vw" }} name={elementArr[0].name} onChange={handleOnChangeFormElement}
@@ -119,7 +119,7 @@ export function AdvancedJobSearchView(props) {
                     }
                     else {
                         renderedElements.push(
-                            <Row>
+                            <Row key={'row_'+groupName+"_"+new Date().getTime}>
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                     <FormControl id={elementArr[0].id}
@@ -139,7 +139,6 @@ export function AdvancedJobSearchView(props) {
                 }
 
             }
-
         }
         return renderedElements;
     }
@@ -167,7 +166,6 @@ export function AdvancedJobSearchView(props) {
                                     <Dropdown.Item eventKey={SERVICE_TYPE_REQUESTING_FILTER_LABEL}>{SERVICE_TYPE_REQUESTING_FILTER_LABEL}</Dropdown.Item>
                                 </DropdownButton>
                             </Col>
-
                         </Row>
                         <Row style={{ paddingTop: "2vh" }}>
                             <Form inline>

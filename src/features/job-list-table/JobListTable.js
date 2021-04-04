@@ -20,7 +20,7 @@ export function JobListTable() {
         <div style={{ width:"100vw", background: "#2d405f", minHeight:"100vh", paddingTop:"20vh" }}>
                 <CardColumns>
                     { globalJobs.map((job, index) => (
-                        <Card body inverse style={{ backgroundColor: '#333', borderColor: '#333' }}>
+                        <Card key={'card_'+index} body inverse style={{ backgroundColor: '#333', borderColor: '#333' }}>
                             <CardTitle tag="h5">$50,000</CardTitle>
                             <CardText>{job.jobType} {job.targetPlayerName} x {job.amount}</CardText>
                             <CardText>Posted on : 30-03-2021</CardText>

@@ -151,8 +151,8 @@ export function JobSearchBar() {
                                     <Col>
                                         <Row>
                                             {availableFilters.map((filter, index) => {
-                                                return <div><Nav.Item>
-                                                    <Nav.Link eventKey={index}>{filter.jobDetailFilterTemplateLabel}</Nav.Link>
+                                                return <div key={'div_'+index}><Nav.Item key={'item_'+index}>
+                                                    <Nav.Link key={'link_'+index} eventKey={index}>{filter.jobDetailFilterTemplateLabel}</Nav.Link>
                                                 </Nav.Item>
                                                 </div>
                                             })}

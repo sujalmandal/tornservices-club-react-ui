@@ -180,7 +180,6 @@ export function JobPostView() {
                                                     <FormControl id={element.id}
                                                         style={{ width: "10vw" }} type={element.type} min={0} name={element.name}
                                                         size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} />}
-
                                             </Col>
                                         </Row>
                                     }
