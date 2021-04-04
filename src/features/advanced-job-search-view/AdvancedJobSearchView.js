@@ -25,7 +25,7 @@ export function AdvancedJobSearchView(props) {
     const [serviceTypeText, setServiceTypeText] = useState(SERVICE_TYPE_OFFERING_FILTER_LABEL);
     const [serviceType, setServiceType] = useState(SERVICE_TYPE_REQUEST);
     const [filterRequestDTO, setFilterRequestDTO] = useState({})
-    
+
     const handleServiceTypeTextChange = function (serviceTypeText) {
         setServiceTypeText(serviceTypeText);
         if (serviceTypeText === SERVICE_TYPE_REQUESTING_FILTER_LABEL) {
@@ -37,25 +37,111 @@ export function AdvancedJobSearchView(props) {
     }
 
     /* init */
-    useEffect(()=>{
-        if(props.isOpen){
-            console.log("opened advanced search with the template : "+JSON.stringify(props.jobDetailFilterTemplate)); 
+    useEffect(() => {
+        if (props.isOpen) {
+            console.log("opened advanced search with the template : " + JSON.stringify(props.jobDetailFilterTemplate));
         }
-    },[props.isOpen])
+    }, [props.isOpen])
 
     /* event handlers */
 
     const handleOnChangeFormElement = function (e) {
         var fieldName = e.target.name;
         var fieldValue = e.target.value;
-        fieldValue=fieldValue.replaceAll('$', '');
-        fieldValue=fieldValue.replaceAll(',', '');
+        fieldValue = fieldValue.replaceAll('$', '');
+        fieldValue = fieldValue.replaceAll(',', '');
         filterRequestDTO[fieldName] = fieldValue;
-        setFilterRequestDTO({...filterRequestDTO});
+        setFilterRequestDTO({ ...filterRequestDTO });
     }
 
-    const handleAdvancedSearch=function(){
+    const handleAdvancedSearch = function () {
 
+    }
+
+    const validateNumberFormat = function (valueObj, limit) {
+        const value = valueObj.value;
+        if (value >= 0 && value <= limit) {
+            return valueObj;
+        }
+        return false;
+    }
+
+    const renderDynamicFilter = function (jobDetailFilterTemplate) {
+        console.log("rendering form based on template...");
+        var renderedElements = [];
+        var groupedElements = {};
+
+
+        if (jobDetailFilterTemplate != null) {
+
+            jobDetailFilterTemplate.filterElements.forEach((element) => {
+                if (!groupedElements[element.groupName])
+                    groupedElements[element.groupName] = [];
+                groupedElements[element.groupName].push(element);
+            });
+
+            for (const [groupName, elementArr] of Object.entries(groupedElements)) {
+                /* text or checkbox */
+                if (elementArr.length == 1) {
+                    renderedElements.push(
+                        <Row>
+                            <Col>
+                                <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
+                                <FormControl id={elementArr[0].id} style={{ width: "10vw" }}
+                                    type={elementArr[0].fieldType} name={elementArr[0].name}
+                                    min={0} max={elementArr[0].limit}
+                                    size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} 
+                                />
+                            </Col>
+                        </Row>
+                    );
+                }
+                /* number (min & max) */
+                if (elementArr.length === 2 && elementArr[0].fieldType === "number" && elementArr[1].fieldType === "number") {
+                    if (elementArr[0].format === CURRENCY_FORMAT && elementArr[1].format === CURRENCY_FORMAT) {
+                        renderedElements.push(
+                            <Row>
+                                <Col>
+                                    <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
+                                    <NumberFormat style={{ width: "10vw" }} name={elementArr[0].name} onChange={handleOnChangeFormElement}
+                                        className="mr-sm-4" thousandSeparator={true} prefix={'$'}
+                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[0].limit) }} 
+                                    />
+                                </Col>
+                                <Col>
+                                    <Form.Label className="mr-sm-4">{elementArr[1].fieldLabel}</Form.Label>
+                                    <NumberFormat style={{ width: "10vw" }} name={elementArr[1].name} onChange={handleOnChangeFormElement}
+                                        className="mr-sm-4" thousandSeparator={true} prefix={'$'}
+                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[0].limit) }} 
+                                    />
+                                </Col>
+                            </Row>);
+                    }
+                    else {
+                        renderedElements.push(
+                            <Row>
+                                <Col>
+                                    <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
+                                    <FormControl id={elementArr[0].id}
+                                        style={{ width: "10vw" }} min={0} type="number" max={elementArr[0].limit} name={elementArr[0].name}
+                                        size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} 
+                                    />
+                                </Col>
+                                <Col>
+                                    <Form.Label className="mr-sm-4">{elementArr[1].fieldLabel}</Form.Label>
+                                    <FormControl id={elementArr[1].id}
+                                        style={{ width: "10vw" }} min={0} type="number" max={elementArr[1].limit} name={elementArr[1].name}
+                                        size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement}
+                                    />
+                                </Col>
+                            </Row>);
+                    }
+                }
+
+            }
+
+        }
+        return renderedElements;
     }
 
     return (
@@ -67,9 +153,9 @@ export function AdvancedJobSearchView(props) {
                 backdrop="static"
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>{props.jobDetailFilterTemplate==null?"":
-                    <>
-                    Search <span style={{color:"green"}}>{props.jobDetailFilterTemplate.filterTemplateLabel}</span> services with filters 
+                    <Modal.Title>{props.jobDetailFilterTemplate == null ? "" :
+                        <>
+                            Search <span style={{ color: "green" }}>{props.jobDetailFilterTemplate.filterTemplateLabel}</span> services with filters
                     </>}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -81,32 +167,27 @@ export function AdvancedJobSearchView(props) {
                                     <Dropdown.Item eventKey={SERVICE_TYPE_REQUESTING_FILTER_LABEL}>{SERVICE_TYPE_REQUESTING_FILTER_LABEL}</Dropdown.Item>
                                 </DropdownButton>
                             </Col>
-                          
+
                         </Row>
-                        <Row style={{ paddingTop: "5vh" }}>
-                        <Container>
-                                {props.jobDetailFilterTemplate == null ? "" : props.jobDetailFilterTemplate.filterElements.map((element => {
-                                    if (element.serviceType === "ALL" || element.serviceType === serviceType) {
-                                        return <Row style={{ paddingRight: "2vw", paddingLeft: "2vw", paddingTop: "1vh" }}>
-                                            <Col><Form.Label className="mr-sm-4">{element.fieldLabel}</Form.Label></Col>
-                                            <Col>
-                                            {(element.format && element.format === CURRENCY_FORMAT) ?
-                                                    <NumberFormat style={{ width: "10vw" }} name={element.name} onChange={handleOnChangeFormElement}
-                                                     className="mr-sm-4" thousandSeparator={true} prefix={'$'} /> :
-                                                    <FormControl id={element.id}
-                                                        style={{ width: "10vw" }} type={element.fieldType} min={0} name={element.name}
-                                                        size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} />}
-                                            </Col>
-                                        </Row>
-                                    }
-                                }))}
-                            </Container>
+                        <Row style={{ paddingTop: "2vh" }}>
+                            <Form inline>
+                                <Container style={{ paddingLeft: "2vw" }}>
+                                    <Row>
+                                        <Form.Text className="text-muted">
+                                            <span style={{ color: "gray" }}>Please fill the items you want. You can leave the ones you don't want empty.</span>
+                                        </Form.Text>
+                                    </Row>
+                                    <Row style={{ paddingTop: "0.5vw" }}>
+                                        {renderDynamicFilter(props.jobDetailFilterTemplate)}
+                                    </Row>
+                                </Container>
+                            </Form>
                         </Row>
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={handleAdvancedSearch} disabled={isLoading}>
-                        <SpinnerText isLoading={isLoading} loadingText="Working on it.." text="Advanced Search"/>
+                        <SpinnerText isLoading={isLoading} loadingText="Working on it.." text="Advanced Search" />
                     </Button>
                     <Button variant="secondary" disabled={isLoading} onClick={() => { props.onClose() }}>Cancel</Button>
                 </Modal.Footer>
