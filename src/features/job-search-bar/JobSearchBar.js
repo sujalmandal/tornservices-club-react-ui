@@ -12,10 +12,7 @@ import {
     getFilterTemplateByTemplateName
 } from './JobSearchBarSlice';
 import {
-    SERVICE_TYPE_OFFERING_TEXT,
-    SERVICE_TYPE_REQUESTING_TEXT,
-    SERVICE_TYPE_OFFER,
-    SERVICE_TYPE_REQUEST,
+    SERVICE_TYPE,
     CURRENCY_FORMAT
 } from '../../constants';
 import NumberFormat from 'react-number-format';
@@ -40,7 +37,7 @@ export function JobSearchBar() {
     const [isAdvancedSearchPopupOpen, setAdvancedSearchPopupOpen] = useState(false);
     const [availableFilters, setAvailableFilters] = useState([]);
     const [selectedFilterIndex, setSelectedFilterIndex] = useState();
-    const [serviceType, setServiceType] = useState(SERVICE_TYPE_REQUEST);
+    const [serviceType, setServiceType] = useState(SERVICE_TYPE.REQUEST.FILTER.KEY);
     const [selectedFilterTemplate, setSelectedFilterTemplate] = useState(null);
 
     /* on init */

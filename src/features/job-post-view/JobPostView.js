@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Modal, Form, FormControl, Container, Dropdown, DropdownButton, Col, Row } from 'react-bootstrap';
 import {
@@ -7,10 +7,7 @@ import {
     getJobDetailFormData
 } from './JobPostViewSlice';
 import {
-    SERVICE_TYPE_OFFERING_FORM_LABEL,
-    SERVICE_TYPE_REQUESTING_FORM_LABEL,
-    SERVICE_TYPE_OFFER,
-    SERVICE_TYPE_REQUEST,
+    SERVICE_TYPE,
     CURRENCY_FORMAT
 } from '../../constants';
 import { selectAPIKey } from '../shared-vars/SharedStateSlice';
@@ -23,20 +20,27 @@ export function JobPostView() {
     const dispatch = useDispatch();
 
     const initialCreateJobDTO = {
-        serviceType: SERVICE_TYPE_REQUEST,
+        serviceType: SERVICE_TYPE.REQUEST.FORM.KEY,
         jobDetails: {},
         apiKey: useSelector(selectAPIKey)
     };
 
     const [jobType, setJobType] = useState(null);
-    const [serviceTypeText, setServiceTypeText] = useState(SERVICE_TYPE_REQUESTING_FORM_LABEL);
-    const [serviceType, setServiceType] = useState(SERVICE_TYPE_REQUEST);
+    const [selectedServiceTypeObj, setServiceType] = useState(SERVICE_TYPE.REQUEST.FORM);
     const [availableJobDetailTemplates, setAvailableJobDetailTemplates] = useState([]);
     const [showJobPostForm, setShowJobPostForm] = useState(false);
     const [jobDetailsTemplate, setJobDetailsTemplate] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     //form data
     const [createJobDTO, setCreateJobDTO] = useState(initialCreateJobDTO);
+
+    /* side effects */
+    useEffect(()=>{
+        setCreateJobDTO({
+            ...createJobDTO,
+            serviceType: selectedServiceTypeObj.KEY
+        });
+    },[selectedServiceTypeObj]);
 
     /* handlers */
     const handleOpenJobPost = function () {
@@ -54,32 +58,15 @@ export function JobPostView() {
     const handleJobTypeSelect = function (index) {
         setCreateJobDTO({
             ...createJobDTO,
-            serviceType: SERVICE_TYPE_REQUEST,
+            serviceType: selectedServiceTypeObj.KEY,
             jobDetailType: availableJobDetailTemplates[index].jobDetailFormTemplateName
         });
         setJobType(availableJobDetailTemplates[index].jobDetailFormTemplateLabel);
         dispatch(getJobDetailFormData(availableJobDetailTemplates[index].jobDetailFormTemplateName, onGetJobDetailFormDataResult));
     }
 
-    const handleServiceTypeTextChange = function (serviceTypeText) {
-        console.log("event text: "+serviceTypeText)
-        setServiceTypeText(serviceTypeText);
-        if (serviceTypeText === SERVICE_TYPE_REQUESTING_FORM_LABEL) {
-            console.log("setting type: "+SERVICE_TYPE_REQUEST)
-            setServiceType(SERVICE_TYPE_REQUEST);
-            setCreateJobDTO({
-                ...createJobDTO,
-                serviceType: SERVICE_TYPE_REQUEST
-            });
-        }
-        if (serviceTypeText === SERVICE_TYPE_OFFERING_FORM_LABEL) {
-            console.log("setting type: "+SERVICE_TYPE_REQUEST)
-            setServiceType(SERVICE_TYPE_OFFER);
-            setCreateJobDTO({
-                ...createJobDTO,
-                serviceType: SERVICE_TYPE_OFFER
-            });
-        }
+    const handleSelectServiceTypeChange = function (selectedServiceTypeKey) {
+        setServiceType(SERVICE_TYPE[selectedServiceTypeKey].FORM);
     }
 
     const handleOnChangeFormElement = function (e) {
@@ -127,7 +114,7 @@ export function JobPostView() {
     const onPostResult = function (isSuccess, response) {
         console.log("postNewJob() result received!");
         if (isSuccess) {
-            toast.success("Your job " + serviceType.toLowerCase() + " has been posted!");
+            toast.success("Your job " + selectedServiceTypeObj.toLowerCase() + " has been posted!");
             setIsLoading(false);
             setShowJobPostForm(false);
             setCreateJobDTO(initialCreateJobDTO);
@@ -157,9 +144,9 @@ export function JobPostView() {
                     <Container>
                         <Row>
                             <Col>
-                                <DropdownButton id="dropdown-basic-button-service-type" title={"I am " + serviceTypeText} onSelect={handleServiceTypeTextChange}>
-                                    <Dropdown.Item eventKey={SERVICE_TYPE_OFFERING_FORM_LABEL}>{SERVICE_TYPE_OFFERING_FORM_LABEL}</Dropdown.Item>
-                                    <Dropdown.Item eventKey={SERVICE_TYPE_REQUESTING_FORM_LABEL}>{SERVICE_TYPE_REQUESTING_FORM_LABEL}</Dropdown.Item>
+                                <DropdownButton id="dropdown-basic-button-service-type" title={"I am " + selectedServiceTypeObj.LABEL} onSelect={handleSelectServiceTypeChange}>
+                                    <Dropdown.Item eventKey={SERVICE_TYPE.REQUEST.FORM.KEY}>{SERVICE_TYPE.REQUEST.FORM.LABEL}</Dropdown.Item>
+                                    <Dropdown.Item eventKey={SERVICE_TYPE.OFFER.FORM.KEY}>{SERVICE_TYPE.OFFER.FORM.LABEL}</Dropdown.Item>
                                 </DropdownButton>
                             </Col>
                             <Col>
@@ -173,7 +160,7 @@ export function JobPostView() {
                         <Row style={{ paddingTop: "5vh" }}>
                             <Container>
                                 {jobDetailsTemplate == null ? "" : jobDetailsTemplate.elements.map((element => {
-                                    if (element.serviceType === "ALL" || element.serviceType === serviceType) {
+                                    if (element.serviceType === "ALL" || element.serviceType === selectedServiceTypeObj.KEY) {
                                         return <Row key={'row_'+element.name} style={{ paddingRight: "2vw", paddingLeft: "2vw", paddingTop: "1vh" }}>
                                             <Col><Form.Label className="mr-sm-4">{element.label}</Form.Label></Col>
                                             <Col>

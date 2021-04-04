@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Button, Modal, Form, FormControl, Container, Dropdown, DropdownButton, Col, Row } from 'react-bootstrap';
 import {
     postNewJob,
@@ -7,10 +7,7 @@ import {
     getJobDetailFormData
 } from './AvancedJobSearchViewSlice';
 import {
-    SERVICE_TYPE_REQUESTING_FILTER_LABEL,
-    SERVICE_TYPE_OFFERING_FILTER_LABEL,
-    SERVICE_TYPE_OFFER,
-    SERVICE_TYPE_REQUEST,
+    SERVICE_TYPE,
     CURRENCY_FORMAT
 } from '../../constants';
 import { selectAPIKey } from '../shared-vars/SharedStateSlice';
@@ -22,24 +19,19 @@ export function AdvancedJobSearchView(props) {
 
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
-    const [serviceTypeText, setServiceTypeText] = useState(SERVICE_TYPE_OFFERING_FILTER_LABEL);
-    const [serviceType, setServiceType] = useState(SERVICE_TYPE_REQUEST);
+    const [selectedServiceTypeObj, setServiceType] = useState(SERVICE_TYPE.REQUEST.FORM);
     const [filterRequestDTO, setFilterRequestDTO] = useState({})
 
-    const handleServiceTypeTextChange = function (serviceTypeText) {
-        setServiceTypeText(serviceTypeText);
-        if (serviceTypeText === SERVICE_TYPE_REQUESTING_FILTER_LABEL) {
-            setServiceType(SERVICE_TYPE_REQUEST);
-        }
-        if (serviceTypeText === SERVICE_TYPE_OFFERING_FILTER_LABEL) {
-            setServiceType(SERVICE_TYPE_OFFER);
-        }
+    const handleSelectServiceTypeChange = function (selectedServiceTypeKey) {
+        setServiceType(SERVICE_TYPE[selectedServiceTypeKey].FORM);
     }
 
     /* init */
     useEffect(() => {
         if (props.isOpen) {
-            console.log("opened advanced search with the template : " + JSON.stringify(props.jobDetailFilterTemplate));
+            console.log("opening advanced search dialog --");
+            console.log("selected template : " + JSON.stringify(props.jobDetailFilterTemplate))
+            console.log("selected serviceType: "+selectedServiceTypeObj.KEY);
         }
     }, [props.isOpen])
 
@@ -66,7 +58,8 @@ export function AdvancedJobSearchView(props) {
         return false;
     }
 
-    const renderDynamicFilter = function (jobDetailFilterTemplate) {
+    /***** dynamic filter form renderer start *****/
+    const renderDynamicFilter = function (jobDetailFilterTemplate,selectedServiceTypeKey) {
         console.log("rendering form based on template...");
         var renderedElements = [];
         var groupedElements = {};
@@ -75,9 +68,13 @@ export function AdvancedJobSearchView(props) {
         if (jobDetailFilterTemplate != null) {
 
             jobDetailFilterTemplate.filterElements.forEach((element) => {
-                if (!groupedElements[element.groupName])
-                    groupedElements[element.groupName] = [];
-                groupedElements[element.groupName].push(element);
+                console.log(JSON.stringify(element))
+                if(element.serviceType===SERVICE_TYPE.ALL || element.serviceType===selectedServiceTypeObj.KEY){
+                    if (!groupedElements[element.groupName]){
+                            groupedElements[element.groupName] = [];
+                    }
+                    groupedElements[element.groupName].push(element);
+                }
             });
 
             for (const [groupName, elementArr] of Object.entries(groupedElements)) {
@@ -143,6 +140,8 @@ export function AdvancedJobSearchView(props) {
         return renderedElements;
     }
 
+    /***** dynamic filter form renderer end *****/
+
     return (
         <div>
             <Modal
@@ -161,9 +160,9 @@ export function AdvancedJobSearchView(props) {
                     <Container>
                         <Row>
                             <Col>
-                                <DropdownButton id="dropdown-basic-button-service-type" title={serviceTypeText} onSelect={handleServiceTypeTextChange}>
-                                    <Dropdown.Item eventKey={SERVICE_TYPE_OFFERING_FILTER_LABEL}>{SERVICE_TYPE_OFFERING_FILTER_LABEL}</Dropdown.Item>
-                                    <Dropdown.Item eventKey={SERVICE_TYPE_REQUESTING_FILTER_LABEL}>{SERVICE_TYPE_REQUESTING_FILTER_LABEL}</Dropdown.Item>
+                            <DropdownButton id="dropdown-basic-button-service-type" title={"I am " + selectedServiceTypeObj.LABEL} onSelect={handleSelectServiceTypeChange}>
+                                    <Dropdown.Item eventKey={SERVICE_TYPE.REQUEST.FORM.KEY}>{SERVICE_TYPE.REQUEST.FORM.LABEL}</Dropdown.Item>
+                                    <Dropdown.Item eventKey={SERVICE_TYPE.OFFER.FORM.KEY}>{SERVICE_TYPE.OFFER.FORM.LABEL}</Dropdown.Item>
                                 </DropdownButton>
                             </Col>
                         </Row>
@@ -176,7 +175,7 @@ export function AdvancedJobSearchView(props) {
                                         </Form.Text>
                                     </Row>
                                     <Row style={{ paddingTop: "0.5vw" }}>
-                                        {renderDynamicFilter(props.jobDetailFilterTemplate)}
+                                        {props.isOpen?renderDynamicFilter(props.jobDetailFilterTemplate,selectedServiceTypeObj.KEY):""}
                                     </Row>
                                 </Container>
                             </Form>
