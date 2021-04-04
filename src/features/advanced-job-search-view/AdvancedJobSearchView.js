@@ -104,14 +104,14 @@ export function AdvancedJobSearchView(props) {
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                     <NumberFormat style={{ width: "10vw" }} name={elementArr[0].name} onChange={handleOnChangeFormElement}
-                                        className="mr-sm-4" thousandSeparator={true} prefix={'$'}
+                                        className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
                                         isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[0].limit) }} 
                                     />
                                 </Col>
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[1].fieldLabel}</Form.Label>
-                                    <NumberFormat style={{ width: "10vw" }} name={elementArr[1].name} onChange={handleOnChangeFormElement}
-                                        className="mr-sm-4" thousandSeparator={true} prefix={'$'}
+                                    <NumberFormat className=".form-control-sm" style={{ width: "10vw" }} name={elementArr[1].name} onChange={handleOnChangeFormElement}
+                                        className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
                                         isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[0].limit) }} 
                                     />
                                 </Col>

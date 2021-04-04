@@ -176,7 +176,7 @@ export function JobPostView() {
                                             <Col>
                                                 {(element.format && element.format === CURRENCY_FORMAT) ?
                                                     <NumberFormat style={{ width: "10vw" }} name={element.name} onChange={handleOnChangeFormElement}
-                                                     className="mr-sm-4" thousandSeparator={true} prefix={'$'} /> :
+                                                     className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'} /> :
                                                     <FormControl id={element.id}
                                                         style={{ width: "10vw" }} type={element.type} min={0} name={element.name}
                                                         size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} />}

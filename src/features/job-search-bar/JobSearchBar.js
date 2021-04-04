@@ -160,8 +160,8 @@ export function JobSearchBar() {
                                     </Col>
                                 </Nav>
                             }
-                            <Form.Group controlId="formBasicRange">
-                                <Form.Label className="mr-sm-4" style={{ color: "gray" }}>Posted before {jobFilters.postedBeforeDays} day(s)?</Form.Label>
+                            <Form.Group controlId="formBasicRange" style={{ paddingLeft: "0.5vw" }}>
+                                <Form.Label className="mr-sm-4" style={{ color: "gray" }}>Posted between today and {jobFilters.postedBeforeDays} day(s) ago</Form.Label>
                                 <Form.Control type="range" style={{ width: "10vw" }} min={1} max={7} value={jobFilters.postedBeforeDays} onChange={updatePostedDate} />
                             </Form.Group>
                             <ButtonGroup style={{paddingLeft:"0.5vw"}} >
