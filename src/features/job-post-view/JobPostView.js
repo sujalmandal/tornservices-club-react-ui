@@ -62,8 +62,10 @@ export function JobPostView() {
     }
 
     const handleServiceTypeTextChange = function (serviceTypeText) {
+        console.log("event text: "+serviceTypeText)
         setServiceTypeText(serviceTypeText);
         if (serviceTypeText === SERVICE_TYPE_REQUESTING_FORM_LABEL) {
+            console.log("setting type: "+SERVICE_TYPE_REQUEST)
             setServiceType(SERVICE_TYPE_REQUEST);
             setCreateJobDTO({
                 ...createJobDTO,
@@ -71,6 +73,7 @@ export function JobPostView() {
             });
         }
         if (serviceTypeText === SERVICE_TYPE_OFFERING_FORM_LABEL) {
+            console.log("setting type: "+SERVICE_TYPE_REQUEST)
             setServiceType(SERVICE_TYPE_OFFER);
             setCreateJobDTO({
                 ...createJobDTO,
@@ -162,7 +165,7 @@ export function JobPostView() {
                             <Col>
                                 <DropdownButton id="dropdown-basic-button-job-details" title={"Service : " + (jobType ? jobType : "-select-")} onSelect={handleJobTypeSelect}>
                                     {availableJobDetailTemplates.map((formTemplate, index) =>{
-                                        return <Dropdown.Item eventKey={index}>{formTemplate.jobDetailFormTemplateLabel}</Dropdown.Item>
+                                        return <Dropdown.Item key={'Dropdown.Item_'+index} eventKey={index}>{formTemplate.jobDetailFormTemplateLabel}</Dropdown.Item>
                                     })}
                                 </DropdownButton>
                             </Col>
@@ -171,7 +174,7 @@ export function JobPostView() {
                             <Container>
                                 {jobDetailsTemplate == null ? "" : jobDetailsTemplate.elements.map((element => {
                                     if (element.serviceType === "ALL" || element.serviceType === serviceType) {
-                                        return <Row style={{ paddingRight: "2vw", paddingLeft: "2vw", paddingTop: "1vh" }}>
+                                        return <Row key={'row_'+element.name} style={{ paddingRight: "2vw", paddingLeft: "2vw", paddingTop: "1vh" }}>
                                             <Col><Form.Label className="mr-sm-4">{element.label}</Form.Label></Col>
                                             <Col>
                                                 {(element.format && element.format === CURRENCY_FORMAT) ?

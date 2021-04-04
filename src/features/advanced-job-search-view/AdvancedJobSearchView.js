@@ -84,7 +84,7 @@ export function AdvancedJobSearchView(props) {
                 /* text or checkbox */
                 if (elementArr.length == 1) {
                     renderedElements.push(
-                        <Row key={'row_'+groupName+"_"+new Date().getTime}>
+                        <Row key={'row_'+groupName+"_"+elementArr[0].name}>
                             <Col>
                                 <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                 <FormControl id={elementArr[0].id} style={{ width: "10vw" }}
@@ -100,7 +100,7 @@ export function AdvancedJobSearchView(props) {
                 if (elementArr.length === 2 && elementArr[0].fieldType === "number" && elementArr[1].fieldType === "number") {
                     if (elementArr[0].format === CURRENCY_FORMAT && elementArr[1].format === CURRENCY_FORMAT) {
                         renderedElements.push(
-                            <Row key={'row_'+groupName+"_"+new Date().getTime}>
+                            <Row key={'row_'+groupName+"_"+elementArr[0].name}>
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                     <NumberFormat style={{ width: "10vw" }} name={elementArr[0].name} onChange={handleOnChangeFormElement}
@@ -119,7 +119,7 @@ export function AdvancedJobSearchView(props) {
                     }
                     else {
                         renderedElements.push(
-                            <Row key={'row_'+groupName+"_"+new Date().getTime}>
+                            <Row key={'row_'+groupName+"_"+elementArr[0].name}>
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                     <FormControl id={elementArr[0].id}
