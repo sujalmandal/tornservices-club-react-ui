@@ -102,7 +102,7 @@ export function JobSearchBar() {
             setIsLoading(false);
             setAvailableFilterTemplates(response.data);
             console.log("fetched available template information : " + JSON.stringify(response.data));
-            if(firstLoad){
+            if(firstLoad && globalIsLoggedIn){
                 handleSimpleSearch();
                 setFirstLoad(false);
             }
@@ -192,9 +192,9 @@ export function JobSearchBar() {
                             </ButtonGroup>
                         </Form>
                     </Nav>
-                    <Nav className="mr-auto" style={{ paddingLeft: "0.5vw", minWidth: "20vw", paddingRight: "0.5vw" }}>
+                    <Nav className="mr-auto" style={{ paddingLeft: "0.5vw", minWidth: "25vw", paddingRight: "0.5vw" }}>
                         <Row>
-                            <Col style={{ minWidth: "5vw" }}>
+                            <Col style={{ minWidth: "15vw" }}>
                                 <JobPostView />
                             </Col>
                             <Col style={{ minWidth: "5vw" }}>

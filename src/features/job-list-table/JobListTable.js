@@ -24,10 +24,9 @@ export function JobListTable() {
                         <Card key={'card_' + index} body inverse style={{ backgroundColor: '#333', borderColor: '#333' }}>
                             <CardTitle tag="h5">$50,000</CardTitle>
                             <CardText>{job.jobType} {job.listedByPlayerId} x {job.amount}</CardText>
-                            <CardText>Posted on : 30-03-2021</CardText>
                             <Form.Text>
                                 <span className="text-muted" style={{ color: "gray" }}>
-
+                                    posted on {job.postedDate} by {}
                                 </span>
                             </Form.Text>
                             <Button>Claim Job !</Button>

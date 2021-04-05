@@ -27,7 +27,7 @@ export function JobPostView() {
         apiKey: useSelector(selectAPIKey)
     };
 
-    const [jobType, setJobType] = useState(null);
+    const [templateName, setTemplateName] = useState(null);
     const [selectedServiceTypeObj, setServiceType] = useState(SERVICE_TYPE.REQUEST.FORM);
     const [availableJobDetailTemplates, setAvailableJobDetailTemplates] = useState([]);
     const [showJobPostForm, setShowJobPostForm] = useState(false);
@@ -52,18 +52,18 @@ export function JobPostView() {
             dispatch(getAvailableJobDetailKeys(onGetAvailableJobDetailKeysResult));
         }
         else {
-            setJobType(availableJobDetailTemplates[0].label);
+            setTemplateName(availableJobDetailTemplates[0].label);
             setShowJobPostForm(true);
         }
     }
 
-    const handleJobTypeSelect = function (index) {
+    const handleJobDetailTemplateSelect = function (index) {
         setCreateJobDTO({
             ...createJobDTO,
             serviceType: selectedServiceTypeObj.KEY,
-            jobDetailType: availableJobDetailTemplates[index].jobDetailFormTemplateName
+            templateName: availableJobDetailTemplates[index].jobDetailFormTemplateName
         });
-        setJobType(availableJobDetailTemplates[index].jobDetailFormTemplateLabel);
+        setTemplateName(availableJobDetailTemplates[index].jobDetailFormTemplateLabel);
         dispatch(getJobDetailFormData(availableJobDetailTemplates[index].jobDetailFormTemplateName, onGetJobDetailFormDataResult));
     }
 
@@ -120,10 +120,11 @@ export function JobPostView() {
             setIsLoading(false);
             setShowJobPostForm(false);
             setCreateJobDTO(initialCreateJobDTO);
+            setJobDetailsTemplate(null);
         }
         else {
             setIsLoading(false);
-            console.error(response);
+            console.error("error: "+response);
             toast.error("Unable to post the job! :( please contact transhumanist on torn!");
         }
     }
@@ -195,7 +196,7 @@ export function JobPostView() {
     return (
         <div>
             <Button onClick={handleOpenJobPost} variant="outline-success" disabled={isLoading}>
-                <SpinnerText isLoading={isLoading} loadingText="Just a min.." text="Post New Job" />
+                <SpinnerText isLoading={isLoading} loadingText="Just a min.." text="Post Offer/Request" />
             </Button>
             <Modal
                 size="lg"
@@ -216,7 +217,7 @@ export function JobPostView() {
                                 </DropdownButton>
                             </Col>
                             <Col>
-                                <DropdownButton id="dropdown-basic-button-job-details" title={"Service : " + (jobType ? jobType : "-select-")} onSelect={handleJobTypeSelect}>
+                                <DropdownButton id="dropdown-basic-button-job-details" title={"Service : " + (templateName ? templateName : "-select-")} onSelect={handleJobDetailTemplateSelect}>
                                     {availableJobDetailTemplates.map((formTemplate, index) => {
                                         return <Dropdown.Item key={'Dropdown.Item_' + index} eventKey={index}>{formTemplate.jobDetailFormTemplateLabel}</Dropdown.Item>
                                     })}
