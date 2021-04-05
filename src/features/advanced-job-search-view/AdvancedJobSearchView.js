@@ -12,13 +12,17 @@ import NumberFormat from 'react-number-format';
 import SpinnerText from '../common-components/SpinnerText';
 import { toast } from 'react-toastify';
 import { validateNumberFormat } from '../../utils/AppUtils';
-
+import _ from "lodash";
 export function AdvancedJobSearchView(props) {
 
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
     const [selectedServiceTypeObj, setServiceType] = useState(SERVICE_TYPE.REQUEST.FORM);
-    const [filterRequestDTO, setFilterRequestDTO] = useState({})
+    const [filterRequestDTO, setFilterRequestDTO] = useState({
+        "serviceType": "ALL",
+        "postedXDaysAgo": 3,
+        "filterFields":[]
+    });
 
     const handleSelectServiceTypeChange = function (selectedServiceTypeKey) {
         setServiceType(SERVICE_TYPE[selectedServiceTypeKey].FORM);
@@ -35,17 +39,34 @@ export function AdvancedJobSearchView(props) {
 
     /* event handlers */
 
-    const handleOnChangeFormElement = function (e) {
-        var fieldName = e.target.name;
-        var fieldValue = e.target.value;
+    const handleOnChangeFormElement = function (fieldValue,fieldName,groupName,fieldType) {
+        //var fieldValue = e.target.value;
         fieldValue = fieldValue.replaceAll('$', '');
         fieldValue = fieldValue.replaceAll(',', '');
-        filterRequestDTO[fieldName] = fieldValue;
-        setFilterRequestDTO({ ...filterRequestDTO });
+        /*var fieldName = e.target.name;
+        var fieldType = e.target.type;
+        var groupName = e.target.groupName;*/
+        var filterFields=filterRequestDTO.filterFields;
+
+        var filterFieldObj = {
+            "type":fieldType,
+            "name":fieldName,
+            "groupName":groupName,
+            "value":fieldValue
+        };
+       
+        console.log(JSON.stringify(filterFieldObj));
+
+        filterFields.push(filterFieldObj);
+        filterFields=_.uniqBy(filterFields, 'groupName');
+        setFilterRequestDTO({ 
+            ...filterRequestDTO ,
+            "filterFields":filterFields
+        });
     }
 
     const handleAdvancedSearch = function () {
-
+        console.log("triggering search with the following parameters: "+JSON.stringify(filterRequestDTO));
     }
 
     /***** dynamic filter form renderer start *****/
@@ -77,9 +98,17 @@ export function AdvancedJobSearchView(props) {
                                     <Col>
                                         <Row><Form.Label>{elementArr[0].fieldLabel}</Form.Label></Row>
                                         <Row><Form.Control as="select" defaultValue={elementArr[0].defaultValue}
-                                            name={elementArr[0].name} onChange={handleOnChangeFormElement}>
+                                            name={elementArr[0].name} 
+                                            onChange={(e)=>{
+                                                handleOnChangeFormElement(
+                                                    e.target.value,
+                                                    elementArr[0].name,
+                                                    elementArr[0].groupName
+                                                    ,elementArr[0].fieldType);
+                                            }}
+                                            groupName={elementArr[0].groupName}>
                                             {elementArr[0].options.map((option, index) => {
-                                                return <option>{option}</option>;
+                                                return <option key={index}>{option}</option>;
                                             })}
                                         </Form.Control></Row>
                                     </Col>
@@ -94,8 +123,15 @@ export function AdvancedJobSearchView(props) {
                                     <FormControl id={elementArr[0].id} style={{ width: "10vw" }}
                                         type={elementArr[0].fieldType} name={elementArr[0].name}
                                         min={elementArr[0].minValue} max={elementArr[0].maxValue}
-                                        defaultValue={elementArr[0].defaultValue}
-                                        size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement}
+                                        defaultValue={elementArr[0].defaultValue} groupName={elementArr[0].groupName}
+                                        size="sm" className="mr-sm-4" 
+                                        onChange={(e)=>{
+                                            handleOnChangeFormElement(
+                                                e.target.value,
+                                                elementArr[0].name,
+                                                elementArr[0].groupName
+                                                ,elementArr[0].fieldType);
+                                        }}
                                     />
                                 </Col>
                             </Row>
@@ -109,20 +145,34 @@ export function AdvancedJobSearchView(props) {
                             <Row key={'row_' + groupName + "_" + elementArr[0].name}>
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
-                                    <NumberFormat style={{ width: "10vw" }} name={elementArr[0].name} onChange={handleOnChangeFormElement}
+                                    <NumberFormat style={{ width: "10vw" }} name={elementArr[0].name}
                                         className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
                                         isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[0].maxValue) }}
                                         min={elementArr[0].minValue} max={elementArr[0].maxValue}
-                                        defaultValue={elementArr[0].defaultValue}
+                                        defaultValue={elementArr[0].defaultValue} groupName={elementArr[0].groupName}
+                                        onChange={(e)=>{
+                                            handleOnChangeFormElement(
+                                                e.target.value,
+                                                elementArr[0].name,
+                                                elementArr[0].groupName
+                                                ,elementArr[0].fieldType);
+                                        }}
                                     />
                                 </Col>
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[1].fieldLabel}</Form.Label>
-                                    <NumberFormat className=".form-control-sm" style={{ width: "10vw" }} name={elementArr[1].name} onChange={handleOnChangeFormElement}
+                                    <NumberFormat className=".form-control-sm" style={{ width: "10vw" }} name={elementArr[1].name}
                                         className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
                                         isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[1].maxValue) }}
                                         min={elementArr[1].minValue} max={elementArr[1].maxValue}
-                                        defaultValue={elementArr[1].defaultValue}
+                                        defaultValue={elementArr[1].defaultValue} groupName={elementArr[1].groupName}
+                                        onChange={(e)=>{
+                                            handleOnChangeFormElement(
+                                                e.target.value,
+                                                elementArr[0].name,
+                                                elementArr[0].groupName
+                                                ,elementArr[0].fieldType);
+                                        }}
                                     />
                                 </Col>
                             </Row>);
@@ -134,18 +184,32 @@ export function AdvancedJobSearchView(props) {
                                     <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                     <FormControl id={elementArr[0].id}
                                         style={{ width: "10vw" }} type="number" name={elementArr[0].name}
-                                        size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement}
+                                        size="sm" className="mr-sm-4"
                                         min={elementArr[0].minValue} max={elementArr[0].maxValue}
-                                        defaultValue={elementArr[0].defaultValue}
+                                        defaultValue={elementArr[0].defaultValue} groupName={elementArr[0].groupName}
+                                        onChange={(e)=>{
+                                            handleOnChangeFormElement(
+                                                e.target.value,
+                                                elementArr[0].name,
+                                                elementArr[0].groupName
+                                                ,elementArr[0].fieldType);
+                                        }}
                                     />
                                 </Col>
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[1].fieldLabel}</Form.Label>
                                     <FormControl id={elementArr[1].id}
                                         style={{ width: "10vw" }} type="number" name={elementArr[1].name}
-                                        size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement}
+                                        size="sm" className="mr-sm-4"
                                         min={elementArr[1].minValue} max={elementArr[1].maxValue}
-                                        defaultValue={elementArr[1].defaultValue}
+                                        defaultValue={elementArr[1].defaultValue} groupName={elementArr[1].groupName}
+                                        onChange={(e)=>{
+                                            handleOnChangeFormElement(
+                                                e.target.value,
+                                                elementArr[0].name,
+                                                elementArr[0].groupName
+                                                ,elementArr[0].fieldType);
+                                        }}
                                     />
                                 </Col>
                             </Row>);
