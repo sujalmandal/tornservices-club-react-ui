@@ -25,7 +25,7 @@ export const SERVICE_TYPE = {
     "ALL":"ALL"
 };
 
-
+export const DATE_FORMAT="DD-MM-YYYY";
 
 export const TOAST_SHOW_DURATION_SECONDS = 3;
 export const CURRENCY_FORMAT = "CURRENCY";

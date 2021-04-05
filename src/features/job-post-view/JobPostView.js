@@ -45,7 +45,9 @@ export function JobPostView() {
     }, [selectedServiceTypeObj]);
 
     /* handlers */
-    const handleOpenJobPost = function () {
+    const handleOpenJobPostForm = function () {
+        setCreateJobDTO(initialCreateJobDTO);
+        setJobDetailsTemplate(null);
         if (availableJobDetailTemplates.length === 0) {
             setIsLoading(true);
             console.log("getAvailableJobDetailKeys() triggered!");
@@ -114,13 +116,13 @@ export function JobPostView() {
     }
 
     const onPostResult = function (isSuccess, response) {
+        setCreateJobDTO(initialCreateJobDTO);
+        setJobDetailsTemplate(null);
         console.log("postNewJob() result received!");
         if (isSuccess) {
             toast.success("Your job " + selectedServiceTypeObj.KEY.toLowerCase() + " has been posted!");
             setIsLoading(false);
             setShowJobPostForm(false);
-            setCreateJobDTO(initialCreateJobDTO);
-            setJobDetailsTemplate(null);
         }
         else {
             setIsLoading(false);
@@ -195,7 +197,7 @@ export function JobPostView() {
 
     return (
         <div>
-            <Button onClick={handleOpenJobPost} variant="outline-success" disabled={isLoading}>
+            <Button onClick={handleOpenJobPostForm} variant="outline-success" disabled={isLoading}>
                 <SpinnerText isLoading={isLoading} loadingText="Just a min.." text="Post Offer/Request" />
             </Button>
             <Modal
