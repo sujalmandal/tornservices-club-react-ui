@@ -103,7 +103,6 @@ export function JobPostView() {
     const onGetJobDetailFormDataResult = function (isSuccess, response) {
         console.log("getJobDetailFormData() result received!");
         if (isSuccess) {
-            console.log(response.data);
             setJobDetailsTemplate(response.data);
         }
         else {
@@ -115,7 +114,7 @@ export function JobPostView() {
     const onPostResult = function (isSuccess, response) {
         console.log("postNewJob() result received!");
         if (isSuccess) {
-            toast.success("Your job " + selectedServiceTypeObj.toLowerCase() + " has been posted!");
+            toast.success("Your job " + selectedServiceTypeObj.KEY.toLowerCase() + " has been posted!");
             setIsLoading(false);
             setShowJobPostForm(false);
             setCreateJobDTO(initialCreateJobDTO);
@@ -168,11 +167,14 @@ export function JobPostView() {
                                                 {(element.format && element.format === CURRENCY_FORMAT) ?
                                                     <NumberFormat style={{ width: "10vw" }} name={element.name} onChange={handleOnChangeFormElement}
                                                      className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'} 
-                                                     isAllowed={(valObj) => { return validateNumberFormat(valObj, element.limit) }} /> :
+                                                     isAllowed={(valObj) => { return validateNumberFormat(valObj, element.maxValue) }} 
+                                                     defaultValue={element.defaultValue} /> 
+                                                     :
                                                     <FormControl id={element.id}
-                                                        style={{ width: "10vw" }} type={element.type} min={0} 
-                                                        max={parseInt(element.limit)} name={element.name}
-                                                        size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} />}
+                                                        style={{ width: "10vw" }} type={element.type} min={element.minValue} 
+                                                        max={element.maxValue} name={element.name} defaultValue={element.defaultValue}
+                                                        size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} />
+                                                }
                                             </Col>
                                         </Row>
                                     }

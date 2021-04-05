@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Button, Modal, Form, FormControl, Container, Dropdown, DropdownButton, Col, Row } from 'react-bootstrap';
-import {
-    postNewJob,
-    getAvailableJobDetailKeys,
-    getJobDetailFormData
-} from './AvancedJobSearchViewSlice';
+import { } from './AdvancedJobSearchViewSlice';
 import {
     SERVICE_TYPE,
-    CURRENCY_FORMAT
+    CURRENCY_FORMAT,
+    INPUT_TYPES
 } from '../../constants';
 import { selectAPIKey } from '../shared-vars/SharedStateSlice';
 import NumberFormat from 'react-number-format';
@@ -54,6 +51,7 @@ export function AdvancedJobSearchView(props) {
     /***** dynamic filter form renderer start *****/
     const renderDynamicFilter = function (jobDetailFilterTemplate,selectedServiceTypeKey) {
         console.log("rendering form based on template...");
+        console.log("service type: "+selectedServiceTypeKey)
         var renderedElements = [];
         var groupedElements = {};
 
@@ -61,7 +59,6 @@ export function AdvancedJobSearchView(props) {
         if (jobDetailFilterTemplate != null) {
 
             jobDetailFilterTemplate.filterElements.forEach((element) => {
-                console.log(JSON.stringify(element))
                 if(element.serviceType===SERVICE_TYPE.ALL || element.serviceType===selectedServiceTypeObj.KEY){
                     if (!groupedElements[element.groupName]){
                             groupedElements[element.groupName] = [];
@@ -79,7 +76,8 @@ export function AdvancedJobSearchView(props) {
                                 <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                 <FormControl id={elementArr[0].id} style={{ width: "10vw" }}
                                     type={elementArr[0].fieldType} name={elementArr[0].name}
-                                    min={0} max={parseInt(elementArr[0].limit)}
+                                    min={elementArr[0].minValue} max={elementArr[0].maxValue} 
+                                    defaultValue={elementArr[0].defaultValue}
                                     size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} 
                                 />
                             </Col>
@@ -87,7 +85,7 @@ export function AdvancedJobSearchView(props) {
                     );
                 }
                 /* number (min & max) */
-                if (elementArr.length === 2 && elementArr[0].fieldType === "number" && elementArr[1].fieldType === "number") {
+                if (elementArr.length === 2 && elementArr[0].fieldType === INPUT_TYPES.NUMBER && elementArr[1].fieldType === INPUT_TYPES.NUMBER) {
                     if (elementArr[0].format === CURRENCY_FORMAT && elementArr[1].format === CURRENCY_FORMAT) {
                         renderedElements.push(
                             <Row key={'row_'+groupName+"_"+elementArr[0].name}>
@@ -95,14 +93,18 @@ export function AdvancedJobSearchView(props) {
                                     <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                     <NumberFormat style={{ width: "10vw" }} name={elementArr[0].name} onChange={handleOnChangeFormElement}
                                         className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
-                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[0].limit) }} 
+                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[0].maxValue)}}
+                                        min={elementArr[0].minValue} max={elementArr[0].maxValue} 
+                                        defaultValue={elementArr[0].defaultValue} 
                                     />
                                 </Col>
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[1].fieldLabel}</Form.Label>
                                     <NumberFormat className=".form-control-sm" style={{ width: "10vw" }} name={elementArr[1].name} onChange={handleOnChangeFormElement}
                                         className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
-                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[0].limit) }} 
+                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[1].maxValue) }} 
+                                        min={elementArr[1].minValue} max={elementArr[1].maxValue} 
+                                        defaultValue={elementArr[1].defaultValue}
                                     />
                                 </Col>
                             </Row>);
@@ -113,17 +115,19 @@ export function AdvancedJobSearchView(props) {
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                     <FormControl id={elementArr[0].id}
-                                        style={{ width: "10vw" }} min={0} type="number" max={parseInt(elementArr[0].limit)} 
-                                        name={elementArr[0].name}
-                                        size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} 
+                                        style={{ width: "10vw" }} type="number" name={elementArr[0].name}
+                                        size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement}
+                                        min={elementArr[0].minValue} max={elementArr[0].maxValue} 
+                                        defaultValue={elementArr[0].defaultValue}
                                     />
                                 </Col>
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[1].fieldLabel}</Form.Label>
                                     <FormControl id={elementArr[1].id}
-                                        style={{ width: "10vw" }} min={0} type="number" max={parseInt(elementArr[1].limit)}
-                                         name={elementArr[1].name}
+                                        style={{ width: "10vw" }} type="number" name={elementArr[1].name}
                                         size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement}
+                                        min={elementArr[1].minValue} max={elementArr[1].maxValue} 
+                                        defaultValue={elementArr[1].defaultValue}
                                     />
                                 </Col>
                             </Row>);

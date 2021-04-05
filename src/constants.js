@@ -29,3 +29,9 @@ export const SERVICE_TYPE = {
 
 export const TOAST_SHOW_DURATION_SECONDS = 3;
 export const CURRENCY_FORMAT = "CURRENCY";
+export const INPUT_TYPES = {
+    "NUMBER":"NUMBER",
+    "SELECT":"SELECT",
+    "CHECKBOX":"CHECKBOX",
+    "TEXT":"TEXT"
+}

@@ -9,7 +9,7 @@ export const yyyy_mm_dd = function (dateIn) {
 
 export const validateNumberFormat = function (valueObj, limit) {
     const value = valueObj.value;
-    if (parseInt(value) >= 0 && parseInt(value) <= parseInt(limit)) {
+    if (parseInt(value) >= 0 && parseInt(value) <= limit) {
         return valueObj;
     }
 }
