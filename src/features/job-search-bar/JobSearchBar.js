@@ -39,7 +39,7 @@ export function JobSearchBar() {
     const [selectFilterTemplateIndex, setSelectedFilterTemplateIndex] = useState(null);
     const [selectedFilterTemplate, setSelectedFilterTemplate] = useState(null);
     const [selectedServiceTypeKey, setServiceTypeKey] = useState(SERVICE_TYPE.ALL);
-
+    const [firstLoad, setFirstLoad] = useState(true);
     /* on init */
     useEffect(() => {
         setIsLoading(true);
@@ -102,6 +102,10 @@ export function JobSearchBar() {
             setIsLoading(false);
             setAvailableFilterTemplates(response.data);
             console.log("fetched available template information : " + JSON.stringify(response.data));
+            if(firstLoad){
+                handleSimpleSearch();
+                setFirstLoad(false);
+            }
         }
         else {
             toast.error("Unable to fetch available search parameters, try refreshing the page.");
