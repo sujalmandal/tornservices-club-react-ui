@@ -7,9 +7,7 @@ import { JobPostView } from '../job-post-view/JobPostView';
 import { AdvancedJobSearchView } from '../advanced-job-search-view/AdvancedJobSearchView';
 import {
     getAvailableFilters,
-    getFilterTemplateByTemplateName,
-    simpleSearchJobsByFilter,
-    setSearchResults
+    getFilterTemplateByTemplateName
 } from './JobSearchBarSlice';
 import {
     SERVICE_TYPE
@@ -17,7 +15,10 @@ import {
 import SpinnerText from '../common-components/SpinnerText';
 import { toast } from 'react-toastify';
 import { selectIsLoggedIn } from '../shared-vars/SharedStateSlice';
-
+import {
+    simpleSearchJobsByFilter,
+    setSearchResults
+} from '../shared-vars/SharedStateSlice';
 export function JobSearchBar() {
 
     const dispatch = useDispatch();

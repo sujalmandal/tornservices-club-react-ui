@@ -4,7 +4,7 @@ import { Container, Card, Button, CardImg, CardTitle, CardText, CardColumns } fr
 import { Form, Col, Row } from 'react-bootstrap';
 import {
     selectSearchResults
-} from './JobListTableSlice';
+} from '../shared-vars/SharedStateSlice';
 import {renderFriendlyDate} from '../../utils/AppUtils';
 
 export function JobListTable() {

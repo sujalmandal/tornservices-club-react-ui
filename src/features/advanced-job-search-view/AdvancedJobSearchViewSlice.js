@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
-  
+  getAdvancedSearchURI
 } from '../../utils/EndpointUtils'
 import axios from 'axios';
 
-export const AvancedJobSearchViewSlice = createSlice({
+export const AdvancedJobSearchViewSlice = createSlice({
   name: 'advancedJobSearchView',
   initialState: {
 
@@ -14,5 +14,5 @@ export const AvancedJobSearchViewSlice = createSlice({
   }
 });
 
-export const { } = AvancedJobSearchViewSlice.actions;
-export default AvancedJobSearchViewSlice.reducer;
+export const { } = AdvancedJobSearchViewSlice.actions;
+export default AdvancedJobSearchViewSlice.reducer;

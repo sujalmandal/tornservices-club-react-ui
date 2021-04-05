@@ -1,4 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
+import {
+      getSimpleSearchURI,
+      getAdvancedSearchURI
+} from '../../utils/EndpointUtils'
 
 export const initialSharedState = {
       apiKey: "",
@@ -19,7 +24,10 @@ const setSharedStateToLocalStorage = function (sharedCache) {
 
 export const sharedStateSlice = createSlice({
       name: 'sharedState',
-      initialState: getSharedStateFromLocalStorage(),
+      initialState: {
+            ...getSharedStateFromLocalStorage(),
+            searchResults: []
+      },
       reducers: {
             updateApiKey: (state, action) => {
                   state.apiKey = action.payload;
@@ -27,18 +35,47 @@ export const sharedStateSlice = createSlice({
             updateSharedState: (state, action) => {
                   state = action.payload;
                   setSharedStateToLocalStorage(action.payload);
+            },
+            setSearchResults: (state, action) => {
+                  state.searchResults = action.payload;
+                  console.log("search results set to redux state: " + JSON.stringify(action.payload));
             }
       }
 });
 
-export const wipeSharedState=(dispatch)=>{
+export const wipeSharedState = (dispatch) => {
       localStorage.removeItem("sharedState");
       dispatch(updateSharedState(initialSharedState));
-      setTimeout(()=>{window.location.reload()},1000);
+      setTimeout(() => { window.location.reload() }, 1000);
 }
 
-export const { updateApiKey, updateSharedState } = sharedStateSlice.actions;
+
+export const simpleSearchJobsByFilter = function (filterRequestDTO, onResult) {
+      return function () {
+            axios.post(getSimpleSearchURI(), filterRequestDTO)
+                  .then((response) => {
+                        onResult(true, response);
+                  }, (error) => {
+                        onResult(false, error);
+                  });
+      }
+}
+
+export const advancedSearchJobsByFilter = function (filterRequestDTO, onResult) {
+      return function () {
+            axios.post(getAdvancedSearchURI(), filterRequestDTO)
+                  .then((response) => {
+                        onResult(true, response);
+                  }, (error) => {
+                        onResult(false, error);
+                  });
+      }
+}
+
+
+export const { updateApiKey, updateSharedState, setSearchResults } = sharedStateSlice.actions;
 export const selectPlayerInfo = (state) => state.sharedState;
-export const selectIsLoggedIn =(state) => state.sharedState.isLoggedIn;
-export const selectAPIKey =(state) => state.sharedState.apiKey;
+export const selectIsLoggedIn = (state) => state.sharedState.isLoggedIn;
+export const selectAPIKey = (state) => state.sharedState.apiKey;
+export const selectSearchResults = (state) => state.sharedState.searchResults;
 export default sharedStateSlice.reducer;

@@ -8,15 +8,8 @@ import axios from 'axios';
 
 export const jobSearchBarSlice = createSlice({
     name: 'jobSearchBar',
-    initialState: {
-        searchResults:[]
-    },
-    reducers: {
-      setSearchResults:(state,action) => {
-        state.searchResults=action.payload;
-        console.log("search results set to redux state: "+JSON.stringify(action.payload));
-      }
-    },
+    initialState: { },
+    reducers: { },
   });
 
   /* api calls */
@@ -42,19 +35,7 @@ export const jobSearchBarSlice = createSlice({
     }
   }
 
-  export const simpleSearchJobsByFilter = function (filterRequestDTO,onResult) {
-    return function () {
-      axios.post(getSimpleSearchURI(),filterRequestDTO)
-        .then((response) => {
-          onResult(true, response);
-        }, (error) => {
-          onResult(false, error);
-        });
-    }
-  }
-
 /* selectors */
-export const selectSearchResults =(state) => state.jobSearchBar.searchResults;
 
-export const {setSearchResults} = jobSearchBarSlice.actions;
+export const {} = jobSearchBarSlice.actions;
 export default jobSearchBarSlice.reducer;
