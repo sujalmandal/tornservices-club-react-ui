@@ -11,7 +11,7 @@ import { selectAPIKey } from '../shared-vars/SharedStateSlice';
 import NumberFormat from 'react-number-format';
 import SpinnerText from '../common-components/SpinnerText';
 import { toast } from 'react-toastify';
-import {validateNumberFormat} from '../../utils/AppUtils';
+import { validateNumberFormat } from '../../utils/AppUtils';
 
 export function AdvancedJobSearchView(props) {
 
@@ -29,7 +29,7 @@ export function AdvancedJobSearchView(props) {
         if (props.isOpen) {
             console.log("opening advanced search dialog --");
             console.log("selected template : " + JSON.stringify(props.jobDetailFilterTemplate))
-            console.log("selected serviceType: "+selectedServiceTypeObj.KEY);
+            console.log("selected serviceType: " + selectedServiceTypeObj.KEY);
         }
     }, [props.isOpen])
 
@@ -49,9 +49,9 @@ export function AdvancedJobSearchView(props) {
     }
 
     /***** dynamic filter form renderer start *****/
-    const renderDynamicFilter = function (jobDetailFilterTemplate,selectedServiceTypeKey) {
+    const renderDynamicFilter = function (jobDetailFilterTemplate, selectedServiceTypeKey) {
         console.log("rendering form based on template...");
-        console.log("service type: "+selectedServiceTypeKey)
+        console.log("service type: " + selectedServiceTypeKey)
         var renderedElements = [];
         var groupedElements = {};
 
@@ -59,9 +59,9 @@ export function AdvancedJobSearchView(props) {
         if (jobDetailFilterTemplate != null) {
 
             jobDetailFilterTemplate.filterElements.forEach((element) => {
-                if(element.serviceType===SERVICE_TYPE.ALL || element.serviceType===selectedServiceTypeObj.KEY){
-                    if (!groupedElements[element.groupName]){
-                            groupedElements[element.groupName] = [];
+                if (element.serviceType === SERVICE_TYPE.ALL || element.serviceType === selectedServiceTypeObj.KEY) {
+                    if (!groupedElements[element.groupName]) {
+                        groupedElements[element.groupName] = [];
                     }
                     groupedElements[element.groupName].push(element);
                 }
@@ -71,26 +71,31 @@ export function AdvancedJobSearchView(props) {
                 /* text or checkbox */
                 if (elementArr.length == 1) {
                     if (elementArr[0].fieldType === INPUT_TYPES.SELECT) {
-                        renderedElements.push(<Row key={'row_'+groupName+"_"+elementArr[0].name}>
-                            <Col><Form.Label>{elementArr[0].label}</Form.Label></Col>
-                            <Col><Form.Control as="select" defaultValue={elementArr[0].defaultValue}
-                                 name={elementArr[0].name} onChange={handleOnChangeFormElement}>
-                                {elementArr[0].options.map((option,index)=>{
-                                    return <option>{option}</option>;
-                                })}
-                            </Form.Control></Col>
-                        </Row>);
-                    }
-                    else{
                         renderedElements.push(
-                            <Row key={'row_'+groupName+"_"+elementArr[0].name}>
+                            <Row key={'row_' + groupName + "_" + elementArr[0].name}>
+                                <Container>
+                                    <Col>
+                                        <Row><Form.Label>{elementArr[0].fieldLabel}</Form.Label></Row>
+                                        <Row><Form.Control as="select" defaultValue={elementArr[0].defaultValue}
+                                            name={elementArr[0].name} onChange={handleOnChangeFormElement}>
+                                            {elementArr[0].options.map((option, index) => {
+                                                return <option>{option}</option>;
+                                            })}
+                                        </Form.Control></Row>
+                                    </Col>
+                                </Container>
+                            </Row>);
+                    }
+                    else {
+                        renderedElements.push(
+                            <Row key={'row_' + groupName + "_" + elementArr[0].name}>
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                     <FormControl id={elementArr[0].id} style={{ width: "10vw" }}
                                         type={elementArr[0].fieldType} name={elementArr[0].name}
-                                        min={elementArr[0].minValue} max={elementArr[0].maxValue} 
+                                        min={elementArr[0].minValue} max={elementArr[0].maxValue}
                                         defaultValue={elementArr[0].defaultValue}
-                                        size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} 
+                                        size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement}
                                     />
                                 </Col>
                             </Row>
@@ -101,22 +106,22 @@ export function AdvancedJobSearchView(props) {
                 if (elementArr.length === 2 && elementArr[0].fieldType === INPUT_TYPES.NUMBER && elementArr[1].fieldType === INPUT_TYPES.NUMBER) {
                     if (elementArr[0].format === CURRENCY_FORMAT && elementArr[1].format === CURRENCY_FORMAT) {
                         renderedElements.push(
-                            <Row key={'row_'+groupName+"_"+elementArr[0].name}>
+                            <Row key={'row_' + groupName + "_" + elementArr[0].name}>
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                     <NumberFormat style={{ width: "10vw" }} name={elementArr[0].name} onChange={handleOnChangeFormElement}
                                         className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
-                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[0].maxValue)}}
-                                        min={elementArr[0].minValue} max={elementArr[0].maxValue} 
-                                        defaultValue={elementArr[0].defaultValue} 
+                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[0].maxValue) }}
+                                        min={elementArr[0].minValue} max={elementArr[0].maxValue}
+                                        defaultValue={elementArr[0].defaultValue}
                                     />
                                 </Col>
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[1].fieldLabel}</Form.Label>
                                     <NumberFormat className=".form-control-sm" style={{ width: "10vw" }} name={elementArr[1].name} onChange={handleOnChangeFormElement}
                                         className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
-                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[1].maxValue) }} 
-                                        min={elementArr[1].minValue} max={elementArr[1].maxValue} 
+                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[1].maxValue) }}
+                                        min={elementArr[1].minValue} max={elementArr[1].maxValue}
                                         defaultValue={elementArr[1].defaultValue}
                                     />
                                 </Col>
@@ -124,13 +129,13 @@ export function AdvancedJobSearchView(props) {
                     }
                     else {
                         renderedElements.push(
-                            <Row key={'row_'+groupName+"_"+elementArr[0].name}>
+                            <Row key={'row_' + groupName + "_" + elementArr[0].name}>
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                     <FormControl id={elementArr[0].id}
                                         style={{ width: "10vw" }} type="number" name={elementArr[0].name}
                                         size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement}
-                                        min={elementArr[0].minValue} max={elementArr[0].maxValue} 
+                                        min={elementArr[0].minValue} max={elementArr[0].maxValue}
                                         defaultValue={elementArr[0].defaultValue}
                                     />
                                 </Col>
@@ -139,7 +144,7 @@ export function AdvancedJobSearchView(props) {
                                     <FormControl id={elementArr[1].id}
                                         style={{ width: "10vw" }} type="number" name={elementArr[1].name}
                                         size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement}
-                                        min={elementArr[1].minValue} max={elementArr[1].maxValue} 
+                                        min={elementArr[1].minValue} max={elementArr[1].maxValue}
                                         defaultValue={elementArr[1].defaultValue}
                                     />
                                 </Col>
@@ -172,7 +177,7 @@ export function AdvancedJobSearchView(props) {
                     <Container>
                         <Row>
                             <Col>
-                            <DropdownButton id="dropdown-basic-button-service-type" title={"I am " + selectedServiceTypeObj.LABEL} onSelect={handleSelectServiceTypeChange}>
+                                <DropdownButton id="dropdown-basic-button-service-type" title={"I am " + selectedServiceTypeObj.LABEL} onSelect={handleSelectServiceTypeChange}>
                                     <Dropdown.Item eventKey={SERVICE_TYPE.REQUEST.FORM.KEY}>{SERVICE_TYPE.REQUEST.FORM.LABEL}</Dropdown.Item>
                                     <Dropdown.Item eventKey={SERVICE_TYPE.OFFER.FORM.KEY}>{SERVICE_TYPE.OFFER.FORM.LABEL}</Dropdown.Item>
                                 </DropdownButton>
@@ -187,7 +192,9 @@ export function AdvancedJobSearchView(props) {
                                         </Form.Text>
                                     </Row>
                                     <Row style={{ paddingTop: "0.5vw" }}>
-                                        {props.isOpen?renderDynamicFilter(props.jobDetailFilterTemplate,selectedServiceTypeObj.KEY):""}
+                                        <Col>
+                                            {props.isOpen ? renderDynamicFilter(props.jobDetailFilterTemplate, selectedServiceTypeObj.KEY) : ""}
+                                        </Col>
                                     </Row>
                                 </Container>
                             </Form>
