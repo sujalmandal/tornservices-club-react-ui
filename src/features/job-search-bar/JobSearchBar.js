@@ -32,6 +32,7 @@ export function JobSearchBar() {
     });
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isSearchLoading, setIsSearchLoading] = useState(false);
     const [filterDetailMap, setFilterDetailMap] = useState({});
     const [isAdvancedSearchPopupOpen, setAdvancedSearchPopupOpen] = useState(false);
     const [availableFilterTemplates, setAvailableFilterTemplates] = useState([]);
@@ -82,7 +83,7 @@ export function JobSearchBar() {
     }
 
     const handleSimpleSearch = function () {
-       setIsLoading(true);
+        setIsSearchLoading(true);
        console.log("triggering simple search with criteria : "+JSON.stringify(searchFilterObj));
        dispatch(simpleSearchJobsByFilter(searchFilterObj,onSimpleSearchJobsByFilterResult))
     }
@@ -122,7 +123,7 @@ export function JobSearchBar() {
 
     const onSimpleSearchJobsByFilterResult = function (isSuccess, response) {
         if (isSuccess) {
-            setIsLoading(false);
+            setIsSearchLoading(false);
             dispatch(setSearchResults(response.data.jobs))
         }
         else {
@@ -178,11 +179,11 @@ export function JobSearchBar() {
                             </Form.Group>
 
                             <ButtonGroup style={{ paddingLeft: "0.5vw" }} >
-                                <Button onClick={openAdvancedSearchPopup} variant="outline-primary" disabled={(isLoading || (selectedFilterTemplate == null))}>
-                                    <SpinnerText isLoading={isLoading} loadingText="Just a min.." text="Advanced Search" />
+                                <Button onClick={openAdvancedSearchPopup} variant="outline-primary" disabled={(selectedFilterTemplate == null)}>
+                                    <SpinnerText loadingText="Just a min.." text="Advanced Search" />
                                 </Button>
-                                <Button onClick={handleSimpleSearch} variant="primary" disabled={(isLoading)}>
-                                    <SpinnerText isLoading={isLoading} loadingText="Just a min.." text="Search" />
+                                <Button onClick={handleSimpleSearch} variant="primary" disabled={(isSearchLoading)}>
+                                    <SpinnerText isLoading={isSearchLoading} loadingText="Just a min.." text="Search" />
                                 </Button>
                             </ButtonGroup>
                         </Form>

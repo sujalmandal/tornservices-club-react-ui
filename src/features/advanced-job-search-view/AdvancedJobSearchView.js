@@ -70,19 +70,32 @@ export function AdvancedJobSearchView(props) {
             for (const [groupName, elementArr] of Object.entries(groupedElements)) {
                 /* text or checkbox */
                 if (elementArr.length == 1) {
-                    renderedElements.push(
-                        <Row key={'row_'+groupName+"_"+elementArr[0].name}>
-                            <Col>
-                                <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
-                                <FormControl id={elementArr[0].id} style={{ width: "10vw" }}
-                                    type={elementArr[0].fieldType} name={elementArr[0].name}
-                                    min={elementArr[0].minValue} max={elementArr[0].maxValue} 
-                                    defaultValue={elementArr[0].defaultValue}
-                                    size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} 
-                                />
-                            </Col>
-                        </Row>
-                    );
+                    if (elementArr[0].fieldType === INPUT_TYPES.SELECT) {
+                        renderedElements.push(<Row key={'row_'+groupName+"_"+elementArr[0].name}>
+                            <Col><Form.Label>{elementArr[0].label}</Form.Label></Col>
+                            <Col><Form.Control as="select" defaultValue={elementArr[0].defaultValue}
+                                 name={elementArr[0].name} onChange={handleOnChangeFormElement}>
+                                {elementArr[0].options.map((option,index)=>{
+                                    return <option>{option}</option>;
+                                })}
+                            </Form.Control></Col>
+                        </Row>);
+                    }
+                    else{
+                        renderedElements.push(
+                            <Row key={'row_'+groupName+"_"+elementArr[0].name}>
+                                <Col>
+                                    <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
+                                    <FormControl id={elementArr[0].id} style={{ width: "10vw" }}
+                                        type={elementArr[0].fieldType} name={elementArr[0].name}
+                                        min={elementArr[0].minValue} max={elementArr[0].maxValue} 
+                                        defaultValue={elementArr[0].defaultValue}
+                                        size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} 
+                                    />
+                                </Col>
+                            </Row>
+                        );
+                    }
                 }
                 /* number (min & max) */
                 if (elementArr.length === 2 && elementArr[0].fieldType === INPUT_TYPES.NUMBER && elementArr[1].fieldType === INPUT_TYPES.NUMBER) {

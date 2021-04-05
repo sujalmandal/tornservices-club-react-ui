@@ -8,12 +8,13 @@ import {
 } from './JobPostViewSlice';
 import {
     SERVICE_TYPE,
-    CURRENCY_FORMAT
+    CURRENCY_FORMAT,
+    INPUT_TYPES
 } from '../../constants';
 import { selectAPIKey } from '../shared-vars/SharedStateSlice';
 import NumberFormat from 'react-number-format';
 import SpinnerText from '../common-components/SpinnerText';
-import {validateNumberFormat} from '../../utils/AppUtils';
+import { validateNumberFormat } from '../../utils/AppUtils';
 import { toast } from 'react-toastify';
 
 export function JobPostView() {
@@ -36,12 +37,12 @@ export function JobPostView() {
     const [createJobDTO, setCreateJobDTO] = useState(initialCreateJobDTO);
 
     /* side effects */
-    useEffect(()=>{
+    useEffect(() => {
         setCreateJobDTO({
             ...createJobDTO,
             serviceType: selectedServiceTypeObj.KEY
         });
-    },[selectedServiceTypeObj]);
+    }, [selectedServiceTypeObj]);
 
     /* handlers */
     const handleOpenJobPost = function () {
@@ -73,8 +74,9 @@ export function JobPostView() {
     const handleOnChangeFormElement = function (e) {
         var fieldName = e.target.name;
         var fieldValue = e.target.value;
-        fieldValue=fieldValue.replaceAll('$', '');
-        fieldValue=fieldValue.replaceAll(',', '');
+        fieldValue = fieldValue.replaceAll('$', '');
+        fieldValue = fieldValue.replaceAll(',', '');
+        console.log("fieldName:"+fieldName+", fieldValue:"+fieldValue);
         createJobDTO.jobDetails[fieldName] = fieldValue;
         setCreateJobDTO(createJobDTO);
     }
@@ -126,10 +128,74 @@ export function JobPostView() {
         }
     }
 
+    const renderDynamicJobDetailFormBasedOnTemplate = function (jobDetailsTemplate, selectedServiceTypeObj) {
+        var renderedElements = [];
+        if (jobDetailsTemplate != null) {
+            jobDetailsTemplate.elements.forEach(element => {
+                if (element.serviceType === "ALL" || element.serviceType === selectedServiceTypeObj.KEY) {
+                    if (element.type == INPUT_TYPES.NUMBER) {
+                        if (element.format === CURRENCY_FORMAT) {
+                            renderedElements.push(<Row key={'row_' + element.name} style={{ paddingRight: "2vw", paddingLeft: "2vw", paddingTop: "1vh" }}>
+                                <Col><Form.Label className="mr-sm-4">{element.label}</Form.Label></Col>
+                                <Col>
+                                    <NumberFormat style={{ width: "10vw" }} name={element.name} onChange={handleOnChangeFormElement}
+                                        className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
+                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, element.maxValue) }}
+                                        defaultValue={element.defaultValue} />
+                                </Col></Row>);
+                        }
+                        else {
+                            renderedElements.push(<Row key={'row_' + element.name} style={{ paddingRight: "2vw", paddingLeft: "2vw", paddingTop: "1vh" }}>
+                                <Col><Form.Label className="mr-sm-4">{element.label}</Form.Label></Col>
+                                <Col>
+                                    <FormControl id={element.id}
+                                        style={{ width: "10vw" }} type="number" min={element.minValue}
+                                        max={element.maxValue} name={element.name} defaultValue={element.defaultValue}
+                                        size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} />
+                                </Col></Row>);
+                        }
+                    }
+                    else if (element.type === INPUT_TYPES.CHECKBOX) {
+                        renderedElements.push(<Row key={'row_' + element.name} style={{ paddingRight: "2vw", paddingLeft: "2vw", paddingTop: "1vh" }}>
+                            <Col><Form.Label className="mr-sm-4">{element.label}</Form.Label></Col>
+                            <Col>
+                                <FormControl id={element.id}
+                                    style={{ width: "10vw" }} type="checkbox" min={element.minValue}
+                                    max={element.maxValue} name={element.name} defaultValue={element.defaultValue}
+                                    size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} />
+                            </Col></Row>);
+                    }
+                    else if (element.type === INPUT_TYPES.SELECT) {
+                        renderedElements.push(<Row key={'row_' + element.name} style={{ paddingRight: "2vw", paddingLeft: "2vw", paddingTop: "1vh" }}>
+                            <Col><Form.Label>{element.label}</Form.Label></Col>
+                            <Col><Form.Control as="select" name={element.name} defaultValue={element.defaultValue} 
+                                    onChange={handleOnChangeFormElement}>
+                                {element.options.map((option,index)=>{
+                                    return <option>{option}</option>;
+                                })}
+                            </Form.Control></Col>
+                        </Row>);
+                    }
+                    else {
+                        renderedElements.push(<Row key={'row_' + element.name} style={{ paddingRight: "2vw", paddingLeft: "2vw", paddingTop: "1vh" }}>
+                            <Col><Form.Label className="mr-sm-4">{element.label}</Form.Label></Col>
+                            <Col>
+                                <FormControl id={element.id}
+                                    style={{ width: "10vw" }} type="text" min={element.minValue}
+                                    max={element.maxValue} name={element.name} defaultValue={element.defaultValue}
+                                    size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} />
+                            </Col></Row>);
+                    }
+                }
+            });
+        }
+        return renderedElements;
+    }
+
     return (
         <div>
             <Button onClick={handleOpenJobPost} variant="outline-success" disabled={isLoading}>
-                <SpinnerText isLoading={isLoading} loadingText="Just a min.." text="Post New Job"/>
+                <SpinnerText isLoading={isLoading} loadingText="Just a min.." text="Post New Job" />
             </Button>
             <Modal
                 size="lg"
@@ -151,41 +217,22 @@ export function JobPostView() {
                             </Col>
                             <Col>
                                 <DropdownButton id="dropdown-basic-button-job-details" title={"Service : " + (jobType ? jobType : "-select-")} onSelect={handleJobTypeSelect}>
-                                    {availableJobDetailTemplates.map((formTemplate, index) =>{
-                                        return <Dropdown.Item key={'Dropdown.Item_'+index} eventKey={index}>{formTemplate.jobDetailFormTemplateLabel}</Dropdown.Item>
+                                    {availableJobDetailTemplates.map((formTemplate, index) => {
+                                        return <Dropdown.Item key={'Dropdown.Item_' + index} eventKey={index}>{formTemplate.jobDetailFormTemplateLabel}</Dropdown.Item>
                                     })}
                                 </DropdownButton>
                             </Col>
                         </Row>
                         <Row style={{ paddingTop: "5vh" }}>
                             <Container>
-                                {jobDetailsTemplate == null ? "" : jobDetailsTemplate.elements.map((element => {
-                                    if (element.serviceType === "ALL" || element.serviceType === selectedServiceTypeObj.KEY) {
-                                        return <Row key={'row_'+element.name} style={{ paddingRight: "2vw", paddingLeft: "2vw", paddingTop: "1vh" }}>
-                                            <Col><Form.Label className="mr-sm-4">{element.label}</Form.Label></Col>
-                                            <Col>
-                                                {(element.format && element.format === CURRENCY_FORMAT) ?
-                                                    <NumberFormat style={{ width: "10vw" }} name={element.name} onChange={handleOnChangeFormElement}
-                                                     className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'} 
-                                                     isAllowed={(valObj) => { return validateNumberFormat(valObj, element.maxValue) }} 
-                                                     defaultValue={element.defaultValue} /> 
-                                                     :
-                                                    <FormControl id={element.id}
-                                                        style={{ width: "10vw" }} type={element.type} min={element.minValue} 
-                                                        max={element.maxValue} name={element.name} defaultValue={element.defaultValue}
-                                                        size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} />
-                                                }
-                                            </Col>
-                                        </Row>
-                                    }
-                                }))}
+                                {renderDynamicJobDetailFormBasedOnTemplate(jobDetailsTemplate, selectedServiceTypeObj)}
                             </Container>
                         </Row>
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={handlePostNewJob} disabled={isLoading}>
-                        <SpinnerText isLoading={isLoading} loadingText="Working on it.." text="Post!"/>
+                        <SpinnerText isLoading={isLoading} loadingText="Working on it.." text="Post!" />
                     </Button>
                     <Button variant="secondary" disabled={isLoading} onClick={() => { setShowJobPostForm(false) }}>Cancel</Button>
                 </Modal.Footer>
