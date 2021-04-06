@@ -7,13 +7,9 @@ export const jobListTableSlice = createSlice({
       
     },
     reducers: {
-      getDetails: (state,action) => {
-        
-      }
+    
     }
   });
 
-export const selectSearchResults =(state) => state.jobSearchBar.searchResults;
-
-export const {getDetails} = jobListTableSlice.actions;
+export const {} = jobListTableSlice.actions;
 export default jobListTableSlice.reducer;
