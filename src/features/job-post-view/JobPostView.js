@@ -143,7 +143,7 @@ export function JobPostView() {
                                 <Col>
                                     <NumberFormat style={{ width: "10vw" }} name={element.name} onChange={handleOnChangeFormElement}
                                         className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
-                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, element.maxValue) }}
+                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, element.maxValue,element.minValue) }}
                                         defaultValue={element.defaultValue} />
                                 </Col></Row>);
                         }

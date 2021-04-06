@@ -64,7 +64,7 @@ export function AdvancedJobSearchView(props) {
         console.log(JSON.stringify(filterFieldObj));
 
         filterFields.push(filterFieldObj);
-        filterFields=_.uniqBy(filterFields, 'groupName');
+        filterFields=_.uniqBy(filterFields, 'name');
         setFilterRequestDTO({ 
             ...filterRequestDTO ,
             "filterFields":filterFields
@@ -81,6 +81,7 @@ export function AdvancedJobSearchView(props) {
         setIsLoading(false);
         props.onClose();
         if (isSuccess) {
+            console.log("advanced search results: "+JSON.stringify(response.data));
             setSearchResults(response.data);
         }
         else {
@@ -148,8 +149,8 @@ export function AdvancedJobSearchView(props) {
                                             handleOnChangeFormElement(
                                                 e.target.value,
                                                 elementArr[0].fieldName,
-                                                elementArr[0].groupName
-                                                ,elementArr[0].fieldType);
+                                                elementArr[0].groupName,
+                                                elementArr[0].fieldType);
                                         }}
                                     />
                                 </Col>
@@ -166,15 +167,15 @@ export function AdvancedJobSearchView(props) {
                                     <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                     <NumberFormat style={{ width: "10vw" }} name={elementArr[0].fieldName}
                                         className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
-                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[0].maxValue) }}
+                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[0].maxValue,elementArr[0].minValue) }}
                                         min={elementArr[0].minValue} max={elementArr[0].maxValue}
                                         defaultValue={elementArr[0].defaultValue} groupName={elementArr[0].groupName}
                                         onChange={(e)=>{
                                             handleOnChangeFormElement(
                                                 e.target.value,
                                                 elementArr[0].fieldName,
-                                                elementArr[0].groupName
-                                                ,elementArr[0].fieldType);
+                                                elementArr[0].groupName,
+                                                elementArr[0].fieldType);
                                         }}
                                     />
                                 </Col>
@@ -182,15 +183,15 @@ export function AdvancedJobSearchView(props) {
                                     <Form.Label className="mr-sm-4">{elementArr[1].fieldLabel}</Form.Label>
                                     <NumberFormat className=".form-control-sm" style={{ width: "10vw" }} name={elementArr[1].fieldName}
                                         className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
-                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[1].maxValue) }}
+                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[1].maxValue, elementArr[1].minValue) }}
                                         min={elementArr[1].minValue} max={elementArr[1].maxValue}
                                         defaultValue={elementArr[1].defaultValue} groupName={elementArr[1].groupName}
                                         onChange={(e)=>{
                                             handleOnChangeFormElement(
                                                 e.target.value,
-                                                elementArr[0].fieldName,
-                                                elementArr[0].groupName
-                                                ,elementArr[0].fieldType);
+                                                elementArr[1].fieldName,
+                                                elementArr[1].groupName,
+                                                elementArr[1].fieldType);
                                         }}
                                     />
                                 </Col>
@@ -210,8 +211,8 @@ export function AdvancedJobSearchView(props) {
                                             handleOnChangeFormElement(
                                                 e.target.value,
                                                 elementArr[0].fieldName,
-                                                elementArr[0].groupName
-                                                ,elementArr[0].fieldType);
+                                                elementArr[0].groupName,
+                                                elementArr[0].fieldType);
                                         }}
                                     />
                                 </Col>
@@ -225,9 +226,9 @@ export function AdvancedJobSearchView(props) {
                                         onChange={(e)=>{
                                             handleOnChangeFormElement(
                                                 e.target.value,
-                                                elementArr[0].fieldName,
-                                                elementArr[0].groupName
-                                                ,elementArr[0].fieldType);
+                                                elementArr[1].fieldName,
+                                                elementArr[1].groupName,
+                                                elementArr[1].fieldType);
                                         }}
                                     />
                                 </Col>

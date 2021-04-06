@@ -9,9 +9,16 @@ export const yyyy_mm_dd = function (dateIn) {
     return dateAsString;
 }
 
-export const validateNumberFormat = function (valueObj, limit) {
+export const validateNumberFormat = function (valueObj, maxValue, minValue) {
     const value = valueObj.value;
-    if (parseInt(value) >= 0 && parseInt(value) <= limit) {
+    console.log("value passed: "+value+", limit: "+maxValue)
+    if(value===""){
+        console.log("value is empty")
+        valueObj.value=minValue;
+        valueObj.formattedValue="$"+minValue;
+        return valueObj;
+    }
+    if (parseInt(value) >= parseInt(minValue) && parseInt(value) <= parseInt(maxValue)) {
         return valueObj;
     }
 }
