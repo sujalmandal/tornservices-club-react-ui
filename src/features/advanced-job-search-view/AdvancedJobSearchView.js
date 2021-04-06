@@ -63,8 +63,18 @@ export function AdvancedJobSearchView(props) {
        
         console.log(JSON.stringify(filterFieldObj));
 
-        filterFields.push(filterFieldObj);
-        filterFields=_.uniqBy(filterFields, 'name');
+        
+        var previousIndex = _.findIndex(filterFields, {'name': fieldName});
+        console.log(previousIndex);
+        //new element
+        if(previousIndex===-1){
+            filterFields.push(filterFieldObj);
+        }
+        else{
+            //replace existing element
+            filterFields[previousIndex]=filterFieldObj;
+        }
+        //filterFields=_.uniqBy(filterFields, 'name');
         setFilterRequestDTO({ 
             ...filterRequestDTO ,
             "filterFields":filterFields
@@ -81,8 +91,8 @@ export function AdvancedJobSearchView(props) {
         setIsLoading(false);
         props.onClose();
         if (isSuccess) {
-            console.log("advanced search results: "+JSON.stringify(response.data));
-            setSearchResults(response.data);
+            console.log("advanced search results: "+JSON.stringify(response.data.jobs));
+            dispatch(setSearchResults(response.data));
         }
         else {
             toast.error("Unable to fetch jobs.");

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Navbar, Nav, Form, Col, Row, Button, ButtonGroup, ToggleButton } from 'react-bootstrap';
+import { Navbar, Nav, Form, Col, Row, Button, ButtonGroup, ToggleButton,Container } from 'react-bootstrap';
 import { NotLoggedInView } from '../profile-view/NotLoggedInView';
 import { LoggedInView } from '../profile-view/LoggedInView';
 import { JobPostView } from '../job-post-view/JobPostView';
@@ -129,7 +129,7 @@ export function JobSearchBar() {
     const onSimpleSearchJobsByFilterResult = function (isSuccess, response) {
         if (isSuccess) {
             setIsSearchLoading(false);
-            dispatch(setSearchResults(response.data.jobs))
+            dispatch(setSearchResults(response.data))
         }
         else {
             toast.error("Unable to search jobs/services. Please wait for a while and try again.");
@@ -137,7 +137,7 @@ export function JobSearchBar() {
     }
 
     return (
-        <div>
+        <Container fluid>
             <AdvancedJobSearchView onClose={closeAdvancedSearchPopup} isOpen={isAdvancedSearchPopupOpen} jobDetailFilterTemplate={selectedFilterTemplate} />
             <Navbar fixed="top" bg="dark" variant="dark" expand="lg">
                 <Navbar.Brand>Find offers/requests</Navbar.Brand>
@@ -160,8 +160,8 @@ export function JobSearchBar() {
                                 </Nav>
                             }
                             <Form.Group controlId="formBasicRange" style={{ paddingLeft: "0.5vw" }}>
-                                <Form.Label className="mr-sm-4" style={{ color: "gray" }}>Posted between today and {searchFilterObj.postedBeforeDays} day(s) ago</Form.Label>
-                                <Form.Control type="range" style={{ width: "10vw" }} min={1} max={7} value={searchFilterObj.postedBeforeDays} onChange={updatePostedDate} />
+                                <Form.Label className="mr-sm-4" style={{ color: "gray" }}>Posted between today and {searchFilterObj.postedXDaysAgo} day(s) ago</Form.Label>
+                                <Form.Control type="range" style={{ width: "10vw" }} min={1} max={7} value={searchFilterObj.postedXDaysAgo} onChange={updatePostedDate} />
                             </Form.Group>
 
                             <Form.Group style={{ paddingLeft: "0.5vw" }}>
@@ -207,7 +207,7 @@ export function JobSearchBar() {
 
             </Navbar>
 
-        </div>
+        </Container>
     );
 
 }

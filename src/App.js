@@ -16,11 +16,20 @@ function App() {
   }, [])
 
   return (
-    <div className="App">
-      <ToastContainer hideProgressBar={true} autoClose={TOAST_SHOW_DURATION_SECONDS * 1000} />
-      <SharedState />
-      <JobSearchBar />
-      <JobListTable />
+    <div className="App" style={{background: "#2d405f"}}>
+      <ToastContainer hideProgressBar={true} autoClose={TOAST_SHOW_DURATION_SECONDS * 1000}/>
+      <SharedState/>
+      <Container  fluid>
+        <Row style={{minWidth:"100vw","minHeight":"20vh"}}>
+          <JobSearchBar/>
+        </Row>
+        <Row style={{minWidth:"100vw"}}>
+          <JobListTable/>
+        </Row>
+        <Row>
+
+        </Row>
+      </Container>
     </div>
   );
 }
