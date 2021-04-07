@@ -19,7 +19,8 @@ import {
     simpleSearchJobsByFilter,
     setSearchResults,
     selectIsSearchLoading,
-    setSimpleSearchReqObj
+    setSimpleSearchReqObj,
+    selectSearchRequestObj
 } from '../shared-vars/SharedStateSlice';
 export function JobSearchBar() {
 
@@ -31,9 +32,7 @@ export function JobSearchBar() {
 
     /* local, feature-level states */
     const [localSearchObj, setLocalSearchObj] = useState({
-        serviceType: "ALL",
-        postedXDaysAgo: 3,
-        filterTemplateName: ""
+        ...useSelector(selectSearchRequestObj)
     });
 
     const [isFilterRequestLoading, setIsFilterRequestLoading] = useState(false);

@@ -15,10 +15,12 @@ export const initialSharedState = {
       searchLoading: true,
       searchRequestObj: {
             "serviceType": "ALL",
+            "pageSize": 3,
             "postedXDaysAgo": 3,
             "filterFields": [],
             "filterTemplateName": ""
-      }
+      },
+      pageNumber: 1
 };
 
 const getSharedStateFromLocalStorage = function () {
@@ -100,14 +102,23 @@ export const searchJobsByFilter = function (filterRequestDTO, onResult, dispatch
       }
 }
 
-export const {
-      updateApiKey,
-      updateSharedState,
-      setSearchResults,
-      setSearchLoading,
-      setSimpleSearchReqObj,
-      setAdvancedSearchReqObj
-} = sharedStateSlice.actions;
+export const searchByPageNumber = function (pageNumber, filterRequestDTO, onResult, dispatch) {
+      return function () {
+            dispatch(setSearchLoading(true));
+
+            axios.post(getAdvancedSearchURI(), {
+                  ...filterRequestDTO,
+                  pageNumber: pageNumber
+            })
+                  .then((response) => {
+                        dispatch(setSearchLoading(false));
+                        onResult(true, response);
+                  }).catch((error) => {
+                        dispatch(setSearchLoading(false));
+                        onResult(false, error.response);
+                  });
+      }
+}
 
 export const selectPlayerInfo = (state) => state.sharedState;
 export const selectIsLoggedIn = (state) => state.sharedState.isLoggedIn;
@@ -117,4 +128,19 @@ export const selectIsSearchLoading = (state) => state.sharedState.searchLoading;
 export const selectSearchRequestObj = (state) => state.sharedState.searchRequestObj;
 
 export const selectSearchResults = (state) => state.sharedState.searchResults;
+export const selectPaginationDetails = (state) => {
+      var paginationDetailsObj = { ...state.sharedState.searchResults };
+      delete paginationDetailsObj.jobs
+      return paginationDetailsObj;
+};
+
+export const {
+      updateApiKey,
+      updateSharedState,
+      setSearchResults,
+      setSearchLoading,
+      setSimpleSearchReqObj,
+      setAdvancedSearchReqObj
+} = sharedStateSlice.actions;
+
 export default sharedStateSlice.reducer;
