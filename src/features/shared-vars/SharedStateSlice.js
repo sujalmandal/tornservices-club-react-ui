@@ -13,12 +13,12 @@ export const initialSharedState = {
       playerId: "",
       isLoggedIn: false,
       searchLoading: true,
-      searchRequestObj:{
+      searchRequestObj: {
             "serviceType": "ALL",
             "postedXDaysAgo": 3,
             "filterFields": [],
             "filterTemplateName": ""
-        }
+      }
 };
 
 const getSharedStateFromLocalStorage = function () {
@@ -45,23 +45,23 @@ export const sharedStateSlice = createSlice({
             },
             setSearchResults: (state, action) => {
                   state.searchResults = action.payload;
-                  state.searchLoading=false;
+                  state.searchLoading = false;
                   console.log("search results set to redux state: " + JSON.stringify(action.payload));
             },
-            setSearchLoading:(state,action)=>{
+            setSearchLoading: (state, action) => {
                   state.searchLoading = action.payload;
                   console.log("search loading set to true redux state.");
             },
-            setSimpleSearchReqObj: (state, action)=>{
-                  console.log("updated simple search request: "+JSON.stringify(action.payload));
-                  state.searchRequestObj={
+            setSimpleSearchReqObj: (state, action) => {
+                  console.log("updated simple search request: " + JSON.stringify(action.payload));
+                  state.searchRequestObj = {
                         ...action.payload,
-                        filterFields:[]
+                        filterFields: []
                   };
             },
-            setAdvancedSearchReqObj: (state, action)=>{
-                  console.log("updated advanced search request: "+JSON.stringify(action.payload));
-                  state.searchRequestObj=action.payload;
+            setAdvancedSearchReqObj: (state, action) => {
+                  console.log("updated advanced search request: " + JSON.stringify(action.payload));
+                  state.searchRequestObj = action.payload;
             }
       }
 });
@@ -79,14 +79,14 @@ export const simpleSearchJobsByFilter = function (filterRequestDTO, onResult, di
                   .then((response) => {
                         dispatch(setSearchLoading(false));
                         onResult(true, response);
-                  }).catch ((error,response) => {
+                  }).catch((error, response) => {
                         dispatch(setSearchLoading(false));
                         onResult(false, error.response);
                   });
       }
 }
 
-export const advancedSearchJobsByFilter = function (filterRequestDTO, onResult, dispatch) {
+export const searchJobsByFilter = function (filterRequestDTO, onResult, dispatch) {
       return function () {
             dispatch(setSearchLoading(true));
             axios.post(getAdvancedSearchURI(), filterRequestDTO)
@@ -101,13 +101,13 @@ export const advancedSearchJobsByFilter = function (filterRequestDTO, onResult, 
 }
 
 export const {
-       updateApiKey,
-       updateSharedState, 
-       setSearchResults,
-       setSearchLoading,
-       setSimpleSearchReqObj,
-       setAdvancedSearchReqObj
-      } = sharedStateSlice.actions;
+      updateApiKey,
+      updateSharedState,
+      setSearchResults,
+      setSearchLoading,
+      setSimpleSearchReqObj,
+      setAdvancedSearchReqObj
+} = sharedStateSlice.actions;
 
 export const selectPlayerInfo = (state) => state.sharedState;
 export const selectIsLoggedIn = (state) => state.sharedState.isLoggedIn;

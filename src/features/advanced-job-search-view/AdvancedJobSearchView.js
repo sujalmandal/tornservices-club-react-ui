@@ -14,7 +14,7 @@ import { validateNumberFormat } from '../../utils/AppUtils';
 import _ from "lodash";
 import {
     setSearchResults,
-    advancedSearchJobsByFilter,
+    searchJobsByFilter,
     selectIsSearchLoading,
     setAdvancedSearchReqObj
 } from '../shared-vars/SharedStateSlice';
@@ -96,7 +96,7 @@ export function AdvancedJobSearchView(props) {
     const handleAdvancedSearch = function () {
         props.onClose();
         console.log("triggering search with the following parameters: " + JSON.stringify(localSearchObj));
-        dispatch(advancedSearchJobsByFilter(localSearchObj, onHandleAdvancedSearchResult, dispatch))
+        dispatch(searchJobsByFilter(localSearchObj, onHandleAdvancedSearchResult, dispatch))
     }
 
     const onHandleAdvancedSearchResult = function (isSuccess, response) {
