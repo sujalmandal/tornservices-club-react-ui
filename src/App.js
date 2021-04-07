@@ -8,7 +8,7 @@ import { ToastContainer } from 'react-toastify';
 import { TOAST_SHOW_DURATION_SECONDS } from './constants';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'react-toastify/dist/ReactToastify.css';
-import { Container, Row } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 function App() {
 
   document.title = "Torn City Services"
@@ -20,7 +20,7 @@ function App() {
         <Row style={{minWidth:"100vw","minHeight":"20vh", maxHeight:"20vh"}}>
           <JobSearchBar/>
         </Row>
-        <Row style={{minWidth:"100vw","minHeight":"70vh", maxHeight:"70vh"}}>
+        <Row fluid style={{minWidth:"100vw","minHeight":"70vh", maxHeight:"70vh"}}>
           <JobListTable/>
         </Row>
         <Row style={{minWidth:"100vw","minHeight":"10vh", paddingTop:"2vh", maxHeight:"5vh"}}>

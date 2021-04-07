@@ -22,14 +22,14 @@ export function JobListTable() {
 
     const renderResults = (searchResults) => {
         var renderedElements = [];
-        if(!searchResults.jobs){
+        if (!searchResults.jobs) {
             console.log("first load");
         }
         else {
-            if(searchResults.jobs.length === 0) {
+            if (searchResults.jobs.length === 0) {
                 renderedElements.push(<h4 style={{ color: "white", paddingTop: "30vh" }}>No current offers/requests match your search.</h4>);
             }
-            else{
+            else {
                 for (var index = 0; index < searchResults.jobs.length; index = index + 3) {
                     var threeJobs = _(searchResults.jobs).chain().slice(index, index + 3).value();
                     renderedElements.push(
@@ -55,12 +55,20 @@ export function JobListTable() {
     }
 
     return (
-        <Container>
-            {isSearchLoading_ReduxState ? <h5 style={{ color: "white", paddingTop: "30vh" }}>Searching...</h5> :
-                <Scrollbars inverse="false">
-                    {renderResults(searchResults)}
-                </Scrollbars>}
-        </Container>
+        <>
+            <Col style={{minWidth:"15vw","minHeight":"70vh", maxHeight:"70vh", color:"gray"}}>
+                ads space
+            </Col>
+            <Col style={{minWidth:"70vw","minHeight":"70vh", maxHeight:"70vh"}}>
+                {isSearchLoading_ReduxState ? <h5 style={{ color: "white", paddingTop: "30vh" }}>Searching...</h5> :
+                    <Scrollbars>
+                        {renderResults(searchResults)}
+                    </Scrollbars>}
+            </Col>
+            <Col style={{minWidth:"15vw","minHeight":"70vh", maxHeight:"70vh", color:"gray"}}>
+                ads space
+            </Col>
+        </>
     );
 
 }
