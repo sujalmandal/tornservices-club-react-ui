@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Navbar, Nav, Form, Col, Row, Button, ButtonGroup, ToggleButton,Container } from 'react-bootstrap';
+import { Navbar, Nav, Form, Col, Row, Button, ButtonGroup, ToggleButton, Container } from 'react-bootstrap';
 import { NotLoggedInView } from '../profile-view/NotLoggedInView';
 import { LoggedInView } from '../profile-view/LoggedInView';
 import { JobPostView } from '../job-post-view/JobPostView';
@@ -29,7 +29,8 @@ export function JobSearchBar() {
     /* local, feature-level states */
     const [searchFilterObj, setSearchFilterObj] = useState({
         serviceType: "ALL",
-        postedXDaysAgo: 3
+        postedXDaysAgo: 3,
+        filterTemplateName: ""
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -57,6 +58,10 @@ export function JobSearchBar() {
                 dispatch(getFilterTemplateByTemplateName(filterTemplateName, onGetAvailableFilterDetailsResult));
             } else {
                 setSelectedFilterTemplate(filterDetailMap[filterTemplateName]);
+                setSearchFilterObj({
+                    ...searchFilterObj,
+                    filterTemplateName: filterDetailMap[filterTemplateName].filterTemplateName
+                });
             }
         }
     }, [selectFilterTemplateIndex, filterDetailMap]);
@@ -75,7 +80,7 @@ export function JobSearchBar() {
     }
 
     const handleSelectServiceTypeChange = function (e) {
-        var selectedServiceTypeKey=e.currentTarget.name;
+        var selectedServiceTypeKey = e.currentTarget.name;
         setServiceTypeKey(selectedServiceTypeKey);
         setSearchFilterObj({
             ...searchFilterObj,
@@ -85,8 +90,8 @@ export function JobSearchBar() {
 
     const handleSimpleSearch = function () {
         setIsSearchLoading(true);
-       console.log("triggering simple search with criteria : "+JSON.stringify(searchFilterObj));
-       dispatch(simpleSearchJobsByFilter(searchFilterObj,onSimpleSearchJobsByFilterResult))
+        console.log("triggering simple search with criteria : " + JSON.stringify(searchFilterObj));
+        dispatch(simpleSearchJobsByFilter(searchFilterObj, onSimpleSearchJobsByFilterResult))
     }
 
     const openAdvancedSearchPopup = function () {
@@ -96,14 +101,14 @@ export function JobSearchBar() {
     const closeAdvancedSearchPopup = function () {
         setAdvancedSearchPopupOpen(false);
     }
-    
+
     /* api callbacks */
     const onGetAvailableFiltersResult = function (isSuccess, response) {
         if (isSuccess) {
             setIsLoading(false);
             setAvailableFilterTemplates(response.data);
             console.log("fetched available template information : " + JSON.stringify(response.data));
-            if(firstLoad && globalIsLoggedIn){
+            if (firstLoad && globalIsLoggedIn) {
                 handleSimpleSearch();
                 setFirstLoad(false);
             }

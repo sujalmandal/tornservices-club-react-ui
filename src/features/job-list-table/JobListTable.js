@@ -47,7 +47,7 @@ export function JobListTable() {
 
     return (
         <Container>
-            <Scrollbars>
+            <Scrollbars inverse="false">
                 {renderResults(searchResults)}
             </Scrollbars>
         </Container>

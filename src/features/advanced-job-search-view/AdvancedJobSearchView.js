@@ -27,7 +27,8 @@ export function AdvancedJobSearchView(props) {
     const [filterRequestDTO, setFilterRequestDTO] = useState({
         "serviceType": "ALL",
         "postedXDaysAgo": 3,
-        "filterFields":[]
+        "filterFields":[],
+        "templateName":props.jobDetailFilterTemplate
     });
 
     const handleSelectServiceTypeChange = function (selectedServiceTypeKey) {

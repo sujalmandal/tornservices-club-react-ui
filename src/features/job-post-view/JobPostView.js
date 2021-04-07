@@ -136,7 +136,7 @@ export function JobPostView() {
         if (jobDetailsTemplate != null) {
             jobDetailsTemplate.elements.forEach(element => {
                 if (element.serviceType === "ALL" || element.serviceType === selectedServiceTypeObj.KEY) {
-                    if (element.type == INPUT_TYPES.NUMBER) {
+                    if (element.type === INPUT_TYPES.NUMBER) {
                         if (element.format === CURRENCY_FORMAT) {
                             renderedElements.push(<Row key={'row_' + element.name} style={{ paddingRight: "2vw", paddingLeft: "2vw", paddingTop: "1vh" }}>
                                 <Col><Form.Label className="mr-sm-4">{element.label}</Form.Label></Col>
@@ -144,7 +144,7 @@ export function JobPostView() {
                                     <NumberFormat style={{ width: "10vw" }} name={element.name} onChange={handleOnChangeFormElement}
                                         className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
                                         isAllowed={(valObj) => { return validateNumberFormat(valObj, element.maxValue,element.minValue) }}
-                                        defaultValue={element.defaultValue} />
+                                        defaultValue={element.minValue} />
                                 </Col></Row>);
                         }
                         else {
