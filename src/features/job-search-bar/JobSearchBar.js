@@ -18,8 +18,7 @@ import {
     selectIsLoggedIn,
     simpleSearchJobsByFilter,
     setSearchResults,
-    selectIsSearchLoading,
-    setSearchLoading
+    selectIsSearchLoading
 } from '../shared-vars/SharedStateSlice';
 export function JobSearchBar() {
 
@@ -91,9 +90,8 @@ export function JobSearchBar() {
     }
 
     const handleSimpleSearch = function () {
-        dispatch(setSearchLoading());
         console.log("triggering simple search with criteria : " + JSON.stringify(searchFilterObj));
-        dispatch(simpleSearchJobsByFilter(searchFilterObj, onSimpleSearchJobsByFilterResult))
+        dispatch(simpleSearchJobsByFilter(searchFilterObj, onSimpleSearchJobsByFilterResult, dispatch))
     }
 
     const openAdvancedSearchPopup = function () {
@@ -135,11 +133,10 @@ export function JobSearchBar() {
 
     const onSimpleSearchJobsByFilterResult = function (isSuccess, response) {
         if (isSuccess) {
-            dispatch(setSearchLoading());
             dispatch(setSearchResults(response.data))
         }
         else {
-            toast.error("Unable to search jobs/services. Please wait for a while and try again.");
+            toast.error("Error: "+response.data.errorMessage);
         }
     }
 

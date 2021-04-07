@@ -15,8 +15,7 @@ import _ from "lodash";
 import {
     setSearchResults,
     advancedSearchJobsByFilter,
-    selectIsSearchLoading,
-    setSearchLoading
+    selectIsSearchLoading
 } from '../shared-vars/SharedStateSlice';
 
 export function AdvancedJobSearchView(props) {
@@ -88,9 +87,8 @@ export function AdvancedJobSearchView(props) {
 
     const handleAdvancedSearch = function () {
         props.onClose();
-        dispatch(setSearchLoading());
         console.log("triggering search with the following parameters: " + JSON.stringify(filterRequestDTO));
-        dispatch(advancedSearchJobsByFilter(filterRequestDTO, onHandleAdvancedSearchResult))
+        dispatch(advancedSearchJobsByFilter(filterRequestDTO, onHandleAdvancedSearchResult, dispatch))
     }
 
     const onHandleAdvancedSearchResult = function (isSuccess, response) {
@@ -99,7 +97,8 @@ export function AdvancedJobSearchView(props) {
             dispatch(setSearchResults(response.data));
         }
         else {
-            toast.error("Unable to fetch jobs.");
+
+            toast.error("Error: "+response.data.errorMessage);
         }
     }
 

@@ -43,7 +43,7 @@ export const sharedStateSlice = createSlice({
                   console.log("search results set to redux state: " + JSON.stringify(action.payload));
             },
             setSearchLoading:(state,action)=>{
-                  state.searchLoading = true;
+                  state.searchLoading = action.payload;
                   console.log("search loading set to true redux state.");
             }
       }
@@ -55,24 +55,30 @@ export const wipeSharedState = (dispatch) => {
       setTimeout(() => { window.location.reload() }, 1000);
 }
 
-export const simpleSearchJobsByFilter = function (filterRequestDTO, onResult) {
+export const simpleSearchJobsByFilter = function (filterRequestDTO, onResult,dispatch) {
       return function () {
+            dispatch(setSearchLoading(true));
             axios.post(getSimpleSearchURI(), filterRequestDTO)
                   .then((response) => {
+                        dispatch(setSearchLoading(false));
                         onResult(true, response);
-                  }, (error) => {
-                        onResult(false, error);
+                  }).catch ((error,response) => {
+                        dispatch(setSearchLoading(false));
+                        onResult(false, error.response);
                   });
       }
 }
 
-export const advancedSearchJobsByFilter = function (filterRequestDTO, onResult) {
+export const advancedSearchJobsByFilter = function (filterRequestDTO, onResult,dispatch) {
       return function () {
+            dispatch(setSearchLoading(true));
             axios.post(getAdvancedSearchURI(), filterRequestDTO)
                   .then((response) => {
+                        dispatch(setSearchLoading(false));
                         onResult(true, response);
-                  }, (error) => {
-                        onResult(false, error);
+                  }).catch((error) => {
+                        dispatch(setSearchLoading(false));
+                        onResult(false, error.response);
                   });
       }
 }
