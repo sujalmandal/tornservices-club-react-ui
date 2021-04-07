@@ -131,10 +131,6 @@ export function JobSearchBar() {
             setFilterDetailMap({
                 ...cache
             });
-            setLocalSearchObj({
-                ...localSearchObj,
-                filterTemplateName: cache[response.data.filterTemplateName].jobDetailFilterTemplateName
-            });
         }
         else {
             toast.error("Unable to fetch details, try refreshing the page.");
