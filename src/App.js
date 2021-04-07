@@ -8,14 +8,10 @@ import { ToastContainer } from 'react-toastify';
 import { TOAST_SHOW_DURATION_SECONDS } from './constants';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'react-toastify/dist/ReactToastify.css';
-import { Container, Col, Row } from 'reactstrap';
-
+import { Container, Row } from 'react-bootstrap';
 function App() {
 
-  useEffect(() => {
-    document.title = "Torn City Services"
-  }, [])
-
+  document.title = "Torn City Services"
   return (
     <div className="App" style={{background: "#2d405f"}}>
       <ToastContainer hideProgressBar={true} autoClose={TOAST_SHOW_DURATION_SECONDS * 1000}/>
