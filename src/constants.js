@@ -22,7 +22,8 @@ export const SERVICE_TYPE = {
             "KEY": "OFFER" 
         }
     },
-    "ALL":"ALL"
+    "ALL":"ALL",
+    "ALL_LABEL":"All"
 };
 
 export const DATE_FORMAT="DD-MM-YYYY";

@@ -11,7 +11,8 @@ export const initialSharedState = {
       tornUserName: "",
       tornPlayerId: "",
       playerId: "",
-      isLoggedIn: false
+      isLoggedIn: false,
+      searchLoading: true
 };
 
 const getSharedStateFromLocalStorage = function () {
@@ -38,7 +39,12 @@ export const sharedStateSlice = createSlice({
             },
             setSearchResults: (state, action) => {
                   state.searchResults = action.payload;
+                  state.searchLoading=false;
                   console.log("search results set to redux state: " + JSON.stringify(action.payload));
+            },
+            setSearchLoading:(state,action)=>{
+                  state.searchLoading = true;
+                  console.log("search loading set to true redux state.");
             }
       }
 });
@@ -48,7 +54,6 @@ export const wipeSharedState = (dispatch) => {
       dispatch(updateSharedState(initialSharedState));
       setTimeout(() => { window.location.reload() }, 1000);
 }
-
 
 export const simpleSearchJobsByFilter = function (filterRequestDTO, onResult) {
       return function () {
@@ -72,10 +77,10 @@ export const advancedSearchJobsByFilter = function (filterRequestDTO, onResult) 
       }
 }
 
-
-export const { updateApiKey, updateSharedState, setSearchResults } = sharedStateSlice.actions;
+export const { updateApiKey, updateSharedState, setSearchResults,setSearchLoading } = sharedStateSlice.actions;
 export const selectPlayerInfo = (state) => state.sharedState;
 export const selectIsLoggedIn = (state) => state.sharedState.isLoggedIn;
+export const selectIsSearchLoading = (state) => state.sharedState.searchLoading;
 export const selectAPIKey = (state) => state.sharedState.apiKey;
 export const selectSearchResults = (state) => state.sharedState.searchResults;
 export default sharedStateSlice.reducer;

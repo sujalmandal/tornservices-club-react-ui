@@ -1,34 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { Button, Modal, Form, FormControl, Container, Dropdown, DropdownButton, Col, Row } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import { Button, Modal, Form, FormControl, Container, Col, Row } from 'react-bootstrap';
 import { } from './AdvancedJobSearchViewSlice';
 import {
     SERVICE_TYPE,
     CURRENCY_FORMAT,
     INPUT_TYPES
 } from '../../constants';
-import { selectAPIKey } from '../shared-vars/SharedStateSlice';
 import NumberFormat from 'react-number-format';
 import SpinnerText from '../common-components/SpinnerText';
 import { toast } from 'react-toastify';
 import { validateNumberFormat } from '../../utils/AppUtils';
 import _ from "lodash";
 import {
-    simpleSearchJobsByFilter,
     setSearchResults,
-    advancedSearchJobsByFilter
+    advancedSearchJobsByFilter,
+    selectIsSearchLoading,
+    setSearchLoading
 } from '../shared-vars/SharedStateSlice';
 
 export function AdvancedJobSearchView(props) {
 
     const dispatch = useDispatch();
-    const [isLoading, setIsLoading] = useState(false);
+    const isSearchLoading_ReduxState = useSelector(selectIsSearchLoading);
     const [selectedServiceTypeObj, setServiceType] = useState(SERVICE_TYPE.REQUEST.FORM);
     const [filterRequestDTO, setFilterRequestDTO] = useState({
         "serviceType": "ALL",
         "postedXDaysAgo": 3,
-        "filterFields":[],
-        "templateName":props.jobDetailFilterTemplate
+        "filterFields": [],
+        "filterTemplateName": ""
     });
 
     const handleSelectServiceTypeChange = function (selectedServiceTypeKey) {
@@ -41,58 +41,61 @@ export function AdvancedJobSearchView(props) {
             console.log("opening advanced search dialog --");
             console.log("selected template : " + JSON.stringify(props.jobDetailFilterTemplate))
             console.log("selected serviceType: " + selectedServiceTypeObj.KEY);
+            setFilterRequestDTO({
+                filterTemplateName: props.jobDetailFilterTemplate.filterTemplateName,
+                serviceType:selectedServiceTypeObj.KEY
+            });
         }
     }, [props.isOpen])
 
     /* event handlers */
 
-    const handleOnChangeFormElement = function (fieldValue,fieldName,groupName,fieldType) {
+    const handleOnChangeFormElement = function (fieldValue, fieldName, groupName, fieldType) {
         //var fieldValue = e.target.value;
         fieldValue = fieldValue.replaceAll('$', '');
         fieldValue = fieldValue.replaceAll(',', '');
         /*var fieldName = e.target.name;
         var fieldType = e.target.type;
         var groupName = e.target.groupName;*/
-        var filterFields=filterRequestDTO.filterFields;
+        var filterFields = filterRequestDTO.filterFields;
 
         var filterFieldObj = {
-            "type":fieldType,
-            "name":fieldName,
-            "groupName":groupName,
-            "value":fieldValue
+            "type": fieldType,
+            "name": fieldName,
+            "groupName": groupName,
+            "value": fieldValue
         };
-       
+
         console.log(JSON.stringify(filterFieldObj));
 
-        
-        var previousIndex = _.findIndex(filterFields, {'name': fieldName});
+
+        var previousIndex = _.findIndex(filterFields, { 'name': fieldName });
         console.log(previousIndex);
         //new element
-        if(previousIndex===-1){
+        if (previousIndex === -1) {
             filterFields.push(filterFieldObj);
         }
-        else{
+        else {
             //replace existing element
-            filterFields[previousIndex]=filterFieldObj;
+            filterFields[previousIndex] = filterFieldObj;
         }
         //filterFields=_.uniqBy(filterFields, 'name');
-        setFilterRequestDTO({ 
-            ...filterRequestDTO ,
-            "filterFields":filterFields
+        setFilterRequestDTO({
+            ...filterRequestDTO,
+            "filterFields": filterFields
         });
     }
 
     const handleAdvancedSearch = function () {
-        setIsLoading(true);
-        console.log("triggering search with the following parameters: "+JSON.stringify(filterRequestDTO));
-        dispatch(advancedSearchJobsByFilter(filterRequestDTO,onHandleAdvancedSearchResult))
+        props.onClose();
+        dispatch(setSearchLoading());
+        console.log("triggering search with the following parameters: " + JSON.stringify(filterRequestDTO));
+        dispatch(advancedSearchJobsByFilter(filterRequestDTO, onHandleAdvancedSearchResult))
     }
 
-    const onHandleAdvancedSearchResult=function (isSuccess, response) {
-        setIsLoading(false);
-        props.onClose();
+    const onHandleAdvancedSearchResult = function (isSuccess, response) {
         if (isSuccess) {
-            console.log("advanced search results: "+JSON.stringify(response.data.jobs));
+            console.log("advanced search results: " + JSON.stringify(response.data.jobs));
             dispatch(setSearchResults(response.data));
         }
         else {
@@ -129,8 +132,8 @@ export function AdvancedJobSearchView(props) {
                                     <Col>
                                         <Row><Form.Label>{elementArr[0].fieldLabel}</Form.Label></Row>
                                         <Row><Form.Control as="select" defaultValue={elementArr[0].defaultValue}
-                                            name={elementArr[0].fieldName} 
-                                            onChange={(e)=>{
+                                            name={elementArr[0].fieldName}
+                                            onChange={(e) => {
                                                 handleOnChangeFormElement(
                                                     e.target.value,
                                                     elementArr[0].fieldName,
@@ -155,8 +158,8 @@ export function AdvancedJobSearchView(props) {
                                         type={elementArr[0].fieldType} name={elementArr[0].fieldName}
                                         min={elementArr[0].minValue} max={elementArr[0].maxValue}
                                         defaultValue={elementArr[0].defaultValue} groupName={elementArr[0].groupName}
-                                        size="sm" className="mr-sm-4" 
-                                        onChange={(e)=>{
+                                        size="sm" className="mr-sm-4"
+                                        onChange={(e) => {
                                             handleOnChangeFormElement(
                                                 e.target.value,
                                                 elementArr[0].fieldName,
@@ -178,10 +181,10 @@ export function AdvancedJobSearchView(props) {
                                     <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                     <NumberFormat style={{ width: "10vw" }} name={elementArr[0].fieldName}
                                         className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
-                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[0].maxValue,elementArr[0].minValue) }}
+                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[0].maxValue, elementArr[0].minValue) }}
                                         min={elementArr[0].minValue} max={elementArr[0].maxValue}
                                         defaultValue={elementArr[0].defaultValue} groupName={elementArr[0].groupName}
-                                        onChange={(e)=>{
+                                        onChange={(e) => {
                                             handleOnChangeFormElement(
                                                 e.target.value,
                                                 elementArr[0].fieldName,
@@ -197,7 +200,7 @@ export function AdvancedJobSearchView(props) {
                                         isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[1].maxValue, elementArr[1].minValue) }}
                                         min={elementArr[1].minValue} max={elementArr[1].maxValue}
                                         defaultValue={elementArr[1].defaultValue} groupName={elementArr[1].groupName}
-                                        onChange={(e)=>{
+                                        onChange={(e) => {
                                             handleOnChangeFormElement(
                                                 e.target.value,
                                                 elementArr[1].fieldName,
@@ -218,7 +221,7 @@ export function AdvancedJobSearchView(props) {
                                         size="sm" className="mr-sm-4"
                                         min={elementArr[0].minValue} max={elementArr[0].maxValue}
                                         defaultValue={elementArr[0].defaultValue} groupName={elementArr[0].groupName}
-                                        onChange={(e)=>{
+                                        onChange={(e) => {
                                             handleOnChangeFormElement(
                                                 e.target.value,
                                                 elementArr[0].fieldName,
@@ -234,7 +237,7 @@ export function AdvancedJobSearchView(props) {
                                         size="sm" className="mr-sm-4"
                                         min={elementArr[1].minValue} max={elementArr[1].maxValue}
                                         defaultValue={elementArr[1].defaultValue} groupName={elementArr[1].groupName}
-                                        onChange={(e)=>{
+                                        onChange={(e) => {
                                             handleOnChangeFormElement(
                                                 e.target.value,
                                                 elementArr[1].fieldName,
@@ -270,14 +273,6 @@ export function AdvancedJobSearchView(props) {
                 </Modal.Header>
                 <Modal.Body>
                     <Container>
-                        <Row>
-                            <Col>
-                                <DropdownButton id="dropdown-basic-button-service-type" title={"I am " + selectedServiceTypeObj.LABEL} onSelect={handleSelectServiceTypeChange}>
-                                    <Dropdown.Item eventKey={SERVICE_TYPE.REQUEST.FORM.KEY}>{SERVICE_TYPE.REQUEST.FORM.LABEL}</Dropdown.Item>
-                                    <Dropdown.Item eventKey={SERVICE_TYPE.OFFER.FORM.KEY}>{SERVICE_TYPE.OFFER.FORM.LABEL}</Dropdown.Item>
-                                </DropdownButton>
-                            </Col>
-                        </Row>
                         <Row style={{ paddingTop: "2vh" }}>
                             <Form inline>
                                 <Container style={{ paddingLeft: "2vw" }}>
@@ -297,10 +292,10 @@ export function AdvancedJobSearchView(props) {
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={handleAdvancedSearch} disabled={isLoading}>
-                        <SpinnerText isLoading={isLoading} loadingText="Working on it.." text="Advanced Search" />
+                    <Button variant="primary" onClick={handleAdvancedSearch} disabled={isSearchLoading_ReduxState}>
+                        <SpinnerText isLoading={isSearchLoading_ReduxState} loadingText="Working on it.." text="Advanced Search" />
                     </Button>
-                    <Button variant="secondary" disabled={isLoading} onClick={() => { props.onClose() }}>Cancel</Button>
+                    <Button variant="secondary" disabled={isSearchLoading_ReduxState} onClick={() => { props.onClose() }}>Cancel</Button>
                 </Modal.Footer>
             </Modal>
         </div>

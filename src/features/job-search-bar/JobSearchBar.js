@@ -14,17 +14,20 @@ import {
 } from '../../constants';
 import SpinnerText from '../common-components/SpinnerText';
 import { toast } from 'react-toastify';
-import { selectIsLoggedIn } from '../shared-vars/SharedStateSlice';
 import {
+    selectIsLoggedIn,
     simpleSearchJobsByFilter,
-    setSearchResults
+    setSearchResults,
+    selectIsSearchLoading,
+    setSearchLoading
 } from '../shared-vars/SharedStateSlice';
 export function JobSearchBar() {
 
     const dispatch = useDispatch();
 
     /* redux, global states */
-    const globalIsLoggedIn = useSelector(selectIsLoggedIn);
+    const isLoggedIn_ReduxState = useSelector(selectIsLoggedIn);
+    const isSearchLoading_ReduxState = useSelector(selectIsSearchLoading);
 
     /* local, feature-level states */
     const [searchFilterObj, setSearchFilterObj] = useState({
@@ -33,18 +36,17 @@ export function JobSearchBar() {
         filterTemplateName: ""
     });
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [isSearchLoading, setIsSearchLoading] = useState(false);
+    const [isFilterRequestLoading, setIsFilterRequestLoading] = useState(false);
     const [filterDetailMap, setFilterDetailMap] = useState({});
     const [isAdvancedSearchPopupOpen, setAdvancedSearchPopupOpen] = useState(false);
     const [availableFilterTemplates, setAvailableFilterTemplates] = useState([]);
     const [selectFilterTemplateIndex, setSelectedFilterTemplateIndex] = useState(null);
-    const [selectedFilterTemplate, setSelectedFilterTemplate] = useState(null);
+    const [selectedFilterTemplateObj, setSelectedFilterTemplateObj] = useState(null);
     const [selectedServiceTypeKey, setServiceTypeKey] = useState(SERVICE_TYPE.ALL);
     const [firstLoad, setFirstLoad] = useState(true);
     /* on init */
     useEffect(() => {
-        setIsLoading(true);
+        setIsFilterRequestLoading(true);
         dispatch(getAvailableFilters(onGetAvailableFiltersResult))
     }, [])
 
@@ -57,10 +59,10 @@ export function JobSearchBar() {
                 console.log("fetching filter detail for '" + filterTemplateName + "' for the first time.");
                 dispatch(getFilterTemplateByTemplateName(filterTemplateName, onGetAvailableFilterDetailsResult));
             } else {
-                setSelectedFilterTemplate(filterDetailMap[filterTemplateName]);
+                setSelectedFilterTemplateObj(filterDetailMap[filterTemplateName]);
                 setSearchFilterObj({
                     ...searchFilterObj,
-                    filterTemplateName: filterDetailMap[filterTemplateName].filterTemplateName
+                    filterTemplateName: filterDetailMap[filterTemplateName].jobDetailFilterTemplateName
                 });
             }
         }
@@ -89,7 +91,7 @@ export function JobSearchBar() {
     }
 
     const handleSimpleSearch = function () {
-        setIsSearchLoading(true);
+        dispatch(setSearchLoading());
         console.log("triggering simple search with criteria : " + JSON.stringify(searchFilterObj));
         dispatch(simpleSearchJobsByFilter(searchFilterObj, onSimpleSearchJobsByFilterResult))
     }
@@ -105,10 +107,10 @@ export function JobSearchBar() {
     /* api callbacks */
     const onGetAvailableFiltersResult = function (isSuccess, response) {
         if (isSuccess) {
-            setIsLoading(false);
+            setIsFilterRequestLoading(false);
             setAvailableFilterTemplates(response.data);
             console.log("fetched available template information : " + JSON.stringify(response.data));
-            if (firstLoad && globalIsLoggedIn) {
+            if (firstLoad && isLoggedIn_ReduxState) {
                 handleSimpleSearch();
                 setFirstLoad(false);
             }
@@ -133,7 +135,7 @@ export function JobSearchBar() {
 
     const onSimpleSearchJobsByFilterResult = function (isSuccess, response) {
         if (isSuccess) {
-            setIsSearchLoading(false);
+            dispatch(setSearchLoading());
             dispatch(setSearchResults(response.data))
         }
         else {
@@ -143,14 +145,14 @@ export function JobSearchBar() {
 
     return (
         <Container fluid>
-            <AdvancedJobSearchView onClose={closeAdvancedSearchPopup} isOpen={isAdvancedSearchPopupOpen} jobDetailFilterTemplate={selectedFilterTemplate} />
+            <AdvancedJobSearchView onClose={closeAdvancedSearchPopup} isOpen={isAdvancedSearchPopupOpen} jobDetailFilterTemplate={selectedFilterTemplateObj} />
             <Navbar fixed="top" bg="dark" variant="dark" expand="lg">
                 <Navbar.Brand>Find offers/requests</Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto" style={{ paddingLeft: "2vw", paddingTop: "0.3vh" }}>
                         <Form inline>
-                            {isLoading ? "" :
+                            {isFilterRequestLoading ? "" :
                                 <Nav variant="pills" onSelect={updateSelectedFilterTemplate}>
                                     <Col>
                                         <Row>
@@ -173,14 +175,21 @@ export function JobSearchBar() {
                                 <ButtonGroup toggle >
                                     <ToggleButton
                                         type="radio"
-                                        variant="secondary"
+                                        variant="primary"
+                                        name={SERVICE_TYPE.ALL}
+                                        checked={selectedServiceTypeKey === SERVICE_TYPE.ALL}
+                                        onChange={handleSelectServiceTypeChange}
+                                    > {SERVICE_TYPE.ALL_LABEL} </ToggleButton>
+                                    <ToggleButton
+                                        type="radio"
+                                        variant="primary"
                                         name={SERVICE_TYPE.REQUEST.FILTER.KEY}
                                         checked={selectedServiceTypeKey === SERVICE_TYPE.REQUEST.FILTER.KEY}
                                         onChange={handleSelectServiceTypeChange}
                                     > {SERVICE_TYPE.REQUEST.FILTER.SHORT_LABEL} </ToggleButton>
                                     <ToggleButton
                                         type="radio"
-                                        variant="secondary"
+                                        variant="primary"
                                         name={SERVICE_TYPE.OFFER.FILTER.KEY}
                                         checked={selectedServiceTypeKey === SERVICE_TYPE.OFFER.FILTER.KEY}
                                         onChange={handleSelectServiceTypeChange}
@@ -189,11 +198,11 @@ export function JobSearchBar() {
                             </Form.Group>
 
                             <ButtonGroup style={{ paddingLeft: "0.5vw" }} >
-                                <Button onClick={openAdvancedSearchPopup} variant="outline-primary" disabled={(selectedFilterTemplate == null)}>
+                                <Button onClick={openAdvancedSearchPopup} variant="outline-primary" disabled={(selectedFilterTemplateObj == null)}>
                                     <SpinnerText loadingText="Just a min.." text="Advanced Search" />
                                 </Button>
-                                <Button onClick={handleSimpleSearch} variant="primary" disabled={(isSearchLoading)}>
-                                    <SpinnerText isLoading={isSearchLoading} loadingText="Just a min.." text="Search" />
+                                <Button onClick={handleSimpleSearch} variant="primary" disabled={(isSearchLoading_ReduxState)}>
+                                    <SpinnerText isLoading={isSearchLoading_ReduxState} loadingText="Just a min.." text="Search" />
                                 </Button>
                             </ButtonGroup>
                         </Form>
@@ -204,7 +213,7 @@ export function JobSearchBar() {
                                 <JobPostView />
                             </Col>
                             <Col style={{ minWidth: "5vw" }}>
-                                {globalIsLoggedIn ? <LoggedInView /> : <NotLoggedInView />}
+                                {isLoggedIn_ReduxState ? <LoggedInView /> : <NotLoggedInView />}
                             </Col>
                         </Row>
                     </Nav>
