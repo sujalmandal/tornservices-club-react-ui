@@ -18,7 +18,8 @@ import {
     selectIsLoggedIn,
     simpleSearchJobsByFilter,
     setSearchResults,
-    selectIsSearchLoading
+    selectIsSearchLoading,
+    setSimpleSearchReqObj
 } from '../shared-vars/SharedStateSlice';
 export function JobSearchBar() {
 
@@ -29,7 +30,7 @@ export function JobSearchBar() {
     const isSearchLoading_ReduxState = useSelector(selectIsSearchLoading);
 
     /* local, feature-level states */
-    const [searchFilterObj, setSearchFilterObj] = useState({
+    const [localSearchObj, setLocalSearchObj] = useState({
         serviceType: "ALL",
         postedXDaysAgo: 3,
         filterTemplateName: ""
@@ -54,18 +55,23 @@ export function JobSearchBar() {
         if (availableFilterTemplates[selectFilterTemplateIndex]) {
             var filterTemplateName = availableFilterTemplates[selectFilterTemplateIndex].jobDetailFilterTemplateName;
             console.log("selected filter template : " + filterTemplateName);
+            setLocalSearchObj({
+                ...localSearchObj,
+                filterTemplateName: filterTemplateName
+            });
             if (!filterDetailMap[filterTemplateName]) {
                 console.log("fetching filter detail for '" + filterTemplateName + "' for the first time.");
                 dispatch(getFilterTemplateByTemplateName(filterTemplateName, onGetAvailableFilterDetailsResult));
             } else {
                 setSelectedFilterTemplateObj(filterDetailMap[filterTemplateName]);
-                setSearchFilterObj({
-                    ...searchFilterObj,
-                    filterTemplateName: filterDetailMap[filterTemplateName].jobDetailFilterTemplateName
-                });
             }
         }
     }, [selectFilterTemplateIndex, filterDetailMap]);
+
+    /* update global search object */
+    useEffect(()=>{
+        dispatch(setSimpleSearchReqObj(localSearchObj));
+    },[localSearchObj]);
 
     /* event handlers */
     const updateSelectedFilterTemplate = function (selectedIndex) {
@@ -74,8 +80,8 @@ export function JobSearchBar() {
     }
 
     const updatePostedDate = function (e) {
-        setSearchFilterObj({
-            ...searchFilterObj,
+        setLocalSearchObj({
+            ...localSearchObj,
             postedXDaysAgo: e.target.value
         });
     }
@@ -83,15 +89,15 @@ export function JobSearchBar() {
     const handleSelectServiceTypeChange = function (e) {
         var selectedServiceTypeKey = e.currentTarget.name;
         setServiceTypeKey(selectedServiceTypeKey);
-        setSearchFilterObj({
-            ...searchFilterObj,
+        setLocalSearchObj({
+            ...localSearchObj,
             serviceType: selectedServiceTypeKey
         });
     }
 
     const handleSimpleSearch = function () {
-        console.log("triggering simple search with criteria : " + JSON.stringify(searchFilterObj));
-        dispatch(simpleSearchJobsByFilter(searchFilterObj, onSimpleSearchJobsByFilterResult, dispatch))
+        console.log("triggering simple search with criteria : " + JSON.stringify(localSearchObj));
+        dispatch(simpleSearchJobsByFilter(localSearchObj, onSimpleSearchJobsByFilterResult, dispatch))
     }
 
     const openAdvancedSearchPopup = function () {
@@ -124,6 +130,10 @@ export function JobSearchBar() {
             cache[response.data.filterTemplateName] = response.data;
             setFilterDetailMap({
                 ...cache
+            });
+            setLocalSearchObj({
+                ...localSearchObj,
+                filterTemplateName: cache[response.data.filterTemplateName].jobDetailFilterTemplateName
             });
         }
         else {
@@ -164,8 +174,8 @@ export function JobSearchBar() {
                                 </Nav>
                             }
                             <Form.Group controlId="formBasicRange" style={{ paddingLeft: "0.5vw" }}>
-                                <Form.Label className="mr-sm-4" style={{ color: "gray" }}>Posted between today and {searchFilterObj.postedXDaysAgo} day(s) ago</Form.Label>
-                                <Form.Control type="range" style={{ width: "10vw" }} min={1} max={7} value={searchFilterObj.postedXDaysAgo} onChange={updatePostedDate} />
+                                <Form.Label className="mr-sm-4" style={{ color: "gray" }}>Posted between today and {localSearchObj.postedXDaysAgo} day(s) ago</Form.Label>
+                                <Form.Control type="range" style={{ width: "10vw" }} min={1} max={7} value={localSearchObj.postedXDaysAgo} onChange={updatePostedDate} />
                             </Form.Group>
 
                             <Form.Group style={{ paddingLeft: "0.5vw" }}>

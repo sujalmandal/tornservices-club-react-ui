@@ -12,7 +12,13 @@ export const initialSharedState = {
       tornPlayerId: "",
       playerId: "",
       isLoggedIn: false,
-      searchLoading: true
+      searchLoading: true,
+      searchRequestObj:{
+            "serviceType": "ALL",
+            "postedXDaysAgo": 3,
+            "filterFields": [],
+            "filterTemplateName": ""
+        }
 };
 
 const getSharedStateFromLocalStorage = function () {
@@ -45,6 +51,17 @@ export const sharedStateSlice = createSlice({
             setSearchLoading:(state,action)=>{
                   state.searchLoading = action.payload;
                   console.log("search loading set to true redux state.");
+            },
+            setSimpleSearchReqObj: (state, action)=>{
+                  console.log("updated simple search request: "+JSON.stringify(action.payload));
+                  state.searchRequestObj={
+                        ...action.payload,
+                        filterFields:[]
+                  };
+            },
+            setAdvancedSearchReqObj: (state, action)=>{
+                  console.log("updated advanced search request: "+JSON.stringify(action.payload));
+                  state.searchRequestObj=action.payload;
             }
       }
 });
@@ -55,7 +72,7 @@ export const wipeSharedState = (dispatch) => {
       setTimeout(() => { window.location.reload() }, 1000);
 }
 
-export const simpleSearchJobsByFilter = function (filterRequestDTO, onResult,dispatch) {
+export const simpleSearchJobsByFilter = function (filterRequestDTO, onResult, dispatch) {
       return function () {
             dispatch(setSearchLoading(true));
             axios.post(getSimpleSearchURI(), filterRequestDTO)
@@ -69,7 +86,7 @@ export const simpleSearchJobsByFilter = function (filterRequestDTO, onResult,dis
       }
 }
 
-export const advancedSearchJobsByFilter = function (filterRequestDTO, onResult,dispatch) {
+export const advancedSearchJobsByFilter = function (filterRequestDTO, onResult, dispatch) {
       return function () {
             dispatch(setSearchLoading(true));
             axios.post(getAdvancedSearchURI(), filterRequestDTO)
@@ -83,10 +100,21 @@ export const advancedSearchJobsByFilter = function (filterRequestDTO, onResult,d
       }
 }
 
-export const { updateApiKey, updateSharedState, setSearchResults,setSearchLoading } = sharedStateSlice.actions;
+export const {
+       updateApiKey,
+       updateSharedState, 
+       setSearchResults,
+       setSearchLoading,
+       setSimpleSearchReqObj,
+       setAdvancedSearchReqObj
+      } = sharedStateSlice.actions;
+
 export const selectPlayerInfo = (state) => state.sharedState;
 export const selectIsLoggedIn = (state) => state.sharedState.isLoggedIn;
-export const selectIsSearchLoading = (state) => state.sharedState.searchLoading;
 export const selectAPIKey = (state) => state.sharedState.apiKey;
+
+export const selectIsSearchLoading = (state) => state.sharedState.searchLoading;
+export const selectSearchRequestObj = (state) => state.sharedState.searchRequestObj;
+
 export const selectSearchResults = (state) => state.sharedState.searchResults;
 export default sharedStateSlice.reducer;

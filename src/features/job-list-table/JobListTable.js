@@ -33,7 +33,7 @@ export function JobListTable() {
                 for (var index = 0; index < searchResults.jobs.length; index = index + 3) {
                     var threeJobs = _(searchResults.jobs).chain().slice(index, index + 3).value();
                     renderedElements.push(
-                        <CardDeck style={{ paddingBottom: "3vh" }}>
+                        <CardDeck key={index} style={{ paddingBottom: "3vh" }}>
                             {threeJobs.map((job, index) => {
                                 return <Card key={'card_' + index} body inverse style={{ backgroundColor: '#333', borderColor: '#333', maxWidth: "20vw" }}>
                                     <Card.Title tag="h5">{job.serviceType + ' ' + job.templateName}</Card.Title>

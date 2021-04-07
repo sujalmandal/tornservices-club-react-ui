@@ -10,11 +10,15 @@ export function FooterPaginationView() {
 
     const dispatch = useDispatch();
 
+    const triggerSearch=function(pageNumber){
+        console.log("search page: "+pageNumber);
+    }
+
     return (
         <Container fluid>
             <Row className="justify-content-lg-center">
                 <Pagination>
-                    <Pagination.First />
+                    <Pagination.First onClick={()=>{triggerSearch(1)}}/>
                     <Pagination.Prev />
                     <Pagination.Item>{1}</Pagination.Item>
                     <Pagination.Ellipsis />

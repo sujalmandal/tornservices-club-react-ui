@@ -15,7 +15,8 @@ import _ from "lodash";
 import {
     setSearchResults,
     advancedSearchJobsByFilter,
-    selectIsSearchLoading
+    selectIsSearchLoading,
+    setAdvancedSearchReqObj
 } from '../shared-vars/SharedStateSlice';
 
 export function AdvancedJobSearchView(props) {
@@ -23,7 +24,7 @@ export function AdvancedJobSearchView(props) {
     const dispatch = useDispatch();
     const isSearchLoading_ReduxState = useSelector(selectIsSearchLoading);
     const [selectedServiceTypeObj, setServiceType] = useState(SERVICE_TYPE.REQUEST.FORM);
-    const [filterRequestDTO, setFilterRequestDTO] = useState({
+    const [localSearchObj, setLocalSearchObj] = useState({
         "serviceType": "ALL",
         "postedXDaysAgo": 3,
         "filterFields": [],
@@ -40,12 +41,20 @@ export function AdvancedJobSearchView(props) {
             console.log("opening advanced search dialog --");
             console.log("selected template : " + JSON.stringify(props.jobDetailFilterTemplate))
             console.log("selected serviceType: " + selectedServiceTypeObj.KEY);
-            setFilterRequestDTO({
+            setLocalSearchObj({
+                ...localSearchObj,
                 filterTemplateName: props.jobDetailFilterTemplate.filterTemplateName,
                 serviceType:selectedServiceTypeObj.KEY
             });
         }
     }, [props.isOpen])
+
+    /* update global search object */
+    useEffect(()=>{
+        dispatch(setAdvancedSearchReqObj(localSearchObj));
+    },[localSearchObj]);
+
+
 
     /* event handlers */
 
@@ -56,7 +65,8 @@ export function AdvancedJobSearchView(props) {
         /*var fieldName = e.target.name;
         var fieldType = e.target.type;
         var groupName = e.target.groupName;*/
-        var filterFields = filterRequestDTO.filterFields;
+
+        var filterFields = [...localSearchObj.filterFields];
 
         var filterFieldObj = {
             "type": fieldType,
@@ -65,30 +75,28 @@ export function AdvancedJobSearchView(props) {
             "value": fieldValue
         };
 
-        console.log(JSON.stringify(filterFieldObj));
-
-
         var previousIndex = _.findIndex(filterFields, { 'name': fieldName });
-        console.log(previousIndex);
         //new element
         if (previousIndex === -1) {
+            console.log("adding new search filter: "+JSON.stringify(filterFieldObj));
             filterFields.push(filterFieldObj);
         }
+        //replace existing element
         else {
-            //replace existing element
+            console.log("updating search filter : "+JSON.stringify(filterFieldObj));
             filterFields[previousIndex] = filterFieldObj;
         }
         //filterFields=_.uniqBy(filterFields, 'name');
-        setFilterRequestDTO({
-            ...filterRequestDTO,
+        setLocalSearchObj({
+            ...localSearchObj,
             "filterFields": filterFields
         });
     }
 
     const handleAdvancedSearch = function () {
         props.onClose();
-        console.log("triggering search with the following parameters: " + JSON.stringify(filterRequestDTO));
-        dispatch(advancedSearchJobsByFilter(filterRequestDTO, onHandleAdvancedSearchResult, dispatch))
+        console.log("triggering search with the following parameters: " + JSON.stringify(localSearchObj));
+        dispatch(advancedSearchJobsByFilter(localSearchObj, onHandleAdvancedSearchResult, dispatch))
     }
 
     const onHandleAdvancedSearchResult = function (isSuccess, response) {
