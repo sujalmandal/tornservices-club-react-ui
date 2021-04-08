@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Modal, Form, FormControl, Container } from 'react-bootstrap';
+import { Button, Modal, Form, FormControl, Container, Row, Col } from 'react-bootstrap';
 import { sendLoginRequest } from './NotLoggedInViewSlice';
 import {
     updateApiKey,
@@ -52,10 +52,10 @@ export function NotLoggedInView() {
         }
         else {
             var error = result.response.data
-            if(error){
-                toast.error("Error: "+error.message);
+            if (error) {
+                toast.error("Error: " + error.message);
             }
-            else{
+            else {
                 toast.error("unknown error occurred!");
             }
             dispatch(updateSharedState(initialSharedState));
@@ -75,17 +75,34 @@ export function NotLoggedInView() {
                 <Modal.Header closeButton>
                     <Modal.Title id="example-modal-sizes-title-lg">Login with your torn API key</Modal.Title>
                 </Modal.Header>
-
                 <Modal.Body>
                     <Container>
-                        <Form inline>
-                            <FormControl defaultValue={globalPlayerInfo.apiKey} type="text" className="mr-sm-4" onChange={setAPIKey} disabled={isLoading} />
-                            <Button onClick={handleLogin} variant="outline-success" disabled={isLoading}>
-                                <SpinnerText isLoading={isLoading} loadingText="Checking your identity.." text="Login!" />
-                            </Button>
+                        <Form>
+                            <Row>
+                                <Col style={{minWidth:"70%"}}>
+                                    <FormControl defaultValue={globalPlayerInfo.apiKey} type="text" className="mr-sm-4" onChange={setAPIKey} disabled={isLoading} />
+                                </Col>
+                                <Col style={{minWidth:"30%"}}>
+                                    <Button onClick={handleLogin} variant="outline-success" disabled={isLoading}>
+                                        <SpinnerText isLoading={isLoading} loadingText="Checking with Chedburn.." text="Login!" />
+                                    </Button>
+                                </Col>
+                            </Row>
+                            
                         </Form>
                     </Container>
                 </Modal.Body>
+                <Modal.Footer>
+                    <Container>
+                        <Form.Text className="text-muted">
+                            <span style={{ color: "gray" }}>
+                                Your API key will never be saved in torncityservices.club's database.
+                                <br/>The backend code base is opensource, so visit 
+                                <a href="https://github.com/sujalmandal/torncityservices-club-rest-api">github codebase</a> to verify!
+                            </span>
+                        </Form.Text>
+                    </Container>
+                </Modal.Footer>
             </Modal>
         </div>
     );
