@@ -131,7 +131,7 @@ export function AdvancedJobSearchView(props) {
 
             for (const [groupName, elementArr] of Object.entries(groupedElements)) {
                 /* text or checkbox */
-                if (elementArr.length === 1) {
+                if (elementArr.length == 1) {
                     if (elementArr[0].fieldType === INPUT_TYPES.SELECT) {
                         renderedElements.push(
                             <Row key={'row_' + groupName + "_" + elementArr[0].fieldName}>
@@ -164,7 +164,7 @@ export function AdvancedJobSearchView(props) {
                                     <FormControl id={elementArr[0].id} style={{ width: "10vw" }}
                                         type={elementArr[0].fieldType} name={elementArr[0].fieldName}
                                         min={elementArr[0].minValue} max={elementArr[0].maxValue}
-                                        defaultValue={elementArr[0].defaultValue} groupName={elementArr[0].groupName}
+                                        defaultValue={elementArr[0].minValue} groupName={elementArr[0].groupName}
                                         size="sm" className="mr-sm-4"
                                         onChange={(e) => {
                                             handleOnChangeFormElement(
@@ -190,7 +190,7 @@ export function AdvancedJobSearchView(props) {
                                         className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
                                         isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[0].maxValue, elementArr[0].minValue) }}
                                         min={elementArr[0].minValue} max={elementArr[0].maxValue}
-                                        defaultValue={elementArr[0].defaultValue} groupName={elementArr[0].groupName}
+                                        defaultValue={elementArr[0].minValue} groupName={elementArr[0].groupName}
                                         onChange={(e) => {
                                             handleOnChangeFormElement(
                                                 e.target.value,
@@ -206,7 +206,7 @@ export function AdvancedJobSearchView(props) {
                                         className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
                                         isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[1].maxValue, elementArr[1].minValue) }}
                                         min={elementArr[1].minValue} max={elementArr[1].maxValue}
-                                        defaultValue={elementArr[1].defaultValue} groupName={elementArr[1].groupName}
+                                        defaultValue={elementArr[1].minValue} groupName={elementArr[1].groupName}
                                         onChange={(e) => {
                                             handleOnChangeFormElement(
                                                 e.target.value,
@@ -227,7 +227,7 @@ export function AdvancedJobSearchView(props) {
                                         style={{ width: "10vw" }} type="number" name={elementArr[0].fieldName}
                                         size="sm" className="mr-sm-4"
                                         min={elementArr[0].minValue} max={elementArr[0].maxValue}
-                                        defaultValue={elementArr[0].defaultValue} groupName={elementArr[0].groupName}
+                                        defaultValue={elementArr[0].minValue} groupName={elementArr[0].groupName}
                                         onChange={(e) => {
                                             handleOnChangeFormElement(
                                                 e.target.value,
@@ -243,7 +243,7 @@ export function AdvancedJobSearchView(props) {
                                         style={{ width: "10vw" }} type="number" name={elementArr[1].fieldName}
                                         size="sm" className="mr-sm-4"
                                         min={elementArr[1].minValue} max={elementArr[1].maxValue}
-                                        defaultValue={elementArr[1].defaultValue} groupName={elementArr[1].groupName}
+                                        defaultValue={elementArr[1].minValue} groupName={elementArr[1].groupName}
                                         onChange={(e) => {
                                             handleOnChangeFormElement(
                                                 e.target.value,
@@ -273,7 +273,7 @@ export function AdvancedJobSearchView(props) {
                 backdrop="static"
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>{props.jobDetailFilterTemplate === null ? "" :
+                    <Modal.Title>{props.jobDetailFilterTemplate == null ? "" :
                         <>
                             Search <span style={{ color: "green" }}>{props.jobDetailFilterTemplate.filterTemplateLabel}</span> services with filters
                     </>}</Modal.Title>
