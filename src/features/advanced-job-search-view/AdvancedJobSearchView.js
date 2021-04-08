@@ -131,7 +131,7 @@ export function AdvancedJobSearchView(props) {
 
             for (const [groupName, elementArr] of Object.entries(groupedElements)) {
                 /* text or checkbox */
-                if (elementArr.length == 1) {
+                if (elementArr.length === 1) {
                     if (elementArr[0].fieldType === INPUT_TYPES.SELECT) {
                         renderedElements.push(
                             <Row key={'row_' + groupName + "_" + elementArr[0].fieldName}>
@@ -273,7 +273,7 @@ export function AdvancedJobSearchView(props) {
                 backdrop="static"
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>{props.jobDetailFilterTemplate == null ? "" :
+                    <Modal.Title>{props.jobDetailFilterTemplate === null ? "" :
                         <>
                             Search <span style={{ color: "green" }}>{props.jobDetailFilterTemplate.filterTemplateLabel}</span> services with filters
                     </>}</Modal.Title>

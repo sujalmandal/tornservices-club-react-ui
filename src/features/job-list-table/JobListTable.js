@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Container, CardDeck, Card, Row, Col, Form, Button } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
+import { CardDeck, Card, Col, Form, Button } from 'react-bootstrap';
 import {
     selectSearchResults,
     selectIsSearchLoading
@@ -10,8 +10,6 @@ import _ from "lodash";
 import { Scrollbars } from 'react-custom-scrollbars';
 
 export function JobListTable() {
-
-    const dispatch = useDispatch();
 
     /* redux, global states */
     const searchResults = useSelector(selectSearchResults);
@@ -35,7 +33,7 @@ export function JobListTable() {
                     renderedElements.push(
                         <CardDeck key={index} style={{ paddingBottom: "3vh" }}>
                             {threeJobs.map((job, index) => {
-                                return <Card key={'card_' + index} body inverse style={{ backgroundColor: '#333', borderColor: '#333', maxWidth: "20vw" }}>
+                                return <Card key={'card_' + index} body style={{ backgroundColor: '#333', borderColor: '#333', maxWidth: "20vw" }}>
                                     <Card.Title tag="h5">{job.serviceType + ' ' + job.templateName}</Card.Title>
                                     <Card.Text>{job.jobType} {job.listedByPlayerId} x {job.amount}</Card.Text>
                                     <Form.Text>
@@ -61,7 +59,7 @@ export function JobListTable() {
             </Col>
             <Col style={{minWidth:"70vw","minHeight":"70vh", maxHeight:"70vh"}}>
                 {isSearchLoading_ReduxState ? <h5 style={{ color: "white", paddingTop: "30vh" }}>Searching...</h5> :
-                    <Scrollbars>
+                    <Scrollbars inverse="false">
                         {renderResults(searchResults)}
                     </Scrollbars>}
             </Col>

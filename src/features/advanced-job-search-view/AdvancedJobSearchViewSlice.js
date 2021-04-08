@@ -1,8 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
-import {
-  getAdvancedSearchURI
-} from '../../utils/EndpointUtils'
-import axios from 'axios';
+import { createSlice } from '@reduxjs/toolkit'
 
 export const AdvancedJobSearchViewSlice = createSlice({
   name: 'advancedJobSearchView',

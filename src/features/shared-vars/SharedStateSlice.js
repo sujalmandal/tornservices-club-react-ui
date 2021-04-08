@@ -12,7 +12,7 @@ export const initialSharedState = {
       tornPlayerId: "",
       playerId: "",
       isLoggedIn: false,
-      searchLoading: true,
+      searchLoading: false,
       searchRequestObj: {
             "serviceType": "ALL",
             "pageSize": 3,
@@ -20,11 +20,19 @@ export const initialSharedState = {
             "filterFields": [],
             "filterTemplateName": ""
       },
-      pageNumber: 1
+      currentPageNumber: 1
 };
 
 const getSharedStateFromLocalStorage = function () {
-      return localStorage.getItem("sharedState") ? JSON.parse(localStorage.getItem("sharedState")) : initialSharedState;
+      var storedState=localStorage.getItem("sharedState");
+      if(storedState){
+            console.log("stored state found!")
+            return JSON.parse(storedState);
+      }
+      else{
+            console.log("stored not state found, returning initial state.");
+            return initialSharedState;
+      }
 }
 
 const setSharedStateToLocalStorage = function (sharedCache) {
@@ -64,6 +72,10 @@ export const sharedStateSlice = createSlice({
             setAdvancedSearchReqObj: (state, action) => {
                   console.log("updated advanced search request: " + JSON.stringify(action.payload));
                   state.searchRequestObj = action.payload;
+            },
+            setCurrentPageNumber: (state,action) =>{
+                  console.log("updated current page number: " + JSON.stringify(action.payload));
+                  state.currentPageNumber = action.payload;
             }
       }
 });
@@ -79,6 +91,7 @@ export const simpleSearchJobsByFilter = function (filterRequestDTO, onResult, di
             dispatch(setSearchLoading(true));
             axios.post(getSimpleSearchURI(), filterRequestDTO)
                   .then((response) => {
+                        dispatch(setCurrentPageNumber(1));
                         dispatch(setSearchLoading(false));
                         onResult(true, response);
                   }).catch((error, response) => {
@@ -94,6 +107,7 @@ export const searchJobsByFilter = function (filterRequestDTO, onResult, dispatch
             axios.post(getAdvancedSearchURI(), filterRequestDTO)
                   .then((response) => {
                         dispatch(setSearchLoading(false));
+                        dispatch(setCurrentPageNumber(1));
                         onResult(true, response);
                   }).catch((error) => {
                         dispatch(setSearchLoading(false));
@@ -104,19 +118,19 @@ export const searchJobsByFilter = function (filterRequestDTO, onResult, dispatch
 
 export const searchByPageNumber = function (pageNumber, filterRequestDTO, onResult, dispatch) {
       return function () {
+            console.log("search by page number: "+pageNumber);
             dispatch(setSearchLoading(true));
-
             axios.post(getAdvancedSearchURI(), {
                   ...filterRequestDTO,
                   pageNumber: pageNumber
             })
-                  .then((response) => {
-                        dispatch(setSearchLoading(false));
-                        onResult(true, response);
-                  }).catch((error) => {
-                        dispatch(setSearchLoading(false));
-                        onResult(false, error.response);
-                  });
+            .then((response) => {
+                  dispatch(setSearchLoading(false));
+                  onResult(true, response);
+            }).catch((error) => {
+                  dispatch(setSearchLoading(false));
+                  onResult(false, error.response);
+            });
       }
 }
 
@@ -128,6 +142,7 @@ export const selectIsSearchLoading = (state) => state.sharedState.searchLoading;
 export const selectSearchRequestObj = (state) => state.sharedState.searchRequestObj;
 
 export const selectSearchResults = (state) => state.sharedState.searchResults;
+export const selectCurrentPageNumber = (state) => state.sharedState.currentPageNumber;
 export const selectPaginationDetails = (state) => {
       var paginationDetailsObj = { ...state.sharedState.searchResults };
       delete paginationDetailsObj.jobs
@@ -140,7 +155,8 @@ export const {
       setSearchResults,
       setSearchLoading,
       setSimpleSearchReqObj,
-      setAdvancedSearchReqObj
+      setAdvancedSearchReqObj,
+      setCurrentPageNumber
 } = sharedStateSlice.actions;
 
 export default sharedStateSlice.reducer;
