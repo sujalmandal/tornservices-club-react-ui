@@ -14,11 +14,11 @@ export const validateNumberFormat = function (valueObj, maxValue, minValue) {
     console.log("value passed: "+value+", limit: "+maxValue)
     if(value===""){
         console.log("value is empty")
-        valueObj.value=minValue;
-        valueObj.formattedValue="$"+minValue;
+        valueObj.value=0;
+        valueObj.formattedValue="$0";
         return valueObj;
     }
-    if (parseInt(value) >= parseInt(minValue) && parseInt(value) <= parseInt(maxValue)) {
+    if (parseInt(value) <= parseInt(maxValue)) {
         return valueObj;
     }
 }
