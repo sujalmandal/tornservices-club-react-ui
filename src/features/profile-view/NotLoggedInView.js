@@ -76,15 +76,15 @@ export function NotLoggedInView() {
                     <Modal.Title id="example-modal-sizes-title-lg">Login with your torn API key</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Container>
+                    <Container fluid>
                         <Form>
                             <Row>
-                                <Col style={{minWidth:"70%"}}>
+                                <Col>
                                     <FormControl defaultValue={globalPlayerInfo.apiKey} type="text" className="mr-sm-4" onChange={setAPIKey} disabled={isLoading} />
                                 </Col>
-                                <Col style={{minWidth:"30%"}}>
+                                <Col>
                                     <Button onClick={handleLogin} variant="outline-success" disabled={isLoading}>
-                                        <SpinnerText isLoading={isLoading} loadingText="Checking with Chedburn.." text="Login!" />
+                                        <SpinnerText isLoading={isLoading} loadingText="Checking with Ched.." text="Login!" />
                                     </Button>
                                 </Col>
                             </Row>
