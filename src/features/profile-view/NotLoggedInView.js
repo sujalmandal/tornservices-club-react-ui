@@ -97,7 +97,7 @@ export function NotLoggedInView() {
                         <Form.Text className="text-muted">
                             <span style={{ color: "gray" }}>
                                 Your API key will never be saved in torncityservices.club's database.
-                                <br/>The backend code base is opensource, so visit 
+                                <br/>The backend code base is opensource. Visit{' '}
                                 <a href="https://github.com/sujalmandal/torncityservices-club-rest-api">github codebase</a> to verify!
                             </span>
                         </Form.Text>
