@@ -115,19 +115,26 @@ export function JobPostView() {
         }
     }
 
-    const onPostResult = function (isSuccess, response) {
-        setCreateJobDTO(initialCreateJobDTO);
-        setJobDetailsTemplate(null);
+    const onPostResult = function (isSuccess, result) {
+
         console.log("postNewJob() result received!");
         if (isSuccess) {
             toast.success("Your job " + selectedServiceTypeObj.KEY.toLowerCase() + " has been posted!");
+            setJobDetailsTemplate(null);
+            setCreateJobDTO(initialCreateJobDTO);
             setIsLoading(false);
             setShowJobPostForm(false);
         }
         else {
             setIsLoading(false);
-            console.error("error: "+response);
-            toast.error("Unable to post the job! :( please contact transhumanist on torn!");
+            var error = result.response.data
+            if(error){
+                toast.error("Error: "+error.message);
+                console.log(error.validationErrors);
+            }
+            else{
+                toast.error("unknown error occurred!");
+            }
         }
     }
 
@@ -144,7 +151,7 @@ export function JobPostView() {
                                     <NumberFormat style={{ width: "10vw" }} name={element.name} onChange={handleOnChangeFormElement}
                                         className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
                                         isAllowed={(valObj) => { return validateNumberFormat(valObj, element.maxValue,element.minValue) }}
-                                        defaultValue={element.minValue} />
+                                    />
                                 </Col></Row>);
                         }
                         else {
@@ -153,7 +160,7 @@ export function JobPostView() {
                                 <Col>
                                     <FormControl id={element.id}
                                         style={{ width: "10vw" }} type="number" min={element.minValue}
-                                        max={element.maxValue} name={element.name} defaultValue={element.defaultValue}
+                                        max={element.maxValue} name={element.name}
                                         size="sm" className="mr-sm-4" onChange={handleOnChangeFormElement} />
                                 </Col></Row>);
                         }
@@ -171,7 +178,7 @@ export function JobPostView() {
                     else if (element.type === INPUT_TYPES.SELECT) {
                         renderedElements.push(<Row key={'row_' + element.name} style={{ paddingRight: "2vw", paddingLeft: "2vw", paddingTop: "1vh" }}>
                             <Col><Form.Label>{element.label}</Form.Label></Col>
-                            <Col><Form.Control as="select" name={element.name} defaultValue={element.defaultValue} 
+                            <Col><Form.Control as="select" name={element.name} defaultValue={"--select--"} 
                                     onChange={handleOnChangeFormElement}>
                                 {element.options.map((option,index)=>{
                                     return <option>{option}</option>;
@@ -179,6 +186,7 @@ export function JobPostView() {
                             </Form.Control></Col>
                         </Row>);
                     }
+                    //text type
                     else {
                         renderedElements.push(<Row key={'row_' + element.name} style={{ paddingRight: "2vw", paddingLeft: "2vw", paddingTop: "1vh" }}>
                             <Col><Form.Label className="mr-sm-4">{element.label}</Form.Label></Col>

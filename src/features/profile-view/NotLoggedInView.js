@@ -36,24 +36,29 @@ export function NotLoggedInView() {
         dispatch(sendLoginRequest(globalPlayerInfo.apiKey, onLoginResult));
     }
 
-    const onLoginResult = function (isSuccess, response) {
+    const onLoginResult = function (isSuccess, result) {
         setIsLoading(false);
         setIsLoginPopupOpen(false);
         if (isSuccess) {
-            console.log(response.data)
+            console.log(result.data)
             dispatch(updateSharedState({
                 ...globalPlayerInfo,
-                ...response.data,
+                ...result.data,
                 isLoggedIn: true,
                 isLoading: false
             }));
-            toast.success("Welcome " + response.data.tornUserName + " !");
+            toast.success("Welcome " + result.data.tornUserName + " !");
             setTimeout(() => { window.location.reload() }, 3000);
         }
         else {
-            console.error(response);
+            var error = result.response.data
+            if(error){
+                toast.error("Error: "+error.message);
+            }
+            else{
+                toast.error("unknown error occurred!");
+            }
             dispatch(updateSharedState(initialSharedState));
-            toast.error("Something went wrong! Please try again..?");
         }
     }
 

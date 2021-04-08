@@ -99,14 +99,19 @@ export function AdvancedJobSearchView(props) {
         dispatch(searchJobsByFilter(localSearchObj, onHandleAdvancedSearchResult, dispatch))
     }
 
-    const onHandleAdvancedSearchResult = function (isSuccess, response) {
+    const onHandleAdvancedSearchResult = function (isSuccess, result) {
         if (isSuccess) {
-            console.log("advanced search results: " + JSON.stringify(response.data.jobs));
-            dispatch(setSearchResults(response.data));
+            console.log("advanced search results: " + JSON.stringify(result.data.jobs));
+            dispatch(setSearchResults(result.data));
         }
         else {
-
-            toast.error("Error: "+response.data.errorMessage);
+            var error = result.response.data
+            if(error){
+                toast.error("Error: "+error.message);
+            }
+            else{
+                toast.error("unknown error occurred!");
+            }
         }
     }
 

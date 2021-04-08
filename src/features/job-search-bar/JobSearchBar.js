@@ -136,12 +136,18 @@ export function JobSearchBar() {
         }
     }
 
-    const onSimpleSearchJobsByFilterResult = function (isSuccess, response) {
+    const onSimpleSearchJobsByFilterResult = function (isSuccess, result) {
         if (isSuccess) {
-            dispatch(setSearchResults(response.data))
+            dispatch(setSearchResults(result.data))
         }
         else {
-            toast.error("Error: "+response.data.errorMessage);
+            var error = result.response.data
+            if(error){
+                toast.error("Error: "+error.message);
+            }
+            else{
+                toast.error("unknown error occurred!");
+            }
         }
     }
 
