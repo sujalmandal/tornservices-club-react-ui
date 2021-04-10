@@ -130,8 +130,13 @@ export function JobPostView() {
 
     const handlePostNewJob = function (e) {
         console.log("posting " + JSON.stringify(createJobDTO));
-        setIsLoading(true);
-        dispatch(postNewJob(createJobDTO, onPostResult));
+        if(!createJobDTO.jobDetails || Object.keys(createJobDTO.jobDetails).length===0){
+            toast.error("Please select a job type from the dropdown and fill in the details to create a new post.");
+        }
+        else{
+            setIsLoading(true);
+            dispatch(postNewJob(createJobDTO, onPostResult));
+        }
     };
 
     /* callbacks */
