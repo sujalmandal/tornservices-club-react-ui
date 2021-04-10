@@ -200,6 +200,7 @@ export function AdvancedJobSearchView(props) {
                                             groupName={elementArr[0].groupName}
                                             name={elementArr[0].fieldName}
                                             type="text"
+                                            autoComplete={false}
                                             className="mr-sm-4"
                                             onKeyPress={allowOnlyNumbers}
                                             onChange={(e) => {

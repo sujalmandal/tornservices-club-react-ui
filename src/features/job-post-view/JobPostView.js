@@ -34,6 +34,7 @@ export function JobPostView() {
     };
 
     const [selectedTemplateName, setSelectedTemplateName] = useState(null);
+    const [selectedTemplateLabel, setSelectedTemplateLabel] = useState("--select--");
     const [selectedServiceTypeObj, setSelectedServiceTypeObj] = useState(
         SERVICE_TYPE.REQUEST.FORM
     );
@@ -88,12 +89,14 @@ export function JobPostView() {
 
     const handleJobDetailTemplateSelect = function (index) {
         var templateName = availableJobDetailTemplates[index].jobDetailFormTemplateName;
+        var templateLabel = availableJobDetailTemplates[index].jobDetailFormTemplateLabel;
         setCreateJobDTO({
             ...createJobDTO,
             serviceType: selectedServiceTypeObj.KEY,
             templateName: templateName
         });
         setSelectedTemplateName(templateName);
+        setSelectedTemplateLabel(templateLabel);
         dispatch(getJobDetailFormData(templateName, onGetJobDetailFormDataResult)
         );
     };
@@ -210,6 +213,7 @@ export function JobPostView() {
                                                     name={element.name}
                                                     type="text"
                                                     className="mr-sm-4"
+                                                    autoComplete={false}
                                                     onKeyPress={allowOnlyNumbers}
                                                     onChange={(e) => {
                                                         formatCurrency(e, element.minValue, element.maxValue, handleOnChangeFormElement);
@@ -417,9 +421,7 @@ export function JobPostView() {
                             <Col>
                                 <DropdownButton
                                     id="dropdown-basic-button-job-details"
-                                    title={
-                                        "Service : " + (selectedTemplateName ? selectedTemplateName : "-select-")
-                                    }
+                                    title={selectedTemplateLabel}
                                     onSelect={handleJobDetailTemplateSelect}
                                 >
                                     {availableJobDetailTemplates.map((formTemplate, index) => {
