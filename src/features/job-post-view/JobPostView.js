@@ -43,6 +43,7 @@ export function JobPostView() {
     const [showJobPostForm, setShowJobPostForm] = useState(false);
     const [jobDetailsTemplate, setJobDetailsTemplate] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [formErrors,setFormErrors] = useState({});
     //form data
     const [createJobDTO, setCreateJobDTO] = useState(initialCreateJobDTO);
 
@@ -150,6 +151,7 @@ export function JobPostView() {
             var error = result.response.data;
             if (error) {
                 toast.error("Error: " + error.message);
+                setFormErrors(error.validationErrors);
                 console.log(error.validationErrors);
             }
         }
@@ -188,7 +190,7 @@ export function JobPostView() {
                                                 <InputGroup.Prepend>
                                                 <InputGroup.Text>$</InputGroup.Text>
                                                 </InputGroup.Prepend>
-                                                <FormControl 
+                                                <FormControl
                                                 style={{ width: "10vw" }}
                                                 id={element.id}
                                                 min={element.minValue}
@@ -200,7 +202,12 @@ export function JobPostView() {
                                                 onChange={(e)=>{
                                                     formatCurrency(e,element.minValue,element.maxValue,handleOnChangeFormElement);
                                                 }}
+                                                isInvalid={formErrors[element.name]!=undefined}
                                             />
+                                            {formErrors[element.name]!=undefined?
+                                            <Form.Control.Feedback type="isInvalid" style={{color:"red"}}>
+                                                {formErrors[element.name]?formErrors[element.name]:""}
+                                            </Form.Control.Feedback>:""}
                                             </InputGroup>
                                         </Col>
                                     </Row>
@@ -233,7 +240,12 @@ export function JobPostView() {
                                                 size="sm"
                                                 className="mr-sm-4"
                                                 onChange={handleOnChangeFormElement}
+                                                isInvalid={formErrors[element.name]!=undefined}
                                             />
+                                            {formErrors[element.name]!=undefined?
+                                            <Form.Control.Feedback type="isInvalid" style={{color:"red"}}>
+                                                {formErrors[element.name]?formErrors[element.name]:""}
+                                            </Form.Control.Feedback>:""}
                                         </Col>
                                     </Row>
                                 </Form.Group>
@@ -265,7 +277,12 @@ export function JobPostView() {
                                             size="sm"
                                             className="mr-sm-4"
                                             onChange={handleOnChangeFormElement}
+                                            isInvalid={formErrors[element.name]!=undefined}
                                         />
+                                        {formErrors[element.name]!=undefined?
+                                            <Form.Control.Feedback type="isInvalid" style={{color:"red"}}>
+                                                {formErrors[element.name]?formErrors[element.name]:""}
+                                            </Form.Control.Feedback>:""}
                                     </Col>
                                 </Row>
                             </Form.Group>
@@ -290,11 +307,16 @@ export function JobPostView() {
                                             name={element.name}
                                             defaultValue={"--select--"}
                                             onChange={handleOnChangeFormElement}
+                                            isInvalid={formErrors[element.name]!=undefined}
                                         >
                                             {element.options.map((option, index) => {
                                                 return <option>{option}</option>;
                                             })}
                                         </Form.Control>
+                                        {formErrors[element.name]!=undefined?
+                                            <Form.Control.Feedback type="isInvalid" style={{color:"red"}}>
+                                                {formErrors[element.name]?formErrors[element.name]:""}
+                                            </Form.Control.Feedback>:""}
                                     </Col>
                                 </Row>
                             </Form.Group>
@@ -327,7 +349,12 @@ export function JobPostView() {
                                             size="sm"
                                             className="mr-sm-4"
                                             onChange={handleOnChangeFormElement}
+                                            isInvalid={formErrors[element.name]!=undefined}
                                         />
+                                        {formErrors[element.name]!=undefined?
+                                            <Form.Control.Feedback type="isInvalid" style={{color:"red"}}>
+                                                {formErrors[element.name]?formErrors[element.name]:""}
+                                            </Form.Control.Feedback>:""}
                                     </Col>
                                 </Row>
                             </Form.Group>
