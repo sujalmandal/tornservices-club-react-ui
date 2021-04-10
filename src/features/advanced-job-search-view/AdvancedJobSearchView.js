@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Modal, Form, FormControl, Container, Col, Row } from 'react-bootstrap';
+import { Button, Modal, Form, FormControl, Container, Col, Row, InputGroup } from 'react-bootstrap';
 import { } from './AdvancedJobSearchViewSlice';
 import {
     SERVICE_TYPE,
     CURRENCY_FORMAT,
     INPUT_TYPES
 } from '../../constants';
-import NumberFormat from 'react-number-format';
 import SpinnerText from '../common-components/SpinnerText';
 import { toast } from 'react-toastify';
-import { validateNumberFormat } from '../../utils/AppUtils';
+import { formatCurrencyForFilter, allowOnlyNumbers } from '../../utils/AppUtils';
 import _ from "lodash";
 import {
     setSearchResults,
@@ -44,15 +43,15 @@ export function AdvancedJobSearchView(props) {
             setLocalSearchObj({
                 ...localSearchObj,
                 filterTemplateName: props.jobDetailFilterTemplate.filterTemplateName,
-                serviceType:selectedServiceTypeObj.KEY
+                serviceType: selectedServiceTypeObj.KEY
             });
         }
     }, [props.isOpen])
 
     /* update global search object */
-    useEffect(()=>{
+    useEffect(() => {
         dispatch(setAdvancedSearchReqObj(localSearchObj));
-    },[localSearchObj]);
+    }, [localSearchObj]);
 
 
 
@@ -78,12 +77,12 @@ export function AdvancedJobSearchView(props) {
         var previousIndex = _.findIndex(filterFields, { 'name': fieldName });
         //new element
         if (previousIndex === -1) {
-            console.log("adding new search filter: "+JSON.stringify(filterFieldObj));
+            console.log("adding new search filter: " + JSON.stringify(filterFieldObj));
             filterFields.push(filterFieldObj);
         }
         //replace existing element
         else {
-            console.log("updating search filter : "+JSON.stringify(filterFieldObj));
+            console.log("updating search filter : " + JSON.stringify(filterFieldObj));
             filterFields[previousIndex] = filterFieldObj;
         }
         //filterFields=_.uniqBy(filterFields, 'name');
@@ -106,10 +105,10 @@ export function AdvancedJobSearchView(props) {
         }
         else {
             var error = result.response.data
-            if(error){
-                toast.error("Error: "+error.message);
+            if (error) {
+                toast.error("Error: " + error.message);
             }
-            else{
+            else {
                 toast.error("unknown error occurred!");
             }
         }
@@ -191,35 +190,57 @@ export function AdvancedJobSearchView(props) {
                             <Row key={'row_' + groupName + "_" + elementArr[0].fieldName}>
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
-                                    <NumberFormat style={{ width: "10vw" }} name={elementArr[0].fieldName}
-                                        className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
-                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[0].maxValue, elementArr[0].minValue) }}
-                                        min={elementArr[0].minValue} max={elementArr[0].maxValue}
-                                        defaultValue={elementArr[0].minValue} groupName={elementArr[0].groupName}
-                                        onChange={(e) => {
-                                            handleOnChangeFormElement(
-                                                e.target.value,
-                                                elementArr[0].fieldName,
-                                                elementArr[0].groupName,
-                                                elementArr[0].fieldType);
-                                        }}
-                                    />
+                                    <InputGroup className="mb-2">
+                                        <InputGroup.Prepend>
+                                            <InputGroup.Text>$</InputGroup.Text>
+                                        </InputGroup.Prepend>
+                                        <FormControl
+                                            style={{ width: "10vw" }}
+                                            id={elementArr[0].fieldName}
+                                            groupName={elementArr[0].groupName}
+                                            name={elementArr[0].fieldName}
+                                            type="text"
+                                            className="mr-sm-4"
+                                            onKeyPress={allowOnlyNumbers}
+                                            onChange={(e) => {
+                                                formatCurrencyForFilter(e,
+                                                    elementArr[0].minValue,
+                                                    elementArr[0].maxValue,
+                                                    elementArr[0].fieldName,
+                                                    elementArr[0].groupName,
+                                                    elementArr[0].fieldType,
+                                                    handleOnChangeFormElement
+                                                )
+                                            }}
+                                        />
+                                    </InputGroup>
                                 </Col>
                                 <Col>
                                     <Form.Label className="mr-sm-4">{elementArr[1].fieldLabel}</Form.Label>
-                                    <NumberFormat className=".form-control-sm" style={{ width: "10vw" }} name={elementArr[1].fieldName}
-                                        className=".mr-sm-4 form-control form-control-sm" thousandSeparator={true} prefix={'$'}
-                                        isAllowed={(valObj) => { return validateNumberFormat(valObj, elementArr[1].maxValue, elementArr[1].minValue) }}
-                                        min={elementArr[1].minValue} max={elementArr[1].maxValue}
-                                        defaultValue={elementArr[1].minValue} groupName={elementArr[1].groupName}
-                                        onChange={(e) => {
-                                            handleOnChangeFormElement(
-                                                e.target.value,
-                                                elementArr[1].fieldName,
-                                                elementArr[1].groupName,
-                                                elementArr[1].fieldType);
-                                        }}
-                                    />
+                                    <InputGroup className="mb-2">
+                                        <InputGroup.Prepend>
+                                            <InputGroup.Text>$</InputGroup.Text>
+                                        </InputGroup.Prepend>
+                                        <FormControl
+                                            style={{ width: "10vw" }}
+                                            id={elementArr[1].fieldName}
+                                            groupName={elementArr[1].groupName}
+                                            name={elementArr[1].fieldName}
+                                            type="text"
+                                            className="mr-sm-4"
+                                            onKeyPress={allowOnlyNumbers}
+                                            onChange={(e) => {
+                                                formatCurrencyForFilter(e,
+                                                    elementArr[1].minValue,
+                                                    elementArr[1].maxValue,
+                                                    elementArr[1].fieldName,
+                                                    elementArr[1].groupName,
+                                                    elementArr[1].fieldType,
+                                                    handleOnChangeFormElement
+                                                )
+                                            }}
+                                        />
+                                    </InputGroup>
                                 </Col>
                             </Row>);
                     }

@@ -5,25 +5,25 @@ export const getLoginURI=function(APIKey){
 }
 
 export const getJobDetailTemplatesURI=function(){
-    return BASE_URI+'/job/jobDetailTemplates';
+    return BASE_URI+'public/jobDetailTemplates';
 }
 
 export const getJobDetailFormTemplateByNameURI=function(jobDetailTemplateName){
-    return BASE_URI+'/job/jobDetailFormTemplate/'+jobDetailTemplateName;
+    return BASE_URI+'public/jobDetailFormTemplate/'+jobDetailTemplateName;
 }
 
 export const getJobDetailFilterTemplateByNameURI=function(jobDetailTemplateName){
-    return BASE_URI+'/job/jobDetailFilterTemplate/'+jobDetailTemplateName;
+    return BASE_URI+'public/jobDetailFilterTemplate/'+jobDetailTemplateName;
 }
 
 export const getPostNewJobURI=function(){
-    return BASE_URI+'/job/post';
+    return BASE_URI+'job/post';
 }
 
 export const getSimpleSearchURI=function(){
-    return BASE_URI+'/job/search';
+    return BASE_URI+'job/search';
 }
 
 export const getAdvancedSearchURI=function(){
-    return BASE_URI+'/job/advancedSearch';
+    return BASE_URI+'job/advancedSearch';
 }

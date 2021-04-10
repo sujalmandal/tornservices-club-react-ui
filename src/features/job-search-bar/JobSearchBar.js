@@ -113,7 +113,7 @@ export function JobSearchBar() {
             setIsFilterRequestLoading(false);
             setAvailableFilterTemplates(response.data);
             console.log("fetched available template information : " + JSON.stringify(response.data));
-            if (firstLoad && isLoggedIn_ReduxState) {
+            if (firstLoad) {
                 handleSimpleSearch();
                 setFirstLoad(false);
             }

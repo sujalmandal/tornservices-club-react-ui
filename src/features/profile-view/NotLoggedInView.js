@@ -3,12 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Button, Modal, Form, FormControl, Container, Row, Col } from 'react-bootstrap';
 import { sendLoginRequest } from './NotLoggedInViewSlice';
 import {
-    updateApiKey,
     updateSharedState,
-    selectPlayerInfo,
-    initialSharedState
-
+    selectSharedState
 } from '../shared-vars/SharedStateSlice';
+
+import { initialSharedState } from '../../utils/AppUtils';
+
 import SpinnerText from '../common-components/SpinnerText';
 import { toast } from 'react-toastify';
 
@@ -17,23 +17,28 @@ export function NotLoggedInView() {
     const dispatch = useDispatch();
 
     /* redux, global states */
-    const globalPlayerInfo = useSelector(selectPlayerInfo);
+    const sharedState = useSelector(selectSharedState);
 
     /* local states */
     const [isLoginPopupOpen, setIsLoginPopupOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [apiKey,setApiKey] = useState("");
 
     const setAPIKey = function (e) {
-        dispatch(updateApiKey(e.target.value))
+        setApiKey(e.target.value);
     }
 
     const handleLogin = function () {
+        setLoadingState();
+        dispatch(sendLoginRequest(apiKey, onLoginResult));
+    }
+
+    const setLoadingState=()=>{
         setIsLoading(true);
         dispatch(updateSharedState({
-            ...globalPlayerInfo,
+            ...sharedState,
             isLoading: true
         }));
-        dispatch(sendLoginRequest(globalPlayerInfo.apiKey, onLoginResult));
     }
 
     const onLoginResult = function (isSuccess, result) {
@@ -42,8 +47,9 @@ export function NotLoggedInView() {
         if (isSuccess) {
             console.log(result.data)
             dispatch(updateSharedState({
-                ...globalPlayerInfo,
+                ...sharedState,
                 ...result.data,
+                apiKey:apiKey,
                 isLoggedIn: true,
                 isLoading: false
             }));
@@ -80,7 +86,7 @@ export function NotLoggedInView() {
                         <Form>
                             <Row>
                                 <Col>
-                                    <FormControl defaultValue={globalPlayerInfo.apiKey} type="text" className="mr-sm-4" onChange={setAPIKey} disabled={isLoading} />
+                                    <FormControl defaultValue={apiKey} type="text" className="mr-sm-4" onChange={setAPIKey} disabled={isLoading} />
                                 </Col>
                                 <Col>
                                     <Button onClick={handleLogin} variant="outline-success" disabled={isLoading}>

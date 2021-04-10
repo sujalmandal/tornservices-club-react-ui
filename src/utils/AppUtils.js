@@ -1,6 +1,32 @@
 import {DATE_FORMAT} from '../constants';
 import moment from 'moment'
 
+
+export const initialSharedState = {
+    isLoggedIn: false,
+    searchLoading: false,
+    searchRequestObj: {
+          "serviceType": "ALL",
+          "pageSize": 3,
+          "postedXDaysAgo": 3,
+          "filterFields": [],
+          "filterTemplateName": ""
+    },
+    currentPageNumber: 1
+};
+
+export const getSharedStateFromLocalStorage = function () {
+    var storedState = localStorage.getItem("sharedState");
+    if (storedState) {
+          console.log("stored state found!")
+          return JSON.parse(storedState);
+    }
+    else {
+          console.log("stored not state found, returning initial state.");
+          return initialSharedState;
+    }
+}
+
 export const yyyy_mm_dd = function (dateIn) {
     var yyyy = dateIn.getFullYear();
     var mm = dateIn.getMonth() + 1;
@@ -20,6 +46,49 @@ export const validateNumberFormat = function (valueObj, maxValue, minValue) {
     }
     if (parseInt(value) <= parseInt(maxValue)) {
         return valueObj;
+    }
+}
+
+export const formatCurrency = function (e,minValue,maxValue,onChange) {
+    var value = e.target.value;
+    value=value.replaceAll(",","");
+    var isNumber=!isNaN(value);
+    if(isNumber){
+        if(value>maxValue){
+            value=maxValue+"";
+        }
+        if(value<minValue){
+            value=minValue+"";
+        }
+        var formattedAsCurrency=value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        e.target.value=formattedAsCurrency;
+        console.log("formattedAsCurrency: "+formattedAsCurrency+", minValue: "+minValue+", maxValue: "+maxValue);
+        onChange(e);
+    }
+}
+
+export const formatCurrencyForFilter = function (e,minValue,maxValue,fieldName,groupName,fieldType,onChange) {
+    var value = e.target.value;
+    value=value.replaceAll(",","");
+    var isNumber=!isNaN(value);
+    if(isNumber){
+        if(value>maxValue){
+            value=maxValue+"";
+        }
+        if(value<minValue){
+            value=minValue+"";
+        }
+        var formattedAsCurrency=value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        e.target.value=formattedAsCurrency;
+        console.log("formattedAsCurrency: "+formattedAsCurrency+", minValue: "+minValue+", maxValue: "+maxValue);
+        onChange(value,fieldName,groupName,fieldType);
+    }
+}
+
+export const allowOnlyNumbers=function(e){
+    var keyChar = e.key;
+    if(isNaN(keyChar) || keyChar===" "){
+        e.preventDefault();
     }
 }
 

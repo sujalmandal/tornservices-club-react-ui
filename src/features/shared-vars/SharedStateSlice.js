@@ -5,35 +5,10 @@ import {
       getAdvancedSearchURI
 } from '../../utils/EndpointUtils'
 
-export const initialSharedState = {
-      apiKey: "",
-      activeSubscriptionType: "",
-      tornUserName: "",
-      tornPlayerId: "",
-      playerId: "",
-      isLoggedIn: false,
-      searchLoading: false,
-      searchRequestObj: {
-            "serviceType": "ALL",
-            "pageSize": 3,
-            "postedXDaysAgo": 3,
-            "filterFields": [],
-            "filterTemplateName": ""
-      },
-      currentPageNumber: 1
-};
-
-const getSharedStateFromLocalStorage = function () {
-      var storedState=localStorage.getItem("sharedState");
-      if(storedState){
-            console.log("stored state found!")
-            return JSON.parse(storedState);
-      }
-      else{
-            console.log("stored not state found, returning initial state.");
-            return initialSharedState;
-      }
-}
+import {
+      initialSharedState,
+      getSharedStateFromLocalStorage
+} from '../../utils/AppUtils';
 
 const setSharedStateToLocalStorage = function (sharedCache) {
       localStorage.setItem("sharedState", JSON.stringify(sharedCache));
@@ -46,9 +21,6 @@ export const sharedStateSlice = createSlice({
             searchResults: []
       },
       reducers: {
-            updateApiKey: (state, action) => {
-                  state.apiKey = action.payload;
-            },
             updateSharedState: (state, action) => {
                   state = action.payload;
                   setSharedStateToLocalStorage(action.payload);
@@ -73,7 +45,7 @@ export const sharedStateSlice = createSlice({
                   console.log("updated advanced search request: " + JSON.stringify(action.payload));
                   state.searchRequestObj = action.payload;
             },
-            setCurrentPageNumber: (state,action) =>{
+            setCurrentPageNumber: (state, action) => {
                   console.log("updated current page number: " + JSON.stringify(action.payload));
                   state.currentPageNumber = action.payload;
             }
@@ -89,40 +61,64 @@ export const wipeSharedState = (dispatch) => {
 export const simpleSearchJobsByFilter = function (filterRequestDTO, onResult, dispatch) {
       return function () {
             dispatch(setSearchLoading(true));
-            axios.post(getSimpleSearchURI(), filterRequestDTO)
-                  .then((response) => {
-                        dispatch(setCurrentPageNumber(1));
-                        dispatch(setSearchLoading(false));
-                        onResult(true, response);
-                  }).catch((error, response) => {
-                        dispatch(setSearchLoading(false));
-                        onResult(false, error.response);
-                  });
+            axios({
+                  method:'POST',
+                  url:getSimpleSearchURI(),
+                  data:filterRequestDTO,
+                  headers: {
+                        fingerprint: getSharedStateFromLocalStorage().fingerprint,
+                        apiKey: getSharedStateFromLocalStorage().apiKey
+                  }
+            })
+            .then((response) => {
+                  dispatch(setCurrentPageNumber(1));
+                  dispatch(setSearchLoading(false));
+                  onResult(true, response);
+            }).catch((error, response) => {
+                  dispatch(setSearchLoading(false));
+                  onResult(false, error.response);
+            });
       }
 }
 
 export const searchJobsByFilter = function (filterRequestDTO, onResult, dispatch) {
       return function () {
             dispatch(setSearchLoading(true));
-            axios.post(getAdvancedSearchURI(), filterRequestDTO)
-                  .then((response) => {
-                        dispatch(setSearchLoading(false));
-                        dispatch(setCurrentPageNumber(1));
-                        onResult(true, response);
-                  }).catch((error) => {
-                        dispatch(setSearchLoading(false));
-                        onResult(false, error.response);
-                  });
+            axios({
+                  method:'POST',
+                  url:getAdvancedSearchURI(), 
+                  data:filterRequestDTO,
+                  headers: {
+                        fingerprint: getSharedStateFromLocalStorage().fingerprint,
+                        apiKey: getSharedStateFromLocalStorage().apiKey
+                  }
+            })
+            .then((response) => {
+                  dispatch(setSearchLoading(false));
+                  dispatch(setCurrentPageNumber(1));
+                  onResult(true, response);
+            }).catch((error) => {
+                  dispatch(setSearchLoading(false));
+                  onResult(false, error.response);
+            });
       }
 }
 
 export const searchByPageNumber = function (pageNumber, filterRequestDTO, onResult, dispatch) {
       return function () {
-            console.log("search by page number: "+pageNumber);
+            console.log("search by page number: " + pageNumber);
             dispatch(setSearchLoading(true));
-            axios.post(getAdvancedSearchURI(), {
-                  ...filterRequestDTO,
-                  pageNumber: pageNumber
+            axios({
+                  method:'POST',
+                  url:getAdvancedSearchURI(), 
+                  data:{
+                        ...filterRequestDTO,
+                        pageNumber: pageNumber
+                  }, 
+                  headers: {
+                        fingerprint: getSharedStateFromLocalStorage().fingerprint,
+                        apiKey: getSharedStateFromLocalStorage().apiKey
+                  }
             })
             .then((response) => {
                   dispatch(setSearchLoading(false));
@@ -134,7 +130,7 @@ export const searchByPageNumber = function (pageNumber, filterRequestDTO, onResu
       }
 }
 
-export const selectPlayerInfo = (state) => state.sharedState;
+export const selectSharedState = (state) => state.sharedState;
 export const selectIsLoggedIn = (state) => state.sharedState.isLoggedIn;
 export const selectAPIKey = (state) => state.sharedState.apiKey;
 
@@ -150,7 +146,6 @@ export const selectPaginationDetails = (state) => {
 };
 
 export const {
-      updateApiKey,
       updateSharedState,
       setSearchResults,
       setSearchLoading,

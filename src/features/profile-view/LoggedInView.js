@@ -2,11 +2,11 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, NavDropdown } from 'react-bootstrap';
 import { } from './LoggedInViewSlice';
-import { selectPlayerInfo, wipeSharedState } from '../shared-vars/SharedStateSlice';
+import { selectSharedState, wipeSharedState } from '../shared-vars/SharedStateSlice';
 
 export function LoggedInView() {
 
-    const globalPlayerInfo = useSelector(selectPlayerInfo);
+    const sharedState = useSelector(selectSharedState);
     const dispatch = useDispatch();
     const handleLogout = function () {
         wipeSharedState(dispatch)
@@ -14,7 +14,7 @@ export function LoggedInView() {
 
     return (
         <div>
-            <NavDropdown title={globalPlayerInfo.tornUserName} id="basic-nav-dropdown">
+            <NavDropdown title={sharedState.tornUserName} id="basic-nav-dropdown">
                 <NavDropdown.Item>Accepted Jobs</NavDropdown.Item>
                 <NavDropdown.Item>Posted Jobs</NavDropdown.Item>
                 <NavDropdown.Divider />
