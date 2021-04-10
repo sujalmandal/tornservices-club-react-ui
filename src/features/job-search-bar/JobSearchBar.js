@@ -4,6 +4,7 @@ import { Navbar, Nav, Form, Col, Row, Button, ButtonGroup, ToggleButton, Contain
 import { NotLoggedInView } from '../profile-view/NotLoggedInView';
 import { LoggedInView } from '../profile-view/LoggedInView';
 import { JobPostView } from '../job-post-view/JobPostView';
+import { initialSharedState } from '../../utils/AppUtils';
 import { AdvancedJobSearchView } from '../advanced-job-search-view/AdvancedJobSearchView';
 import {
     getAvailableFilters,
@@ -99,6 +100,15 @@ export function JobSearchBar() {
         dispatch(simpleSearchJobsByFilter(localSearchObj, onSimpleSearchJobsByFilterResult, dispatch))
     }
 
+    const handleClearSearchFilters = function () {
+        console.log("triggering simple search with criteria : " + JSON.stringify(localSearchObj));
+        setLocalSearchObj(initialSharedState.searchRequestObj);
+        dispatch(setSimpleSearchReqObj(initialSharedState.searchRequestObj));
+        setSelectedFilterTemplateIndex(null);
+        setSelectedFilterTemplateObj(null);
+        setServiceTypeKey(SERVICE_TYPE.ALL);
+    }
+
     const openAdvancedSearchPopup = function () {
         setAdvancedSearchPopupOpen(true);
     }
@@ -166,7 +176,7 @@ export function JobSearchBar() {
                                         <Row>
                                             {availableFilterTemplates.map((filter, index) => {
                                                 return <div key={'div_' + index}><Nav.Item key={'item_' + index}>
-                                                    <Nav.Link key={'link_' + index} eventKey={index}>{filter.jobDetailFilterTemplateLabel}</Nav.Link>
+                                                    <Nav.Link key={'link_' + index} active={index===selectFilterTemplateIndex} eventKey={index}>{filter.jobDetailFilterTemplateLabel}</Nav.Link>
                                                 </Nav.Item>
                                                 </div>
                                             })}
@@ -213,6 +223,13 @@ export function JobSearchBar() {
                                     <SpinnerText isLoading={isSearchLoading_ReduxState} loadingText="Just a min.." text="Search" />
                                 </Button>
                             </ButtonGroup>
+
+                            <ButtonGroup style={{ paddingLeft: "0.5vw" }} >
+                                <Button onClick={handleClearSearchFilters} variant="secondary" disabled={(isSearchLoading_ReduxState)}>
+                                    Clear
+                                </Button>
+                            </ButtonGroup>
+
                         </Form>
                     </Nav>
                     <Nav className="mr-auto" style={{ paddingLeft: "0.5vw", minWidth: "25vw", paddingRight: "0.5vw" }}>
