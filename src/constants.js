@@ -1,7 +1,7 @@
 export const SERVICE_TYPE = {
     "REQUEST": {
         "FORM": {
-            "LABEL": "looking for services",
+            "LABEL": "looking for ",
             "SHORT_LABEL":"Requests",
             "KEY": "REQUEST",
         },
@@ -12,7 +12,7 @@ export const SERVICE_TYPE = {
         }
     }, "OFFER": {
         "FORM": {
-            "LABEL": "offering services",
+            "LABEL": "offering to",
             "SHORT_LABEL":"Offers",
             "KEY": "OFFER"
         },
@@ -37,4 +37,4 @@ export const INPUT_TYPES = {
     "TEXT":"TEXT"
 }
 
-export const JOB_CREATE_LABEL="Post a new service request/offer";
+export const JOB_CREATE_LABEL="Create a new offer or request";

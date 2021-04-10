@@ -7,7 +7,7 @@ export const initialSharedState = {
     searchLoading: false,
     searchRequestObj: {
           "serviceType": "ALL",
-          "pageSize": 3,
+          "pageSize": 12,
           "postedXDaysAgo": 3,
           "filterFields": [],
           "filterTemplateName": ""
@@ -96,7 +96,7 @@ export const fieldHasError=(fieldName,errorMap)=>{
     if(errorMap==={} || errorMap===null || errorMap===undefined){
         return false;
     }
-    else if(errorMap[fieldName] || Object.keys(errorMap).length === 0){
+    else if(!errorMap[fieldName] || Object.keys(errorMap).length === 0){
         return false;
     }
     else{
@@ -105,7 +105,7 @@ export const fieldHasError=(fieldName,errorMap)=>{
 }
 
 export const getFieldErrorMessage=(fieldName,errorMap)=>{
-    if(!fieldHasError){
+    if(!fieldHasError(fieldName,errorMap)){
         return "";
     }
     else if(!errorMap[fieldName]){

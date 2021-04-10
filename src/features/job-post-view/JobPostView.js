@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 import { CURRENCY_FORMAT, INPUT_TYPES, SERVICE_TYPE, JOB_CREATE_LABEL } from "../../constants";
 import { allowOnlyNumbers, formatCurrency, fieldHasError, getFieldErrorMessage } from "../../utils/AppUtils";
 import SpinnerText from "../common-components/SpinnerText";
-import { selectAPIKey } from "../shared-vars/SharedStateSlice";
+import { selectAPIKey,selectIsLoggedIn } from "../shared-vars/SharedStateSlice";
 import {
     getAvailableJobDetailKeys,
     getJobDetailFormData,
@@ -32,6 +32,7 @@ export function JobPostView() {
         jobDetails: {},
         apiKey: useSelector(selectAPIKey),
     };
+    const isLoggedIn_ReduxState = useSelector(selectIsLoggedIn);
 
     const [selectedTemplateName, setSelectedTemplateName] = useState(null);
     const [selectedTemplateLabel, setSelectedTemplateLabel] = useState("--select--");
@@ -46,7 +47,7 @@ export function JobPostView() {
     const [selectedJobDetailTemplateObj, setSelectedJobDetailTemplateObj] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [formErrors, setFormErrors] = useState({});
-    const [formLabel, setFormLabel] = useState(JOB_CREATE_LABEL);
+    const [formLabel, setFormLabel] = useState(null);
     //form data
     const [createJobDTO, setCreateJobDTO] = useState(initialCreateJobDTO);
 
@@ -69,20 +70,25 @@ export function JobPostView() {
             }
         }
         else {
-            setFormLabel(JOB_CREATE_LABEL);
+            setFormLabel("--select--");
         }
     }, [selectedServiceTypeObj, selectedJobDetailTemplateObj]);
 
     /* handlers */
     const handleOpenJobPostForm = function () {
-        setCreateJobDTO(initialCreateJobDTO);
-        setSelectedJobDetailTemplateObj(null);
-        if (availableJobDetailTemplates.length === 0) {
-            setIsLoading(true);
-            console.log("getAvailableJobDetailKeys() triggered!");
-            dispatch(getAvailableJobDetailKeys(onGetAvailableJobDetailKeysResult));
-        } else {
-            setShowJobPostForm(true);
+        if(isLoggedIn_ReduxState){
+            setCreateJobDTO(initialCreateJobDTO);
+            setSelectedJobDetailTemplateObj(null);
+            if (availableJobDetailTemplates.length === 0) {
+                setIsLoading(true);
+                console.log("getAvailableJobDetailKeys() triggered!");
+                dispatch(getAvailableJobDetailKeys(onGetAvailableJobDetailKeysResult));
+            } else {
+                setShowJobPostForm(true);
+            }
+        }
+        else{
+            toast.error("Please login to create your own posts.");
         }
     };
 
@@ -168,6 +174,10 @@ export function JobPostView() {
             setIsLoading(false);
             if (!result.response) {
                 toast.error("unknown error occurred!");
+                return;
+            }
+            if(result.response.status===403){
+                toast.error("This operation needs you to login first!");
             }
             var error = result.response.data;
             if (error) {
@@ -405,7 +415,7 @@ export function JobPostView() {
                 backdrop="static"
             >
                 <Modal.Header closeButton>
-                    <Modal.Title style={{ color: "GrayText" }}>{formLabel}</Modal.Title>
+                    <Modal.Title style={{ color: "GrayText" }}>{JOB_CREATE_LABEL}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Container>
@@ -427,7 +437,7 @@ export function JobPostView() {
                             <Col>
                                 <DropdownButton
                                     id="dropdown-basic-button-job-details"
-                                    title={selectedTemplateLabel}
+                                    title={formLabel}
                                     onSelect={handleJobDetailTemplateSelect}
                                 >
                                     {availableJobDetailTemplates.map((formTemplate, index) => {
