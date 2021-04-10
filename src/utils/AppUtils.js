@@ -93,10 +93,10 @@ export const allowOnlyNumbers=function(e){
 }
 
 export const fieldHasError=(fieldName,errorMap)=>{
-    if(errorMap==={} || Object.keys(errorMap).length === 0 ||  errorMap===null || errorMap===undefined){
+    if(errorMap==={} || errorMap===null || errorMap===undefined){
         return false;
     }
-    else if(errorMap[fieldName]){
+    else if(errorMap[fieldName] || Object.keys(errorMap).length === 0){
         return false;
     }
     else{

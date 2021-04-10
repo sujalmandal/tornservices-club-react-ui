@@ -82,9 +82,15 @@ export function JobPostView() {
             console.log("getAvailableJobDetailKeys() triggered!");
             dispatch(getAvailableJobDetailKeys(onGetAvailableJobDetailKeysResult));
         } else {
-            setSelectedTemplateName(availableJobDetailTemplates[0].label);
             setShowJobPostForm(true);
         }
+    };
+
+    const handleCloseJobPostForm = function () {
+        setSelectedJobDetailTemplateObj(null);
+        setShowJobPostForm(false);
+        setSelectedTemplateName(null);
+        setSelectedTemplateLabel("--select--");
     };
 
     const handleJobDetailTemplateSelect = function (index) {
@@ -456,15 +462,13 @@ export function JobPostView() {
                         <SpinnerText
                             isLoading={isLoading}
                             loadingText="Working on it.."
-                            text="Post!"
+                            text="Post"
                         />
                     </Button>
                     <Button
                         variant="secondary"
                         disabled={isLoading}
-                        onClick={() => {
-                            setShowJobPostForm(false);
-                        }}
+                        onClick={handleCloseJobPostForm}
                     >
                         Cancel
           </Button>
