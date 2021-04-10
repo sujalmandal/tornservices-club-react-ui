@@ -229,7 +229,6 @@ export function JobPostView() {
                                                 <FormControl
                                                     style={{ width: "10vw" }}
                                                     id={element.id}
-                                                    min={element.minValue}
                                                     max={element.maxValue}
                                                     name={element.name}
                                                     type="text"
@@ -270,7 +269,6 @@ export function JobPostView() {
                                                 id={element.id}
                                                 style={{ width: "10vw" }}
                                                 type="number"
-                                                min={element.minValue}
                                                 max={element.maxValue}
                                                 name={element.name}
                                                 size="sm"
@@ -305,7 +303,6 @@ export function JobPostView() {
                                             id={element.id}
                                             style={{ width: "10vw" }}
                                             type="checkbox"
-                                            min={element.minValue}
                                             max={element.maxValue}
                                             name={element.name}
                                             defaultValue={element.defaultValue}

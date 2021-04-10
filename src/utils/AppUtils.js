@@ -57,9 +57,9 @@ export const formatCurrency = function (e,minValue,maxValue,onChange) {
         if(value>maxValue){
             value=maxValue+"";
         }
-        if(value<minValue){
+        /*if(value<minValue){
             value=minValue+"";
-        }
+        }*/
         var formattedAsCurrency=value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         e.target.value=formattedAsCurrency;
         console.log("formattedAsCurrency: "+formattedAsCurrency+", minValue: "+minValue+", maxValue: "+maxValue);
@@ -121,12 +121,12 @@ export const renderFriendlyDate=(dateString)=>{
     var now = new Date();
     var diff = now.getDay()-dateObj.day();
     if(diff===0){
-        return "today";
+        return "today.";
     }
     else if(diff===1){
-        return "yesterday";
+        return "yesterday.";
     }
     else{
-        return diff;
+        return diff+" days ago.";
     }
 }

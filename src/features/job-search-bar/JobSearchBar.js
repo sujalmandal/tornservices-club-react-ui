@@ -151,7 +151,7 @@ export function JobSearchBar() {
             dispatch(setSearchResults(result.data))
         }
         else {
-            var error = result.response.data
+            var error = result.response.data;
             if(error){
                 toast.error("Error: "+error.message);
             }

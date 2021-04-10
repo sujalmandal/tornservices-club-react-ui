@@ -48,9 +48,11 @@ export function FooterPaginationView() {
 
     return (
         <Container fluid>
-            <Row className="justify-content-lg-center">
+            <Row style={{paddingLeft:"50vw"}}>
                 {paginationInfo?
                 <Pagination>
+                    <Col style={{color:"white", paddingTop:"0.7vh"}}>Showing {currentPageNumberLocal} of total {paginationInfo.totalPages} page(s). 
+                    Total {paginationInfo.pageSize} result(s) on this page.</Col>
                     <Pagination.First onClick={() => { handleUpdateCurrentPage(1) }}/>
                     <Pagination.Prev onClick={() => { handleUpdateCurrentPage(currentPageNumberLocal-1) }}/>
                     <Pagination.Item active>{currentPageNumberLocal}</Pagination.Item>
