@@ -36,3 +36,5 @@ export const INPUT_TYPES = {
     "CHECKBOX":"CHECKBOX",
     "TEXT":"TEXT"
 }
+
+export const JOB_CREATE_LABEL="Post a new service request/offer";

@@ -13,8 +13,8 @@ import {
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { CURRENCY_FORMAT, INPUT_TYPES, SERVICE_TYPE } from "../../constants";
-import { allowOnlyNumbers, formatCurrency } from "../../utils/AppUtils";
+import { CURRENCY_FORMAT, INPUT_TYPES, SERVICE_TYPE, JOB_CREATE_LABEL } from "../../constants";
+import { allowOnlyNumbers, formatCurrency, fieldHasError, getFieldErrorMessage } from "../../utils/AppUtils";
 import SpinnerText from "../common-components/SpinnerText";
 import { selectAPIKey } from "../shared-vars/SharedStateSlice";
 import {
@@ -24,6 +24,7 @@ import {
 } from "./JobPostViewSlice";
 
 export function JobPostView() {
+
     const dispatch = useDispatch();
 
     const initialCreateJobDTO = {
@@ -32,8 +33,8 @@ export function JobPostView() {
         apiKey: useSelector(selectAPIKey),
     };
 
-    const [templateName, setTemplateName] = useState(null);
-    const [selectedServiceTypeObj, setServiceType] = useState(
+    const [selectedTemplateName, setSelectedTemplateName] = useState(null);
+    const [selectedServiceTypeObj, setSelectedServiceTypeObj] = useState(
         SERVICE_TYPE.REQUEST.FORM
     );
     const [
@@ -41,9 +42,10 @@ export function JobPostView() {
         setAvailableJobDetailTemplates,
     ] = useState([]);
     const [showJobPostForm, setShowJobPostForm] = useState(false);
-    const [jobDetailsTemplate, setJobDetailsTemplate] = useState(null);
+    const [selectedJobDetailTemplateObj, setSelectedJobDetailTemplateObj] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [formErrors,setFormErrors] = useState({});
+    const [formErrors, setFormErrors] = useState({});
+    const [formLabel, setFormLabel] = useState(JOB_CREATE_LABEL);
     //form data
     const [createJobDTO, setCreateJobDTO] = useState(initialCreateJobDTO);
 
@@ -55,40 +57,50 @@ export function JobPostView() {
         });
     }, [selectedServiceTypeObj]);
 
+    useEffect(() => {
+        setFormErrors({});
+        if (selectedJobDetailTemplateObj) {
+            if (selectedServiceTypeObj.KEY === SERVICE_TYPE.REQUEST.FORM.KEY) {
+                setFormLabel(selectedJobDetailTemplateObj.formRequestTypeLabel);
+            }
+            else if (selectedServiceTypeObj.KEY === SERVICE_TYPE.OFFER.FORM.KEY) {
+                setFormLabel(selectedJobDetailTemplateObj.formOfferTypeLabel);
+            }
+        }
+        else {
+            setFormLabel(JOB_CREATE_LABEL);
+        }
+    }, [selectedServiceTypeObj, selectedJobDetailTemplateObj]);
+
     /* handlers */
     const handleOpenJobPostForm = function () {
         setCreateJobDTO(initialCreateJobDTO);
-        setJobDetailsTemplate(null);
+        setSelectedJobDetailTemplateObj(null);
         if (availableJobDetailTemplates.length === 0) {
             setIsLoading(true);
             console.log("getAvailableJobDetailKeys() triggered!");
             dispatch(getAvailableJobDetailKeys(onGetAvailableJobDetailKeysResult));
         } else {
-            setTemplateName(availableJobDetailTemplates[0].label);
+            setSelectedTemplateName(availableJobDetailTemplates[0].label);
             setShowJobPostForm(true);
         }
     };
 
     const handleJobDetailTemplateSelect = function (index) {
+        var templateName = availableJobDetailTemplates[index].jobDetailFormTemplateName;
         setCreateJobDTO({
             ...createJobDTO,
             serviceType: selectedServiceTypeObj.KEY,
-            templateName:
-                availableJobDetailTemplates[index].jobDetailFormTemplateName,
+            templateName: templateName
         });
-        setTemplateName(
-            availableJobDetailTemplates[index].jobDetailFormTemplateLabel
-        );
-        dispatch(
-            getJobDetailFormData(
-                availableJobDetailTemplates[index].jobDetailFormTemplateName,
-                onGetJobDetailFormDataResult
-            )
+        setSelectedTemplateName(templateName);
+        dispatch(getJobDetailFormData(templateName, onGetJobDetailFormDataResult)
         );
     };
 
     const handleSelectServiceTypeChange = function (selectedServiceTypeKey) {
-        setServiceType(SERVICE_TYPE[selectedServiceTypeKey].FORM);
+        var serviceTypeObj = SERVICE_TYPE[selectedServiceTypeKey].FORM;
+        setSelectedServiceTypeObj(serviceTypeObj);
     };
 
     const handleOnChangeFormElement = function (e) {
@@ -124,7 +136,7 @@ export function JobPostView() {
     const onGetJobDetailFormDataResult = function (isSuccess, response) {
         console.log("getJobDetailFormData() result received!");
         if (isSuccess) {
-            setJobDetailsTemplate(response.data);
+            setSelectedJobDetailTemplateObj(response.data);
         } else {
             console.error(response);
             toast.error("Unable to fetch job post details from server!");
@@ -139,7 +151,7 @@ export function JobPostView() {
                 selectedServiceTypeObj.KEY.toLowerCase() +
                 " has been posted!"
             );
-            setJobDetailsTemplate(null);
+            setSelectedJobDetailTemplateObj(null);
             setCreateJobDTO(initialCreateJobDTO);
             setIsLoading(false);
             setShowJobPostForm(false);
@@ -188,26 +200,25 @@ export function JobPostView() {
                                         <Col>
                                             <InputGroup className="mb-2">
                                                 <InputGroup.Prepend>
-                                                <InputGroup.Text>$</InputGroup.Text>
+                                                    <InputGroup.Text>$</InputGroup.Text>
                                                 </InputGroup.Prepend>
                                                 <FormControl
-                                                style={{ width: "10vw" }}
-                                                id={element.id}
-                                                min={element.minValue}
-                                                max={element.maxValue}
-                                                name={element.name}
-                                                type="text"
-                                                className="mr-sm-4"
-                                                onKeyPress={allowOnlyNumbers}
-                                                onChange={(e)=>{
-                                                    formatCurrency(e,element.minValue,element.maxValue,handleOnChangeFormElement);
-                                                }}
-                                                isInvalid={formErrors[element.name]!=undefined}
-                                            />
-                                            {formErrors[element.name]!=undefined?
-                                            <Form.Control.Feedback type="isInvalid" style={{color:"red"}}>
-                                                {formErrors[element.name]?formErrors[element.name]:""}
-                                            </Form.Control.Feedback>:""}
+                                                    style={{ width: "10vw" }}
+                                                    id={element.id}
+                                                    min={element.minValue}
+                                                    max={element.maxValue}
+                                                    name={element.name}
+                                                    type="text"
+                                                    className="mr-sm-4"
+                                                    onKeyPress={allowOnlyNumbers}
+                                                    onChange={(e) => {
+                                                        formatCurrency(e, element.minValue, element.maxValue, handleOnChangeFormElement);
+                                                    }}
+                                                    isInvalid={fieldHasError(element.name, formErrors)}
+                                                />
+                                                <Form.Control.Feedback type="isInvalid" style={{ color: "red" }}>
+                                                    {getFieldErrorMessage(element.name, formErrors)}
+                                                </Form.Control.Feedback>
                                             </InputGroup>
                                         </Col>
                                     </Row>
@@ -240,12 +251,11 @@ export function JobPostView() {
                                                 size="sm"
                                                 className="mr-sm-4"
                                                 onChange={handleOnChangeFormElement}
-                                                isInvalid={formErrors[element.name]!=undefined}
+                                                isInvalid={fieldHasError(element.name, formErrors)}
                                             />
-                                            {formErrors[element.name]!=undefined?
-                                            <Form.Control.Feedback type="isInvalid" style={{color:"red"}}>
-                                                {formErrors[element.name]?formErrors[element.name]:""}
-                                            </Form.Control.Feedback>:""}
+                                            <Form.Control.Feedback type="isInvalid" style={{ color: "red" }}>
+                                                {getFieldErrorMessage(element.name, formErrors)}
+                                            </Form.Control.Feedback>
                                         </Col>
                                     </Row>
                                 </Form.Group>
@@ -277,12 +287,11 @@ export function JobPostView() {
                                             size="sm"
                                             className="mr-sm-4"
                                             onChange={handleOnChangeFormElement}
-                                            isInvalid={formErrors[element.name]!=undefined}
+                                            isInvalid={fieldHasError(element.name, formErrors)}
                                         />
-                                        {formErrors[element.name]!=undefined?
-                                            <Form.Control.Feedback type="isInvalid" style={{color:"red"}}>
-                                                {formErrors[element.name]?formErrors[element.name]:""}
-                                            </Form.Control.Feedback>:""}
+                                        <Form.Control.Feedback type="isInvalid" style={{ color: "red" }}>
+                                            {getFieldErrorMessage(element.name, formErrors)}
+                                        </Form.Control.Feedback>
                                     </Col>
                                 </Row>
                             </Form.Group>
@@ -305,18 +314,17 @@ export function JobPostView() {
                                         <Form.Control
                                             as="select"
                                             name={element.name}
-                                            defaultValue={"--select--"}
+                                            defaultValue={element.defaultValue}
                                             onChange={handleOnChangeFormElement}
-                                            isInvalid={formErrors[element.name]!=undefined}
+                                            isInvalid={fieldHasError(element.name, formErrors)}
                                         >
                                             {element.options.map((option, index) => {
                                                 return <option>{option}</option>;
                                             })}
                                         </Form.Control>
-                                        {formErrors[element.name]!=undefined?
-                                            <Form.Control.Feedback type="isInvalid" style={{color:"red"}}>
-                                                {formErrors[element.name]?formErrors[element.name]:""}
-                                            </Form.Control.Feedback>:""}
+                                        <Form.Control.Feedback type="isInvalid" style={{ color: "red" }}>
+                                            {getFieldErrorMessage(element.name, formErrors)}
+                                        </Form.Control.Feedback>
                                     </Col>
                                 </Row>
                             </Form.Group>
@@ -349,12 +357,11 @@ export function JobPostView() {
                                             size="sm"
                                             className="mr-sm-4"
                                             onChange={handleOnChangeFormElement}
-                                            isInvalid={formErrors[element.name]!=undefined}
+                                            isInvalid={fieldHasError(element.name, formErrors)}
                                         />
-                                        {formErrors[element.name]!=undefined?
-                                            <Form.Control.Feedback type="isInvalid" style={{color:"red"}}>
-                                                {formErrors[element.name]?formErrors[element.name]:""}
-                                            </Form.Control.Feedback>:""}
+                                        <Form.Control.Feedback type="isInvalid" style={{ color: "red" }}>
+                                            {getFieldErrorMessage(element.name, formErrors)}
+                                        </Form.Control.Feedback>
                                     </Col>
                                 </Row>
                             </Form.Group>
@@ -388,7 +395,7 @@ export function JobPostView() {
                 backdrop="static"
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Post a new Job</Modal.Title>
+                    <Modal.Title style={{ color: "GrayText" }}>{formLabel}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Container>
@@ -411,7 +418,7 @@ export function JobPostView() {
                                 <DropdownButton
                                     id="dropdown-basic-button-job-details"
                                     title={
-                                        "Service : " + (templateName ? templateName : "-select-")
+                                        "Service : " + (selectedTemplateName ? selectedTemplateName : "-select-")
                                     }
                                     onSelect={handleJobDetailTemplateSelect}
                                 >
@@ -431,7 +438,7 @@ export function JobPostView() {
                         <Row style={{ paddingTop: "5vh" }}>
                             <Container>
                                 {renderDynamicJobDetailFormBasedOnTemplate(
-                                    jobDetailsTemplate,
+                                    selectedJobDetailTemplateObj,
                                     selectedServiceTypeObj
                                 )}
                             </Container>

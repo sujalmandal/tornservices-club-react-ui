@@ -92,6 +92,30 @@ export const allowOnlyNumbers=function(e){
     }
 }
 
+export const fieldHasError=(fieldName,errorMap)=>{
+    if(errorMap==={} || Object.keys(errorMap).length === 0 ||  errorMap===null || errorMap===undefined){
+        return false;
+    }
+    else if(errorMap[fieldName]){
+        return false;
+    }
+    else{
+        return true;
+    }
+}
+
+export const getFieldErrorMessage=(fieldName,errorMap)=>{
+    if(!fieldHasError){
+        return "";
+    }
+    else if(!errorMap[fieldName]){
+        return "";
+    }
+    else{
+        return errorMap[fieldName];
+    }
+}
+
 export const renderFriendlyDate=(dateString)=>{
     var dateObj = moment(dateString,DATE_FORMAT);
     var now = new Date();
