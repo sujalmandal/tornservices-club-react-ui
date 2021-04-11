@@ -5,7 +5,7 @@ import {
     selectSearchResults,
     selectIsSearchLoading
 } from '../shared-vars/SharedStateSlice';
-import { renderFriendlyDate } from '../../utils/AppUtils';
+import { renderFriendlyDate,getCardBodyText,getCardHeaderText } from '../../utils/AppUtils';
 import { SERVICE_TYPE } from '../../constants';
 import _ from "lodash";
 import { Scrollbars } from 'react-custom-scrollbars';
@@ -20,40 +20,6 @@ export function JobListTable() {
     const [selectedJob, setSelectedJob]=useState(null);
     const [isJobDetailViewOpen, setIsJobDetailViewOpen]=useState(false);
 
-    const getCardBodyText = function(job){
-        var text="";
-        if(job.listedByPlayerName){
-            text+=job.listedByPlayerName+" is";
-        }
-        else{
-            text+="Someone is";
-        }
-        if(job.serviceType===SERVICE_TYPE.REQUEST.FORM.KEY){
-            text+=" requesting for ";
-        }
-        else if(job.serviceType===SERVICE_TYPE.OFFER.FORM.KEY){
-            text+=" offering to ";
-        }
-        else{
-            console.error("Illegal job type.");
-        }
-        text+=job.templateLabel+".";
-        return text;
-    }
-
-    const getCardHeaderText=function(job){
-        var text="";
-        if(job.totalPay){
-            text+="Total $"+(job.totalPay+"").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
-        else if(job.payPerAction){
-            text+="Per action $"+(job.payPerAction+"").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
-        else{
-            text+="Unspecified amount";
-        }
-        return text;
-    }
 
     const handleViewBtnClicked=function(job){
         setSelectedJob(job);
@@ -114,7 +80,7 @@ export function JobListTable() {
 
     return (
         <>
-            {isJobDetailViewOpen?<JobDetailView onClose={()=>{setIsJobDetailViewOpen(false)}} job={selectedJob}/>:""}
+            {isJobDetailViewOpen?<JobDetailView isOpen={isJobDetailViewOpen} onClose={()=>{setIsJobDetailViewOpen(false)}} job={selectedJob}/>:""}
             <Col style={{minWidth:"15vw","minHeight":"70vh", maxHeight:"70vh", color:"gray"}}>
                 ads space
             </Col>

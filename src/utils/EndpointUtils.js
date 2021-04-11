@@ -27,3 +27,7 @@ export const getSimpleSearchURI=function(){
 export const getAdvancedSearchURI=function(){
     return BASE_URI+'job/advancedSearch';
 }
+
+export const getJobDetailURI=function(){
+    return BASE_URI+'job/search/';
+}

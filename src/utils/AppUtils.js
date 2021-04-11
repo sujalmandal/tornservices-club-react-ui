@@ -1,4 +1,4 @@
-import {DATE_FORMAT} from '../constants';
+import {DATE_FORMAT,SERVICE_TYPE} from '../constants';
 import moment from 'moment'
 
 
@@ -129,4 +129,40 @@ export const renderFriendlyDate=(dateString)=>{
     else{
         return diff+" days ago.";
     }
+}
+
+
+export const getCardBodyText = function(job){
+    var text="";
+    if(job.listedByPlayerName){
+        text+=job.listedByPlayerName+" is";
+    }
+    else{
+        text+="Someone is";
+    }
+    if(job.serviceType===SERVICE_TYPE.REQUEST.FORM.KEY){
+        text+=" requesting for ";
+    }
+    else if(job.serviceType===SERVICE_TYPE.OFFER.FORM.KEY){
+        text+=" offering to ";
+    }
+    else{
+        console.error("Illegal job type.");
+    }
+    text+=job.templateLabel+".";
+    return text;
+}
+
+export const getCardHeaderText=function(job){
+    var text="";
+    if(job.totalPay){
+        text+="Total $"+(job.totalPay+"").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    else if(job.payPerAction){
+        text+="Per action $"+(job.payPerAction+"").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    else{
+        text+="Unspecified amount";
+    }
+    return text;
 }
