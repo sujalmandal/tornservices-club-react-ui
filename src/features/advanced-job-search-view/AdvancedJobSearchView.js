@@ -21,7 +21,6 @@ export function AdvancedJobSearchView(props) {
 
     const dispatch = useDispatch();
     const isSearchLoading_ReduxState = useSelector(selectIsSearchLoading);
-    const [selectedServiceTypeObj, setServiceType] = useState(SERVICE_TYPE.REQUEST.FORM);
     const [localSearchObj, setLocalSearchObj] = useState({
         "serviceType": "ALL",
         "postedXDaysAgo": 3,
@@ -29,20 +28,16 @@ export function AdvancedJobSearchView(props) {
         "filterTemplateName": ""
     });
 
-    const handleSelectServiceTypeChange = function (selectedServiceTypeKey) {
-        setServiceType(SERVICE_TYPE[selectedServiceTypeKey].FORM);
-    }
-
     /* init */
     useEffect(() => {
         if (props.isOpen) {
             console.log("opening advanced search dialog --");
             console.log("selected template : " + JSON.stringify(props.jobDetailFilterTemplate))
-            console.log("selected serviceType: " + selectedServiceTypeObj.KEY);
+            console.log("selected serviceType: " +props.serviceType);
             setLocalSearchObj({
                 ...localSearchObj,
                 filterTemplateName: props.jobDetailFilterTemplate.filterTemplateName,
-                serviceType: selectedServiceTypeObj.KEY
+                serviceType: props.serviceType
             });
         }
     }, [props.isOpen])
@@ -114,9 +109,9 @@ export function AdvancedJobSearchView(props) {
     }
 
     /***** dynamic filter form renderer start *****/
-    const renderDynamicFilter = function (jobDetailFilterTemplate, selectedServiceTypeKey) {
+    const renderDynamicFilter = function (jobDetailFilterTemplate) {
         console.log("rendering form based on template...");
-        console.log("service type: " + selectedServiceTypeKey)
+        console.log("service type: " + props.serviceType)
         var renderedElements = [];
         var groupedElements = {};
 
@@ -124,7 +119,7 @@ export function AdvancedJobSearchView(props) {
         if (jobDetailFilterTemplate != null) {
 
             jobDetailFilterTemplate.filterElements.forEach((element) => {
-                if (element.serviceType === SERVICE_TYPE.ALL || element.serviceType === selectedServiceTypeObj.KEY) {
+                if (element.serviceType === SERVICE_TYPE.ALL || element.serviceType === props.serviceType) {
                     if (!groupedElements[element.groupName]) {
                         groupedElements[element.groupName] = [];
                     }
@@ -316,7 +311,7 @@ export function AdvancedJobSearchView(props) {
                                     </Row>
                                     <Row style={{ paddingTop: "0.5vw" }}>
                                         <Col>
-                                            {props.isOpen ? renderDynamicFilter(props.jobDetailFilterTemplate, selectedServiceTypeObj.KEY) : ""}
+                                            {props.isOpen ? renderDynamicFilter(props.jobDetailFilterTemplate) : ""}
                                         </Col>
                                     </Row>
                                 </Container>

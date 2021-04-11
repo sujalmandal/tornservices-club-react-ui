@@ -163,7 +163,7 @@ export function JobSearchBar() {
 
     return (
         <Container fluid>
-            <AdvancedJobSearchView onClose={closeAdvancedSearchPopup} isOpen={isAdvancedSearchPopupOpen} jobDetailFilterTemplate={selectedFilterTemplateObj} />
+            <AdvancedJobSearchView onClose={closeAdvancedSearchPopup} isOpen={isAdvancedSearchPopupOpen} jobDetailFilterTemplate={selectedFilterTemplateObj} serviceType={selectedServiceTypeKey}/>
             <Navbar fixed="top" bg="dark" variant="dark" expand="lg">
                 <Navbar.Brand>Find offers/requests</Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
