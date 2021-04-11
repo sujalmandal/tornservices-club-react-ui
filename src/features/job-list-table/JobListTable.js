@@ -86,9 +86,8 @@ export function JobListTable() {
                                             <Col>
                                                 <Row>
                                                     <Card.Subtitle>{getCardHeaderText(job)}</Card.Subtitle>
-                                                    <hr/>
                                                 </Row>
-                                                <Row  style={{textAlign:'left'}}>
+                                                <Row  style={{textAlign:'left', paddingTop:"0.5vh"}}>
                                                     {getCardBodyText(job)}
                                                 </Row>
                                                 <Row style={{paddingLeft:"70%",paddingTop:"5%"}}>
@@ -109,16 +108,16 @@ export function JobListTable() {
 
     return (
         <>
-            <Col style={{minWidth:"12.5vw","minHeight":"70vh", maxHeight:"70vh", color:"gray"}}>
+            <Col style={{minWidth:"15vw","minHeight":"70vh", maxHeight:"70vh", color:"gray"}}>
                 ads space
             </Col>
-            <Col style={{minWidth:"75vw","minHeight":"70vh", maxHeight:"70vh"}}>
+            <Col style={{minWidth:"70vw","minHeight":"70vh", maxHeight:"70vh"}}>
                 {isSearchLoading_ReduxState ? <h5 style={{ color: "white", paddingTop: "30vh" }}>Searching...</h5> :
                     <Scrollbars inverse="false">
                         {renderResults(searchResults)}
                     </Scrollbars>}
             </Col>
-            <Col style={{minWidth:"12.5vw","minHeight":"70vh", maxHeight:"70vh", color:"gray"}}>
+            <Col style={{minWidth:"15vw","minHeight":"70vh", maxHeight:"70vh", color:"gray"}}>
                 ads space
             </Col>
         </>

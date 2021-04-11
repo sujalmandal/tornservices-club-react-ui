@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Modal, Form, FormControl, Container, Col, Row, InputGroup } from 'react-bootstrap';
-import { } from './AdvancedJobSearchViewSlice';
 import {
     SERVICE_TYPE,
     CURRENCY_FORMAT,
