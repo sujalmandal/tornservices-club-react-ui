@@ -9,6 +9,7 @@ import { renderFriendlyDate } from '../../utils/AppUtils';
 import { SERVICE_TYPE } from '../../constants';
 import _ from "lodash";
 import { Scrollbars } from 'react-custom-scrollbars';
+import { JobDetailView } from '../job-detail-view/JobDetailView';
 
 export function JobListTable() {
 
@@ -16,9 +17,8 @@ export function JobListTable() {
     const searchResults = useSelector(selectSearchResults);
     const isSearchLoading_ReduxState = useSelector(selectIsSearchLoading);
     const jobsToShowPerRow=3;
-
-    /* local, feature-level states */
-    const [selectedJob, setSelectedJob] = useState(null);
+    const [selectedJob, setSelectedJob]=useState(null);
+    const [isJobDetailViewOpen, setIsJobDetailViewOpen]=useState(false);
 
     const getCardBodyText = function(job){
         var text="";
@@ -53,6 +53,12 @@ export function JobListTable() {
             text+="Unspecified amount";
         }
         return text;
+    }
+
+    const handleViewBtnClicked=function(job){
+        setSelectedJob(job);
+        setIsJobDetailViewOpen(true);
+        console.log("job selected: "+job.seqId);
     }
 
     const renderResults = (searchResults) => {
@@ -91,7 +97,7 @@ export function JobListTable() {
                                                     {getCardBodyText(job)}
                                                 </Row>
                                                 <Row style={{paddingLeft:"70%",paddingTop:"5%"}}>
-                                                    <Button>View</Button>
+                                                    <Button onClick={()=>{handleViewBtnClicked(job)}}>View</Button>
                                                 </Row>
                                             </Col>
                                         </Row>
@@ -108,6 +114,7 @@ export function JobListTable() {
 
     return (
         <>
+            {isJobDetailViewOpen?<JobDetailView onClose={()=>{setIsJobDetailViewOpen(false)}} job={selectedJob}/>:""}
             <Col style={{minWidth:"15vw","minHeight":"70vh", maxHeight:"70vh", color:"gray"}}>
                 ads space
             </Col>
