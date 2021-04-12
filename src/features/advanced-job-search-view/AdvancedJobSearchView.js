@@ -161,8 +161,8 @@ export function AdvancedJobSearchView(props) {
                                     <Form.Label className="mr-sm-4">{elementArr[0].fieldLabel}</Form.Label>
                                     <FormControl id={elementArr[0].id} style={{ width: "10vw" }}
                                         type={elementArr[0].fieldType} name={elementArr[0].fieldName}
-                                        min={elementArr[0].minValue} max={elementArr[0].maxValue}
-                                        defaultValue={elementArr[0].minValue} groupName={elementArr[0].groupName}
+                                        min={elementArr[0].defaultValue} max={elementArr[0].maxValue}
+                                        groupName={elementArr[0].groupName}
                                         size="sm" className="mr-sm-4"
                                         onChange={(e) => {
                                             handleOnChangeFormElement(
@@ -248,7 +248,7 @@ export function AdvancedJobSearchView(props) {
                                         style={{ width: "10vw" }} type="number" name={elementArr[0].fieldName}
                                         size="sm" className="mr-sm-4"
                                         min={elementArr[0].minValue} max={elementArr[0].maxValue}
-                                        defaultValue={elementArr[0].minValue} groupName={elementArr[0].groupName}
+                                        groupName={elementArr[0].groupName}
                                         onChange={(e) => {
                                             handleOnChangeFormElement(
                                                 e.target.value,
@@ -264,7 +264,7 @@ export function AdvancedJobSearchView(props) {
                                         style={{ width: "10vw" }} type="number" name={elementArr[1].fieldName}
                                         size="sm" className="mr-sm-4"
                                         min={elementArr[1].minValue} max={elementArr[1].maxValue}
-                                        defaultValue={elementArr[1].minValue} groupName={elementArr[1].groupName}
+                                        groupName={elementArr[1].groupName}
                                         onChange={(e) => {
                                             handleOnChangeFormElement(
                                                 e.target.value,

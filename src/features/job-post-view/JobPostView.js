@@ -200,6 +200,30 @@ export function JobPostView() {
         var renderedElements = [];
         if (jobDetailsTemplate != null) {
             jobDetailsTemplate.elements.forEach((element) => {
+                var label="";
+                console.log(element);
+
+                if(element.serviceType===SERVICE_TYPE.ALL){
+                    if(selectedServiceTypeObj.KEY===SERVICE_TYPE.REQUEST.FORM.KEY && element.labelRequest){
+                        label=element.labelRequest;
+                    }
+                    else if(selectedServiceTypeObj.KEY===SERVICE_TYPE.OFFER.FORM.KEY  && element.labelOffer){
+                        label=element.labelOffer;
+                    }
+                    else{
+                        label=element.label;
+                    }
+                }
+                else if(element.serviceType===SERVICE_TYPE.REQUEST.FORM.KEY && element.labelRequest){
+                    label=element.labelRequest;
+                }
+                else if(element.serviceType===SERVICE_TYPE.OFFER.FORM.KEY && element.labelOffer){
+                    label=element.labelOffer;
+                }
+                else{
+                    label=element.label;
+                }
+                
                 if (
                     element.serviceType === "ALL" ||
                     element.serviceType === selectedServiceTypeObj.KEY
@@ -218,7 +242,7 @@ export function JobPostView() {
                                     >
                                         <Col>
                                             <Form.Label className="mr-sm-4">
-                                                {element.label}
+                                                {label}
                                             </Form.Label>
                                         </Col>
                                         <Col>
@@ -261,7 +285,7 @@ export function JobPostView() {
                                     >
                                         <Col>
                                             <Form.Label className="mr-sm-4">
-                                                {element.label}
+                                                {label}
                                             </Form.Label>
                                         </Col>
                                         <Col>
@@ -296,7 +320,7 @@ export function JobPostView() {
                                     }}
                                 >
                                     <Col>
-                                        <Form.Label className="mr-sm-4">{element.label}</Form.Label>
+                                        <Form.Label className="mr-sm-4">{label}</Form.Label>
                                     </Col>
                                     <Col>
                                         <FormControl
@@ -330,7 +354,7 @@ export function JobPostView() {
                                     }}
                                 >
                                     <Col>
-                                        <Form.Label>{element.label}</Form.Label>
+                                        <Form.Label>{label}</Form.Label>
                                     </Col>
                                     <Col>
                                         <Form.Control
@@ -365,7 +389,7 @@ export function JobPostView() {
                                     }}
                                 >
                                     <Col>
-                                        <Form.Label className="mr-sm-4">{element.label}</Form.Label>
+                                        <Form.Label className="mr-sm-4">{label}</Form.Label>
                                     </Col>
                                     <Col>
                                         <FormControl
