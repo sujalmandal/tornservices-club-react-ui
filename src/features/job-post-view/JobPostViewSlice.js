@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
-  getJobDetailTemplatesURI,
-  getJobDetailFormTemplateByNameURI,
+  getAvailableTemplateNamesURI,
+  getTemplateByNameURI,
   getPostNewJobURI
 } from '../../utils/EndpointUtils'
 import axios from 'axios';
@@ -24,7 +24,7 @@ export const getAvailableJobDetailKeys = function (onResult) {
   return function () {
     axios({
       method:"GET",
-      url:getJobDetailTemplatesURI(),
+      url:getAvailableTemplateNamesURI(),
       headers:{
             fingerprint:getSharedStateFromLocalStorage().fingerprint,
             apiKey:getSharedStateFromLocalStorage().apiKey
@@ -42,7 +42,7 @@ export const getJobDetailFormData = function (jobDetailTemplateName, onResult) {
   return function () {
     axios({
       method:'GET',
-      url:getJobDetailFormTemplateByNameURI(jobDetailTemplateName),
+      url:getTemplateByNameURI(jobDetailTemplateName),
       headers:{
             fingerprint: getSharedStateFromLocalStorage().fingerprint,
             apiKey: getSharedStateFromLocalStorage().apiKey

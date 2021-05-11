@@ -1,7 +1,7 @@
 import React from 'react';
 import { Spinner } from 'react-bootstrap';
 
-export default function SpinnerText(props) {
+export default function SearchableDropDown(props) {
     return (
         <div>
             {props.isLoading ? <div>{props.loadingText}{' '}<Spinner

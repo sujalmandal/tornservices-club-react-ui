@@ -54,28 +54,30 @@ export function JobDetailView(props) {
     const renderDetails = function () {
         var renderedElements = [];
         jobData.details.fields.forEach(element => {
-            var label = element.label;
-            if (element.labelRequest && jobData.serviceType === SERVICE_TYPE.REQUEST.FORM.KEY) {
-                label = element.labelRequest;
-            }
-            if (element.labelOffer && jobData.serviceType === SERVICE_TYPE.OFFER.FORM.KEY) {
-                label = element.labelOffer;
-            }
-            if (element.type.toUpperCase() === INPUT_TYPES.NUMBER) {
-                var formattedValue = (element.value + "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                if (element.format.toUpperCase() === CURRENCY_FORMAT) {
-                    formattedValue = "$" + formattedValue;
+            if(element.value){
+                var label = element.label;
+                if (element.labelRequest && jobData.serviceType === SERVICE_TYPE.REQUEST.FORM.KEY) {
+                    label = element.labelRequest;
                 }
-                renderedElements.push(<tr>
-                    <td>{label}</td>
-                    <td>{formattedValue}</td>
-                </tr>);
-            }
-            else {
-                renderedElements.push(<tr>
-                    <td>{label}</td>
-                    <td>{element.value}</td>
-                </tr>);
+                if (element.labelOffer && jobData.serviceType === SERVICE_TYPE.OFFER.FORM.KEY) {
+                    label = element.labelOffer;
+                }
+                if (element.type.toUpperCase() === INPUT_TYPES.NUMBER) {
+                    var formattedValue = (element.value + "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    if (element.format.toUpperCase() === CURRENCY_FORMAT) {
+                        formattedValue = "$" + formattedValue;
+                    }
+                    renderedElements.push(<tr>
+                        <td>{label}</td>
+                        <td>{formattedValue}</td>
+                    </tr>);
+                }
+                else {
+                    renderedElements.push(<tr>
+                        <td>{label}</td>
+                        <td>{element.value}</td>
+                    </tr>);
+                }
             }
         });
         return renderedElements;
@@ -99,7 +101,10 @@ export function JobDetailView(props) {
                     <Modal.Body>
                         <Container fluid style={{ padding: "2rem" }}>
                             <h5>{getCardBodyText(jobData)}</h5>
-                            <Table striped bordered hover variant="dark">
+                            <br/>
+                            <h6>Followings are the details</h6>
+                            <hr/>
+                            <Table striped bordered hover>
                                 <tbody>
                                     {renderDetails()}
                                 </tbody>

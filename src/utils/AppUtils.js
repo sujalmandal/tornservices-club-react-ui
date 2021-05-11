@@ -155,11 +155,19 @@ export const getCardBodyText = function(job){
 
 export const getCardHeaderText=function(job){
     var text="";
+    
+    if(job.payOnServiceType===job.serviceType){
+        text+="Pay ";
+    }
+    else{
+        text+="Cost ";
+    }
+
     if(job.totalPay){
-        text+="Total $"+(job.totalPay+"").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        text+="in total $"+(job.totalPay+"").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
     else if(job.payPerAction){
-        text+="Per action $"+(job.payPerAction+"").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        text+="per action $"+(job.payPerAction+"").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
     else{
         text+="Unspecified amount";

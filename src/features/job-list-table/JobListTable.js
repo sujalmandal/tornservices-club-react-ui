@@ -51,14 +51,12 @@ export function JobListTable() {
                                             </span>
                                         </Card.Header>
                                     <Card.Body>
+                                        <Card.Subtitle>{getCardHeaderText(job)}</Card.Subtitle>
                                         <Row>
                                             <Col>
                                                 <Card.Img src="images/mug.png" />
                                             </Col>
                                             <Col>
-                                                <Row>
-                                                    <Card.Subtitle>{getCardHeaderText(job)}</Card.Subtitle>
-                                                </Row>
                                                 <Row  style={{textAlign:'left', paddingTop:"0.5vh"}}>
                                                     {getCardBodyText(job)}
                                                 </Row>

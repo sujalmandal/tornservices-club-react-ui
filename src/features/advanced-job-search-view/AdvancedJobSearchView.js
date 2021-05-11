@@ -285,6 +285,26 @@ export function AdvancedJobSearchView(props) {
 
     /***** dynamic filter form renderer end *****/
 
+    const searchHeaderText=()=>{
+        //filterOfferTypeLabel
+        //filterRequestTypeLabel
+        if(props.serviceType===SERVICE_TYPE.REQUEST.FORM.KEY && props.jobDetailFilterTemplate.filterOfferTypeLabel){
+            return <>
+                {props.jobDetailFilterTemplate.filterOfferTypeLabel}
+            </>
+        }
+        else if(props.serviceType===SERVICE_TYPE.REQUEST.FORM.KEY && props.jobDetailFilterTemplate.filterRequestTypeLabel){
+            return <>
+               {props.jobDetailFilterTemplate.filterRequestTypeLabel}
+            </>
+        }
+        else{
+            return <>
+                Search <span style={{ color: "green" }}>{props.jobDetailFilterTemplate.filterTemplateLabel}</span> services with filters
+            </>
+        }
+    }
+
     return (
         <div>
             <Modal
@@ -294,25 +314,22 @@ export function AdvancedJobSearchView(props) {
                 backdrop="static"
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>{props.jobDetailFilterTemplate == null ? "" :
-                        <>
-                            Search <span style={{ color: "green" }}>{props.jobDetailFilterTemplate.filterTemplateLabel}</span> services with filters
-                    </>}</Modal.Title>
+                    <Modal.Title>{props.jobDetailFilterTemplate == null ? "" :searchHeaderText()}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Container>
                         <Row style={{ paddingTop: "2vh" }}>
                             <Form inline>
                                 <Container style={{ paddingLeft: "2vw" }}>
-                                    <Row>
-                                        <Form.Text className="text-muted">
-                                            <span style={{ color: "gray" }}>Please fill the items you want. You can leave the ones you don't want empty.</span>
-                                        </Form.Text>
-                                    </Row>
                                     <Row style={{ paddingTop: "0.5vw" }}>
                                         <Col>
                                             {props.isOpen ? renderDynamicFilter(props.jobDetailFilterTemplate) : ""}
                                         </Col>
+                                    </Row>
+                                    <Row>
+                                        <Form.Text className="text-muted">
+                                            <span style={{ color: "gray" }}>Please fill the items you want. You can leave the ones you don't want empty.</span>
+                                        </Form.Text>
                                     </Row>
                                 </Container>
                             </Form>

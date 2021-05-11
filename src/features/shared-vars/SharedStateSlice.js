@@ -2,7 +2,9 @@ import { createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import {
       getSimpleSearchURI,
-      getAdvancedSearchURI
+      getAdvancedSearchURI,
+      getTemplateByNameURI,
+      getAvailableTemplateNamesURI,
 } from '../../utils/EndpointUtils'
 
 import {
@@ -48,9 +50,15 @@ export const sharedStateSlice = createSlice({
             setCurrentPageNumber: (state, action) => {
                   console.log("updated current page number: " + JSON.stringify(action.payload));
                   state.currentPageNumber = action.payload;
+            },
+            setAvailableTemplateNames: (state,action)=>{
+                  console.log("updated available template names in redux: " + JSON.stringify(action.payload));
+                  state.availableTemplateNames = action.payload;
             }
       }
 });
+
+
 
 export const wipeSharedState = (dispatch) => {
       localStorage.removeItem("sharedState");
@@ -62,22 +70,22 @@ export const simpleSearchJobsByFilter = function (filterRequestDTO, onResult, di
       return function () {
             dispatch(setSearchLoading(true));
             axios({
-                  method:'POST',
-                  url:getSimpleSearchURI(),
-                  data:filterRequestDTO,
+                  method: 'POST',
+                  url: getSimpleSearchURI(),
+                  data: filterRequestDTO,
                   headers: {
                         fingerprint: getSharedStateFromLocalStorage().fingerprint,
                         apiKey: getSharedStateFromLocalStorage().apiKey
                   }
             })
-            .then((response) => {
-                  dispatch(setCurrentPageNumber(1));
-                  dispatch(setSearchLoading(false));
-                  onResult(true, response);
-            }).catch((error, response) => {
-                  dispatch(setSearchLoading(false));
-                  onResult(false, error.response);
-            });
+                  .then((response) => {
+                        dispatch(setCurrentPageNumber(1));
+                        dispatch(setSearchLoading(false));
+                        onResult(true, response);
+                  }).catch((error, response) => {
+                        dispatch(setSearchLoading(false));
+                        onResult(false, error.response);
+                  });
       }
 }
 
@@ -85,22 +93,22 @@ export const searchJobsByFilter = function (filterRequestDTO, onResult, dispatch
       return function () {
             dispatch(setSearchLoading(true));
             axios({
-                  method:'POST',
-                  url:getAdvancedSearchURI(), 
-                  data:filterRequestDTO,
+                  method: 'POST',
+                  url: getAdvancedSearchURI(),
+                  data: filterRequestDTO,
                   headers: {
                         fingerprint: getSharedStateFromLocalStorage().fingerprint,
                         apiKey: getSharedStateFromLocalStorage().apiKey
                   }
             })
-            .then((response) => {
-                  dispatch(setSearchLoading(false));
-                  dispatch(setCurrentPageNumber(1));
-                  onResult(true, response);
-            }).catch((error) => {
-                  dispatch(setSearchLoading(false));
-                  onResult(false, error.response);
-            });
+                  .then((response) => {
+                        dispatch(setSearchLoading(false));
+                        dispatch(setCurrentPageNumber(1));
+                        onResult(true, response);
+                  }).catch((error) => {
+                        dispatch(setSearchLoading(false));
+                        onResult(false, error.response);
+                  });
       }
 }
 
@@ -109,30 +117,55 @@ export const searchByPageNumber = function (pageNumber, filterRequestDTO, onResu
             console.log("search by page number: " + pageNumber);
             dispatch(setSearchLoading(true));
             axios({
-                  method:'POST',
-                  url:getAdvancedSearchURI(), 
-                  data:{
+                  method: 'POST',
+                  url: getAdvancedSearchURI(),
+                  data: {
                         ...filterRequestDTO,
                         pageNumber: pageNumber
-                  }, 
+                  },
                   headers: {
                         fingerprint: getSharedStateFromLocalStorage().fingerprint,
                         apiKey: getSharedStateFromLocalStorage().apiKey
                   }
             })
-            .then((response) => {
-                  dispatch(setSearchLoading(false));
-                  onResult(true, response);
-            }).catch((error) => {
-                  dispatch(setSearchLoading(false));
-                  onResult(false, error.response);
-            });
+                  .then((response) => {
+                        dispatch(setSearchLoading(false));
+                        onResult(true, response);
+                  }).catch((error) => {
+                        dispatch(setSearchLoading(false));
+                        onResult(false, error.response);
+                  });
+      }
+}
+
+/* api calls */
+export const getAvailableFilters = function (onResult) {
+      return function () {
+            axios.get(getAvailableTemplateNamesURI())
+                  .then((response) => {
+                        onResult(true, response);
+                  }, (error) => {
+                        onResult(false, error);
+                  });
+      }
+}
+
+export const getFilterTemplateByTemplateName = function (filterType, onResult) {
+      return function () {
+            axios.get(getTemplateByNameURI(filterType))
+                  .then((response) => {
+                        onResult(true, response);
+                  }, (error) => {
+                        onResult(false, error);
+                  });
       }
 }
 
 export const selectSharedState = (state) => state.sharedState;
 export const selectIsLoggedIn = (state) => state.sharedState.isLoggedIn;
 export const selectAPIKey = (state) => state.sharedState.apiKey;
+
+export const selectAvailableTemplateNames = (state) => state.sharedState.availableTemplateNames;
 
 export const selectIsSearchLoading = (state) => state.sharedState.searchLoading;
 export const selectSearchRequestObj = (state) => state.sharedState.searchRequestObj;
@@ -151,7 +184,8 @@ export const {
       setSearchLoading,
       setSimpleSearchReqObj,
       setAdvancedSearchReqObj,
-      setCurrentPageNumber
+      setCurrentPageNumber,
+      setAvailableTemplateNames
 } = sharedStateSlice.actions;
 
 export default sharedStateSlice.reducer;

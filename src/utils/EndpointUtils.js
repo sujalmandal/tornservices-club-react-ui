@@ -4,12 +4,12 @@ export const getLoginURI=function(APIKey){
     return BASE_URI+'player/auth/'+APIKey
 }
 
-export const getJobDetailTemplatesURI=function(){
-    return BASE_URI+'public/jobDetailTemplates';
+export const getAvailableTemplateNamesURI=function(){
+    return BASE_URI+'templates/availableTemplateNames';
 }
 
-export const getJobDetailFormTemplateByNameURI=function(jobDetailTemplateName){
-    return BASE_URI+'public/jobDetailFormTemplate/'+jobDetailTemplateName;
+export const getTemplateByNameURI=function(templateName){
+    return BASE_URI+'templates/'+templateName;
 }
 
 export const getJobDetailFilterTemplateByNameURI=function(jobDetailTemplateName){

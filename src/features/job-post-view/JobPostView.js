@@ -480,7 +480,7 @@ export function JobPostView() {
                             </Col>
                         </Row>
                         <Row style={{ paddingTop: "5vh" }}>
-                            <Container>
+                            <Container fluid>
                                 {renderDynamicJobDetailFormBasedOnTemplate(
                                     selectedJobDetailTemplateObj,
                                     selectedServiceTypeObj
