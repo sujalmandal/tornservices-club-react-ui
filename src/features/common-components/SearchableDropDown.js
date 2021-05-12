@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FormControl ,Dropdown } from 'react-bootstrap';
+import FuzzySet from 'fuzzyset'
 
 export default function SearchableDropDown(props) {
 
@@ -41,9 +42,21 @@ export default function SearchableDropDown(props) {
                         value={value}
                     />
                     <ul className="list-unstyled pre-scrollable">
-                        {React.Children.toArray(children).filter(
-                            (child) =>
-                                !value || child.props.children.toLowerCase().startsWith(value),
+                        {
+                        React.Children.toArray(children).filter(
+                            (child) =>{
+                                var listText=child.props.children.props.children;
+                                if(!value){
+                                    return true;
+                                }
+                                else if(value.length>2){
+                                    var fuzzySetObj=FuzzySet([listText]);
+                                    var matchResult=fuzzySetObj.get(value);
+                                    return (matchResult!==null);
+                                }
+                                else 
+                                    return true;
+                            }
                         )}
                     </ul>
                 </div>

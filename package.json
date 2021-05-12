@@ -10,6 +10,7 @@
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
     "dateformat": "^4.5.1",
+    "fuzzyset": "^1.0.6",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "react": "^17.0.2",
